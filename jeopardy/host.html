@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jeopardy — Host Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Bitter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/host.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <span class="topbar-title">JEOPARDY <em>host console</em></span>
+    <span class="topbar-hint">students see <strong>index.html</strong> — keep this screen to yourself</span>
+  </header>
+
+  <!-- ===== Setup ===== -->
+  <section id="setup-screen" class="panel">
+    <div id="resume-banner" class="resume-banner" hidden>
+      <div>
+        <strong>Game in progress found</strong>
+        <span id="resume-title"></span>
+      </div>
+      <div class="resume-actions">
+        <button id="resume-btn" class="btn primary">Resume</button>
+        <button id="discard-btn" class="btn ghost">Discard</button>
+      </div>
+    </div>
+
+    <h2>New Game</h2>
+
+    <label class="field">
+      <span>Game set <small>(edit data/games.js to add your own)</small></span>
+      <select id="game-select"></select>
+    </label>
+
+    <label class="field">
+      <span>Teams</span>
+      <select id="team-count"></select>
+    </label>
+
+    <div class="field">
+      <span>Team names <small>(leave blank for Team 1, Team 2, …)</small></span>
+      <div id="team-names" class="team-names"></div>
+    </div>
+
+    <label class="checkbox-field">
+      <input type="checkbox" id="autoplay-music">
+      <span>Auto-play think music when a clue opens <small>(a countdown shows on the projector while it plays)</small></span>
+    </label>
+
+    <div class="setup-actions">
+      <button id="start-btn" class="btn primary big">Start Game ▶</button>
+      <button id="open-display-btn" class="btn">Open display window</button>
+      <button id="print-key-btn" class="btn ghost">Print answer key</button>
+      <button id="test-sound-btn" class="btn ghost">🔔 Test sound</button>
+      <span id="test-sound-status" class="test-sound-status"></span>
+    </div>
+
+    <details class="help">
+      <summary>Two-screen setup</summary>
+      <ol>
+        <li>In this folder run: <code>python -m http.server 8080</code></li>
+        <li>On <strong>your laptop</strong> open <code>http://localhost:8080/host.html</code> (this page)</li>
+        <li>Drag a second window to the <strong>projector</strong> and open <code>http://localhost:8080/index.html</code> (or use the button above)</li>
+        <li>Start the game here — both screens stay in sync automatically</li>
+      </ol>
+    </details>
+  </section>
+
+  <!-- ===== Game (board + teams) ===== -->
+  <section id="game-screen" class="panel wide" hidden>
+    <div class="game-top">
+      <span id="game-title-label" class="game-title-label"></span>
+      <span id="remaining-label" class="remaining-label"></span>
+      <span class="game-top-actions">
+        <button id="sound-btn" class="btn ghost" title="Toggle all game sounds">🔊 Sounds on</button>
+        <button id="final-results-btn" class="btn">Final results</button>
+        <button id="new-game-btn" class="btn ghost">New game</button>
+      </span>
+    </div>
+
+    <div id="all-done-banner" class="all-done" hidden>
+      All clues played!
+      <button id="all-done-btn" class="btn primary">Show final results 🏆</button>
+    </div>
+
+    <div class="game-layout">
+      <div id="host-board" class="host-board"></div>
+      <aside id="teams-panel" class="teams-panel"></aside>
+    </div>
+    <p class="hint">Click a dollar value to put the clue up on the display.</p>
+  </section>
+
+  <!-- ===== Clue modal ===== -->
+  <div id="clue-modal" class="modal-backdrop" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <span id="cm-category"></span>
+        <span id="cm-value" class="cm-value"></span>
+      </div>
+
+      <p id="cm-clue" class="cm-clue"></p>
+
+      <div class="cm-answer-box">
+        <span class="cm-answer-label">Answer</span>
+        <span id="cm-answer"></span>
+      </div>
+
+      <div id="cm-status" class="cm-status"></div>
+      <div id="cm-teams" class="cm-teams"></div>
+
+      <div class="modal-actions">
+        <button id="cm-music-btn" class="btn" title="Plays sounds/think.mp3 if you've added one, otherwise a built-in thinking clock (~30s)">🎵 Think music</button>
+        <button id="cm-reveal-btn" class="btn">Reveal answer on display</button>
+        <button id="cm-done-btn" class="btn primary">Done — back to board</button>
+        <button id="cm-cancel-btn" class="btn ghost" title="Close without using up the clue (Esc)">Oops — keep clue available</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Final standings ===== -->
+  <section id="final-screen" class="panel" hidden>
+    <h2>Final Standings</h2>
+    <div id="final-standings" class="final-standings"></div>
+    <div class="setup-actions">
+      <button id="final-back-btn" class="btn">← Back to board</button>
+      <button id="final-new-btn" class="btn primary">New game</button>
+    </div>
+  </section>
+
+  <script src="js/channel.js"></script>
+  <script src="js/sounds.js"></script>
+  <script src="data/games.js"></script>
+  <script src="js/host.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jeopardy — Display</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Bitter:wght@600;800&family=Ultra&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/display.css">
+</head>
+<body>
+  <div class="stage">
+
+    <!-- Waiting for host -->
+    <section id="waiting-screen" class="screen">
+      <h1 class="logo">JEOPARDY!</h1>
+      <p class="waiting-msg">waiting for host<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+      <p class="waiting-hint">Start the game from <strong>host.html</strong> on the teacher's screen</p>
+    </section>
+
+    <!-- Game board -->
+    <section id="board-screen" class="screen" hidden>
+      <header class="board-header">
+        <span class="board-logo">JEOPARDY!</span>
+        <span class="game-title" id="game-title"></span>
+      </header>
+      <div class="board" id="board"></div>
+      <footer class="scoreboard" id="scoreboard"></footer>
+    </section>
+
+    <!-- Final results -->
+    <section id="gameover-screen" class="screen" hidden>
+      <div class="confetti" id="confetti"></div>
+      <h1 class="logo small">FINAL SCORES</h1>
+      <div class="podium" id="podium"></div>
+    </section>
+
+    <!-- Clue overlay (slides over the board) -->
+    <div id="clue-overlay">
+      <div class="clue-meta">
+        <span id="clue-category"></span>
+        <span class="clue-meta-sep">•</span>
+        <span id="clue-value"></span>
+      </div>
+      <div class="clue-text" id="clue-text"></div>
+      <div class="clue-answer-wrap">
+        <div class="clue-answer" id="clue-answer"></div>
+      </div>
+      <div class="clue-timer" id="clue-timer">
+        <span class="clue-timer-secs" id="clue-timer-secs"></span>
+        <div class="clue-timer-track">
+          <div class="clue-timer-fill" id="clue-timer-fill"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/channel.js"></script>
+  <script src="js/display.js"></script>
+</body>
+</html>
