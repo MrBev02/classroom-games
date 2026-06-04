@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POINTLESS — Controller</title>
+    <link rel="stylesheet" href="css/controller.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>POINTLESS &mdash; Controller</h1>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot disconnected" id="statusDot"></span>
+                <span id="statusText">Display: Disconnected</span>
+            </div>
+        </header>
+
+        <div class="panels">
+            <!-- ── Setup ───────────────────────────────────── -->
+            <section id="setupPanel" class="panel">
+                <h2>Game Setup</h2>
+                <div class="file-input">
+                    <label for="fileInput">Load Questions (JSON)</label>
+                    <input type="file" id="fileInput" accept=".json">
+                    <div id="fileName"></div>
+                </div>
+                <div class="team-names">
+                    <h3>Team Names</h3>
+                    <input type="text" id="setupTeam0" value="Team 1" placeholder="Team 1">
+                    <input type="text" id="setupTeam1" value="Team 2" placeholder="Team 2">
+                    <input type="text" id="setupTeam2" value="Team 3" placeholder="Team 3">
+                    <input type="text" id="setupTeam3" value="Team 4" placeholder="Team 4">
+                </div>
+                <button id="startGameBtn" disabled>Start Game</button>
+            </section>
+
+            <!-- ── Game Controls ───────────────────────────── -->
+            <section id="gamePanel" class="panel" style="display:none">
+                <div class="game-info">
+                    <h2 id="roundTitle">Round 1</h2>
+                    <p id="questionInfo"></p>
+                </div>
+
+                <div class="question-controls">
+                    <button id="showQuestionBtn">Show Question</button>
+                    <div class="current-question" id="currentQuestion">
+                        <div class="cq-category" id="cqCategory"></div>
+                        <div class="cq-text" id="cqText"></div>
+                    </div>
+                </div>
+
+                <div id="answerSection" class="answer-section" style="display:none">
+                    <h3 id="activeTeamLabel" class="team-turn-0">Team 1's Turn</h3>
+                    <div class="answer-input-group">
+                        <input type="text" id="answerInput" placeholder="Type team's answer..." autocomplete="off">
+                        <button id="submitAnswerBtn">Submit</button>
+                    </div>
+                    <div class="answer-result" id="answerResult"></div>
+                    <div class="wrong-controls" id="wrongControls" style="display:none">
+                        <button id="markWrongBtn">Mark Wrong (100)</button>
+                        <div class="override-input">
+                            <input type="number" id="overrideScore" min="0" max="100" placeholder="Score">
+                            <button id="overrideBtn">Override</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progression-controls" id="progressionControls">
+                    <button id="nextQuestionBtn" style="display:none">Next Question</button>
+                    <button id="showScoreboardBtn" style="display:none">Show Scoreboard</button>
+                </div>
+
+                <details class="answer-reference" id="answerReference" style="display:none">
+                    <summary>Answer Reference (all valid answers)</summary>
+                    <div class="answer-list" id="answerList"></div>
+                </details>
+            </section>
+
+            <!-- ── Scoreboard ──────────────────────────────── -->
+            <section id="scoreboardPanel" class="panel" style="display:none">
+                <h2>Scoreboard</h2>
+                <div class="controller-scoreboard" id="controllerScoreboard"></div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button id="nextRoundBtn" style="display:none">Next Round</button>
+                    <button id="startHeadToHeadBtn" style="display:none">Start Head to Head</button>
+                    <button id="startFinalBtn" style="display:none">Start Final Round</button>
+                    <button id="showWinnerBtn" style="display:none">Show Winner</button>
+                </div>
+            </section>
+
+            <!-- ── Final Round ─────────────────────────────── -->
+            <section id="finalPanel" class="panel" style="display:none">
+                <h2>The Final</h2>
+                <div id="finalInfo"></div>
+                <div class="final-answer-input">
+                    <h3 id="finalAnswerLabel">Answer 1 of 3</h3>
+                    <div class="answer-input-group">
+                        <input type="text" id="finalAnswerInput" placeholder="Type answer..." autocomplete="off">
+                        <button id="submitFinalBtn">Submit</button>
+                    </div>
+                </div>
+                <div class="answer-result" id="finalResult"></div>
+                <div class="wrong-controls" id="finalWrongControls" style="display:none">
+                    <button id="finalMarkWrongBtn">Mark Wrong (100)</button>
+                    <div class="override-input">
+                        <input type="number" id="finalOverrideScore" min="0" max="100" placeholder="Score">
+                        <button id="finalOverrideBtn">Override</button>
+                    </div>
+                </div>
+                <details class="answer-reference" id="finalAnswerReference">
+                    <summary>Answer Reference</summary>
+                    <div class="answer-list" id="finalAnswerList"></div>
+                </details>
+            </section>
+        </div>
+
+        <!-- ── Sidebar ─────────────────────────────────────── -->
+        <aside id="sidebar" style="display:none">
+            <h3>Teams</h3>
+            <div id="scoreOverrides"></div>
+            <hr>
+            <button id="undoBtn" disabled>Undo Last Action</button>
+            <hr>
+            <button id="resetBtn">Reset Game</button>
+        </aside>
+    </div>
+
+    <script src="js/channel.js"></script>
+    <script src="js/scorer.js"></script>
+    <script src="js/controller.js"></script>
+</body>
+</html>

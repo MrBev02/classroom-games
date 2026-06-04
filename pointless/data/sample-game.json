@@ -1,0 +1,123 @@
+{
+  "title": "CS Fundamentals Review",
+  "rounds": [
+    {
+      "roundNumber": 1,
+      "questions": [
+        {
+          "category": "Programming Languages",
+          "question": "Name a programming language in the TIOBE top 20",
+          "answers": {
+            "python": { "score": 95, "aliases": ["py"] },
+            "javascript": { "score": 88, "aliases": ["js", "ecmascript"] },
+            "java": 85,
+            "c": 72,
+            "c++": { "score": 70, "aliases": ["cpp"] },
+            "c#": { "score": 65, "aliases": ["csharp", "c sharp"] },
+            "typescript": { "score": 45, "aliases": ["ts"] },
+            "go": { "score": 30, "aliases": ["golang"] },
+            "rust": 12,
+            "fortran": 5,
+            "scratch": 3,
+            "zig": 0
+          }
+        },
+        {
+          "category": "HTTP Status Codes",
+          "question": "Name a valid HTTP status code",
+          "answers": {
+            "200": { "score": 92, "aliases": ["200 ok"] },
+            "404": { "score": 90, "aliases": ["404 not found"] },
+            "500": { "score": 65, "aliases": ["500 internal server error"] },
+            "301": { "score": 40, "aliases": ["301 moved permanently"] },
+            "403": { "score": 35, "aliases": ["403 forbidden"] },
+            "201": 25,
+            "418": { "score": 8, "aliases": ["418 im a teapot", "teapot"] },
+            "204": 5,
+            "451": { "score": 2, "aliases": ["451 unavailable for legal reasons"] },
+            "507": 0
+          }
+        }
+      ]
+    },
+    {
+      "roundNumber": 2,
+      "questions": [
+        {
+          "category": "Linux Terminal Commands",
+          "question": "Name a common Linux terminal command",
+          "answers": {
+            "ls": 92,
+            "cd": 90,
+            "mkdir": 75,
+            "rm": 70,
+            "cp": 60,
+            "grep": 45,
+            "chmod": 35,
+            "ssh": 30,
+            "awk": 15,
+            "tar": 12,
+            "sed": 10,
+            "tee": 3,
+            "xargs": 0
+          }
+        },
+        {
+          "category": "Computer Science Pioneers",
+          "question": "Name a famous person in the history of computing",
+          "answers": {
+            "alan turing": { "score": 85, "aliases": ["turing"] },
+            "bill gates": { "score": 90, "aliases": ["gates"] },
+            "steve jobs": { "score": 88, "aliases": ["jobs"] },
+            "ada lovelace": { "score": 55, "aliases": ["lovelace", "ada"] },
+            "grace hopper": { "score": 40, "aliases": ["hopper"] },
+            "linus torvalds": { "score": 30, "aliases": ["torvalds", "linus"] },
+            "tim berners-lee": { "score": 25, "aliases": ["berners-lee", "berners lee"] },
+            "dennis ritchie": { "score": 15, "aliases": ["ritchie"] },
+            "margaret hamilton": { "score": 10, "aliases": ["hamilton"] },
+            "konrad zuse": { "score": 3, "aliases": ["zuse"] },
+            "hedy lamarr": { "score": 0, "aliases": ["lamarr"] }
+          }
+        }
+      ]
+    },
+    {
+      "roundNumber": 3,
+      "questions": [
+        {
+          "category": "Database Systems",
+          "question": "Name a database management system",
+          "answers": {
+            "mysql": { "score": 90, "aliases": ["my sql"] },
+            "postgresql": { "score": 75, "aliases": ["postgres", "psql"] },
+            "mongodb": { "score": 70, "aliases": ["mongo"] },
+            "sqlite": 55,
+            "oracle": { "score": 50, "aliases": ["oracle db"] },
+            "microsoft sql server": { "score": 40, "aliases": ["sql server", "mssql", "ms sql"] },
+            "redis": 25,
+            "elasticsearch": { "score": 15, "aliases": ["elastic"] },
+            "cassandra": 8,
+            "neo4j": 3,
+            "cockroachdb": { "score": 0, "aliases": ["cockroach"] }
+          }
+        }
+      ]
+    }
+  ],
+  "final": {
+    "category": "Sorting Algorithms",
+    "question": "Name a sorting algorithm",
+    "answers": {
+      "bubble sort": { "score": 88, "aliases": ["bubblesort"] },
+      "quick sort": { "score": 70, "aliases": ["quicksort"] },
+      "merge sort": { "score": 65, "aliases": ["mergesort"] },
+      "insertion sort": { "score": 45, "aliases": ["insertionsort"] },
+      "selection sort": { "score": 40, "aliases": ["selectionsort"] },
+      "heap sort": { "score": 20, "aliases": ["heapsort"] },
+      "radix sort": { "score": 10, "aliases": ["radixsort"] },
+      "shell sort": { "score": 5, "aliases": ["shellsort"] },
+      "tim sort": { "score": 3, "aliases": ["timsort"] },
+      "bogosort": { "score": 0, "aliases": ["bogo sort", "monkey sort"] }
+    }
+  }
+}

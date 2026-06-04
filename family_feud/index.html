@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Feud</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== SETUP SCREEN ===== -->
+  <div id="setup-screen">
+    <h1>FAMILY FEUD</h1>
+    <p class="subtitle">Classroom Edition</p>
+    <div class="setup-form">
+      <label for="team1-input">Team 1 Name</label>
+      <input type="text" id="team1-input" value="Team 1" maxlength="20">
+
+      <label for="team2-input">Team 2 Name</label>
+      <input type="text" id="team2-input" value="Team 2" maxlength="20">
+
+      <label for="rounds-select">Number of Rounds</label>
+      <select id="rounds-select">
+        <option value="5">5 rounds</option>
+        <option value="10" selected>10 rounds</option>
+        <option value="15">15 rounds</option>
+        <option value="20">20 rounds</option>
+      </select>
+
+      <button id="start-btn" onclick="startGame()">START GAME</button>
+      <button id="print-key-btn" onclick="printAnswerKey()">Print Answer Key</button>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="game-screen">
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+      <div class="team-score team1">
+        <span class="team-name">Team 1</span>
+        <span class="score-value">0</span>
+      </div>
+      <div class="game-title">
+        <h1>FAMILY FEUD</h1>
+        <span class="round-info">Round 1 of 10</span>
+      </div>
+      <div class="team-score team2">
+        <span class="team-name">Team 2</span>
+        <span class="score-value">0</span>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div class="question-bar">
+      <h2>Question goes here</h2>
+    </div>
+
+    <!-- Strikes -->
+    <div class="strikes-overlay"></div>
+
+    <!-- Board -->
+    <div class="board-area">
+      <div class="board"></div>
+    </div>
+
+    <!-- Round Points -->
+    <div class="round-points-bar">
+      Round Points: <span>0</span>
+    </div>
+
+    <!-- Host Controls -->
+    <div class="host-controls">
+      <button class="btn-strike" onclick="addStrike()">STRIKE  &#10005;</button>
+      <button class="btn-nav" onclick="clearStrikes()">Clear Strikes</button>
+      <div class="controls-divider"></div>
+      <button class="btn-team1" onclick="awardPoints(0)">Award to <span class="ctrl-team1-name">Team 1</span></button>
+      <button class="btn-team2" onclick="awardPoints(1)">Award to <span class="ctrl-team2-name">Team 2</span></button>
+      <div class="controls-divider"></div>
+      <button class="btn-reveal-all" onclick="revealAll()">Reveal All</button>
+      <div class="controls-divider"></div>
+      <button class="btn-nav" onclick="prevRound()">&larr; Prev</button>
+      <button class="btn-nav" onclick="nextRound()">Next &rarr;</button>
+      <div class="controls-divider"></div>
+      <button class="btn-new-game" onclick="newGame()">New Game</button>
+    </div>
+
+    <div class="controls-hint">Press H to toggle host controls</div>
+  </div>
+
+  <!-- ===== GAME OVER SCREEN ===== -->
+  <div id="gameover-screen">
+    <h1>GAME OVER</h1>
+    <p class="winner-text"></p>
+    <div class="final-scores">
+      <div class="final-score-card team1">
+        <div class="final-team-name">Team 1</div>
+        <div class="final-score-value">0</div>
+      </div>
+      <div class="final-score-card team2">
+        <div class="final-team-name">Team 2</div>
+        <div class="final-score-value">0</div>
+      </div>
+    </div>
+    <button onclick="newGame()">PLAY AGAIN</button>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

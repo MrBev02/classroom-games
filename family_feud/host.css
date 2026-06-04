@@ -1,0 +1,390 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --border: #2a3a5c;
+  --gold: #ffd700;
+  --white: #f0f0f0;
+  --muted: #8899bb;
+  --team1: #1565c0;
+  --team2: #c62828;
+  --red: #e53935;
+  --green: #43a047;
+  --purple: #6a1b9a;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ===== SETUP ===== */
+
+#host-setup {
+  max-width: 420px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+#host-setup h1 {
+  font-size: 2.5rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+
+#host-setup .subtitle {
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+#host-setup .hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: 1px dashed var(--border);
+}
+
+.setup-form {
+  text-align: left;
+}
+
+.setup-form label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+  margin-top: 1rem;
+}
+
+.setup-form input,
+.setup-form select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--white);
+  font-size: 1rem;
+}
+
+.setup-form input:focus,
+.setup-form select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.setup-form select option {
+  background: var(--bg);
+}
+
+#start-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--bg);
+  background: var(--gold);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#start-btn:hover {
+  background: #ffe44d;
+}
+
+/* ===== HOST GAME VIEW ===== */
+
+#host-game {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Header */
+
+.host-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.host-team {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.host-team.team1 {
+  background: var(--team1);
+}
+
+.host-team.team2 {
+  background: var(--team2);
+}
+
+.host-team-name {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.host-team-score {
+  font-size: 1.5rem;
+}
+
+.host-title {
+  text-align: center;
+}
+
+.host-round-info {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Question */
+
+.host-question {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.host-question h2 {
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+
+/* Answer Key Table */
+
+.answer-key {
+  margin-bottom: 0.8rem;
+}
+
+#answer-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#answer-table th {
+  text-align: left;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+#answer-table th:last-child {
+  text-align: center;
+}
+
+#answer-table td {
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.95rem;
+}
+
+#answer-table tr.revealed-row td {
+  color: var(--muted);
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+#answer-table .answer-num {
+  color: var(--muted);
+  font-weight: bold;
+  width: 30px;
+}
+
+#answer-table .answer-pts {
+  color: var(--gold);
+  font-weight: bold;
+  width: 60px;
+}
+
+#answer-table .answer-action {
+  text-align: center;
+  width: 90px;
+}
+
+.btn-reveal {
+  padding: 0.3rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--team1);
+  color: white;
+  transition: background 0.15s;
+}
+
+.btn-reveal:hover {
+  background: #1976d2;
+}
+
+.btn-reveal:disabled {
+  background: #333;
+  color: #666;
+  cursor: default;
+}
+
+/* Status bar */
+
+.host-status {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  padding: 0.6rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.host-status strong {
+  color: var(--gold);
+}
+
+/* Controls */
+
+.host-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.control-group {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  color: white;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-strike {
+  background: var(--red);
+}
+
+.btn-clear {
+  background: #555;
+}
+
+.btn-team1 {
+  background: var(--team1);
+}
+
+.btn-team2 {
+  background: var(--team2);
+}
+
+.btn-reveal-all {
+  background: var(--purple);
+}
+
+.btn-nav {
+  background: #37474f;
+}
+
+.btn-new-game {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* ===== GAME OVER ===== */
+
+#host-gameover {
+  max-width: 500px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+#host-gameover h1 {
+  font-size: 2.5rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.winner-text {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.final-scores {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.final-card {
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.final-card.team1 {
+  background: var(--team1);
+}
+
+.final-card.team2 {
+  background: var(--team2);
+}
+
+.final-name {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.final-score {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.final-card.winner {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}

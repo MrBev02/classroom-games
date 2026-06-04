@@ -1,0 +1,3346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classroom Timer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Russo+One&family=Roboto+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ══════════════════════════════════════════
+     THEME VARIABLES
+     ══════════════════════════════════════════ */
+
+  /* Cybersecurity theme */
+  body.theme-cyber {
+    --primary: #00ff41;
+    --primary-dim: #00cc33;
+    --primary-dark: #003d0f;
+    --warn: #ffaa00;
+    --critical: #ff0033;
+    --critical-glow: #ff003388;
+    --bg: #0a0a0a;
+    --panel: #0d1117;
+    --border: #1a2a1a;
+    --text: #00ff41;
+    --accent: #00e5ff;
+    font-family: 'Share Tech Mono', monospace;
+    cursor: crosshair;
+  }
+
+  /* Gaming theme */
+  body.theme-gaming {
+    --primary: #39ff14;
+    --primary-dim: #39ff14;
+    --primary-dark: #003d0f;
+    --warn: #ffe600;
+    --critical: #ff1744;
+    --critical-glow: rgba(255, 23, 68, 0.5);
+    --bg: #0d0d1a;
+    --panel: #12122a;
+    --border: #2a2a4a;
+    --text: #e0e0ff;
+    --accent: #b388ff;
+    --xp-blue: #00b0ff;
+    --purple: #b388ff;
+    --gold: #ffd740;
+    font-family: 'Russo One', sans-serif;
+  }
+
+  /* Mechatronics theme */
+  body.theme-mecha {
+    --primary: #ff8c00;
+    --primary-dim: #cc7000;
+    --primary-dark: #4d2a00;
+    --warn: #ffcc00;
+    --critical: #ff2020;
+    --critical-glow: rgba(255, 32, 32, 0.5);
+    --bg: #0c0e13;
+    --panel: #11141c;
+    --border: #1e2738;
+    --text: #c8d0e0;
+    --accent: #4a9eff;
+    --mecha-teal: #00bfa5;
+    --mecha-steel: #607d8b;
+    font-family: 'Rajdhani', sans-serif;
+  }
+
+  /* ══════════════════════════════════════════
+     LANDING PAGE
+     ══════════════════════════════════════════ */
+
+  .landing {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #08080f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s;
+  }
+
+  .landing.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .landing-inner {
+    text-align: center;
+    max-width: 700px;
+    width: 90%;
+  }
+
+  .landing h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: #fff;
+    margin-bottom: 6px;
+    text-shadow: 0 0 20px rgba(255,255,255,0.15);
+  }
+
+  .landing .landing-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: #555;
+    letter-spacing: 4px;
+    margin-bottom: 40px;
+  }
+
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 35px;
+  }
+
+  .theme-card {
+    background: #0d0d1a;
+    border: 2px solid #222;
+    border-radius: 8px;
+    padding: 35px 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .theme-card.cyber::before {
+    background: radial-gradient(ellipse at center, rgba(0,255,65,0.06) 0%, transparent 70%);
+  }
+
+  .theme-card.gaming::before {
+    background: radial-gradient(ellipse at center, rgba(179,136,255,0.06) 0%, transparent 70%);
+  }
+
+  .theme-card.mecha::before {
+    background: radial-gradient(ellipse at center, rgba(255,140,0,0.06) 0%, transparent 70%);
+  }
+
+  .theme-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .theme-card:hover::before { opacity: 1; }
+
+  .theme-card.cyber:hover {
+    border-color: #00ff41;
+    box-shadow: 0 0 30px rgba(0,255,65,0.15);
+  }
+
+  .theme-card.gaming:hover {
+    border-color: #b388ff;
+    box-shadow: 0 0 30px rgba(179,136,255,0.15);
+  }
+
+  .theme-card.mecha:hover {
+    border-color: #ff8c00;
+    box-shadow: 0 0 30px rgba(255,140,0,0.15);
+  }
+
+  .theme-card.selected.cyber {
+    border-color: #00ff41;
+    box-shadow: 0 0 30px rgba(0,255,65,0.2);
+  }
+
+  .theme-card.selected.gaming {
+    border-color: #b388ff;
+    box-shadow: 0 0 30px rgba(179,136,255,0.2);
+  }
+
+  .theme-card.selected.mecha {
+    border-color: #ff8c00;
+    box-shadow: 0 0 30px rgba(255,140,0,0.2);
+  }
+
+  .theme-card .theme-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+  }
+
+  .theme-card .theme-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+
+  .theme-card.cyber .theme-name { color: #00ff41; }
+  .theme-card.gaming .theme-name { color: #b388ff; }
+  .theme-card.mecha .theme-name { color: #ff8c00; }
+
+  .theme-card .theme-desc {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: #666;
+    letter-spacing: 1px;
+  }
+
+  .landing-voice-row {
+    text-align: left;
+    margin-bottom: 30px;
+  }
+
+  .landing-voice-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: #555;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .landing-voice-select-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .landing-voice-select {
+    flex: 1;
+    min-width: 0;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #aaa;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    padding: 10px 12px;
+    outline: none;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .landing-voice-select:focus { border-color: #666; }
+  .landing-voice-select option { background: #0a0a0a; color: #aaa; }
+
+  .landing-preview-btn {
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #777;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+  }
+
+  .landing-preview-btn:hover {
+    border-color: #888;
+    color: #ccc;
+  }
+
+  /* ══════════════════════════════════════════
+     BACKGROUND CANVAS
+     ══════════════════════════════════════════ */
+
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  /* Cyber: matrix rain opacity by phase */
+  body.theme-cyber #bg-canvas { opacity: 0.15; transition: opacity 2s; }
+  body.theme-cyber.phase-warning #bg-canvas { opacity: 0.25; }
+  body.theme-cyber.phase-critical #bg-canvas { opacity: 0.4; }
+  body.theme-cyber.phase-ended #bg-canvas { opacity: 0.6; }
+
+  /* CRT scanline overlay (cyber only) */
+  body.theme-cyber::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 65, 0.04) 2px,
+      rgba(0, 255, 65, 0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CRT vignette (cyber only) */
+  body.theme-cyber::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* Blueprint grid overlay (mecha only) */
+  body.theme-mecha::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,158,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,158,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Pixel grid overlay (gaming only) */
+  body.theme-gaming::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 4px 4px;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ══════════════════════════════════════════
+     HEX GRID (cyber decoration)
+     ══════════════════════════════════════════ */
+
+  .hex-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.03;
+    pointer-events: none;
+    display: none;
+    background-image:
+      linear-gradient(30deg, var(--primary) 12%, transparent 12.5%, transparent 87%, var(--primary) 87.5%, var(--primary)),
+      linear-gradient(150deg, var(--primary) 12%, transparent 12.5%, transparent 87%, var(--primary) 87.5%, var(--primary)),
+      linear-gradient(30deg, var(--primary) 12%, transparent 12.5%, transparent 87%, var(--primary) 87.5%, var(--primary)),
+      linear-gradient(150deg, var(--primary) 12%, transparent 12.5%, transparent 87%, var(--primary) 87.5%, var(--primary)),
+      linear-gradient(60deg, rgba(0,255,65,0.3) 25%, transparent 25.5%, transparent 75%, rgba(0,255,65,0.3) 75%, rgba(0,255,65,0.3)),
+      linear-gradient(60deg, rgba(0,255,65,0.3) 25%, transparent 25.5%, transparent 75%, rgba(0,255,65,0.3) 75%, rgba(0,255,65,0.3));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  }
+
+  body.theme-cyber .hex-grid { display: block; }
+
+  /* ══════════════════════════════════════════
+     CORNER DECORATIONS (cyber only)
+     ══════════════════════════════════════════ */
+
+  .corner {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    border-color: var(--primary-dim);
+    border-style: solid;
+    transition: border-color 0.5s;
+    z-index: 50;
+    opacity: 0.5;
+    display: none;
+  }
+
+  body.theme-cyber .corner { display: block; }
+  body.phase-warning .corner { border-color: var(--warn); }
+  body.phase-critical .corner,
+  body.phase-ended .corner { border-color: var(--critical); }
+
+  .corner-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+  /* ══════════════════════════════════════════
+     MAIN LAYOUT
+     ══════════════════════════════════════════ */
+
+  .container {
+    position: relative;
+    z-index: 10;
+    height: 100vh;
+    grid-template-rows: auto 1fr auto;
+    padding: 20px;
+    gap: 10px;
+    display: none;
+  }
+
+  body.timer-active .container { display: grid; }
+
+  /* ══════════════════════════════════════════
+     TOP BAR
+     ══════════════════════════════════════════ */
+
+  /* Cyber top bar */
+  .top-bar-cyber {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  body.theme-cyber.timer-active .top-bar-cyber { display: flex; }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    margin-right: 8px;
+    animation: pulse-dot 1.5s infinite;
+  }
+
+  body.phase-warning .status-dot { background: var(--warn); }
+  body.phase-critical .status-dot,
+  body.phase-ended .status-dot { background: var(--critical); }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .threat-level {
+    color: var(--primary);
+    transition: color 0.5s;
+  }
+
+  body.phase-warning .threat-level { color: var(--warn); }
+  body.phase-critical .threat-level,
+  body.phase-ended .threat-level { color: var(--critical); }
+
+  /* Gaming HUD bar */
+  .hud-bar {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  body.theme-gaming.timer-active .hud-bar { display: flex; }
+
+  /* Mecha top bar */
+  .mecha-bar {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    background: var(--panel);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+
+  body.theme-mecha.timer-active .mecha-bar { display: flex; }
+
+  .mecha-bar .mecha-status {
+    color: var(--primary);
+    transition: color 0.5s;
+  }
+
+  body.phase-warning .mecha-bar .mecha-status { color: var(--warn); }
+  body.phase-critical .mecha-bar .mecha-status,
+  body.phase-ended .mecha-bar .mecha-status { color: var(--critical); }
+
+  .mecha-bar .mecha-readouts {
+    display: flex;
+    gap: 20px;
+    color: var(--mecha-steel);
+    font-size: 0.65rem;
+  }
+
+  .mecha-bar .mecha-readouts span { transition: color 0.5s; }
+  .mecha-bar .mecha-readouts .val { color: var(--accent); }
+
+  body.phase-warning .mecha-bar .mecha-readouts .val { color: var(--warn); }
+  body.phase-critical .mecha-bar .mecha-readouts .val { color: var(--critical); }
+
+  .hud-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hud-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--xp-blue), transparent);
+    opacity: 0.5;
+  }
+
+  .player-name {
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(255, 215, 64, 0.4);
+  }
+
+  .level-badge {
+    background: var(--purple);
+    color: var(--bg);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 0.5rem;
+  }
+
+  .score-display {
+    color: var(--xp-blue);
+    text-shadow: 0 0 8px rgba(0, 176, 255, 0.4);
+  }
+
+  .combo-display {
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255, 215, 64, 0.5);
+    transition: transform 0.15s;
+  }
+
+  .combo-display.bump { transform: scale(1.3); }
+
+  /* Hearts */
+  .hearts { display: flex; gap: 8px; align-items: center; }
+  .heart {
+    width: 16px; height: 16px;
+    position: relative; display: inline-block;
+    filter: drop-shadow(0 0 4px rgba(255, 23, 68, 0.5));
+    transition: opacity 0.3s;
+  }
+  .heart svg { width: 100%; height: 100%; }
+  .heart.lost svg { opacity: 0.15; filter: none; }
+
+  /* ══════════════════════════════════════════
+     TIMER AREA
+     ══════════════════════════════════════════ */
+
+  .timer-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Boss name (gaming only) */
+  .boss-name {
+    display: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: var(--critical);
+    text-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+
+  body.theme-gaming .boss-name { display: block; }
+
+  body.theme-mecha .boss-name {
+    display: block;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(74, 158, 255, 0.3);
+    letter-spacing: 4px;
+  }
+
+  /* HP bar (gaming only) */
+  .hp-bar-container {
+    display: none;
+    width: clamp(250px, 50vw, 500px);
+    margin-bottom: 15px;
+  }
+
+  body.theme-gaming .hp-bar-container { display: block; }
+  body.theme-mecha .hp-bar-container { display: block; }
+
+  .hp-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.5rem;
+    margin-bottom: 4px;
+    color: #888;
+  }
+
+  body.theme-mecha .hp-bar-label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+
+  body.theme-mecha .hp-bar-outer {
+    border-color: var(--border);
+    border-radius: 0;
+    background: #0a0c12;
+  }
+
+  body.theme-mecha .hp-bar-inner {
+    background: linear-gradient(90deg, #ff8c00, #ffab40);
+    border-radius: 0;
+    box-shadow: 0 0 12px rgba(255, 140, 0, 0.3);
+  }
+
+  body.theme-mecha.phase-warning .hp-bar-inner {
+    background: linear-gradient(90deg, #ffcc00, #ffe066);
+    box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
+  }
+
+  body.theme-mecha.phase-critical .hp-bar-inner,
+  body.theme-mecha.phase-ended .hp-bar-inner {
+    background: linear-gradient(90deg, #ff2020, #ff6060);
+    box-shadow: 0 0 15px rgba(255, 32, 32, 0.4);
+    animation: hp-pulse 0.5s infinite;
+  }
+
+  .hp-bar-outer {
+    width: 100%;
+    height: 16px;
+    background: #1a1a35;
+    border: 2px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .hp-bar-inner {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(180deg, var(--primary) 0%, #1a8a00 100%);
+    border-radius: 1px;
+    transition: width 0.3s;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+  }
+
+  body.phase-warning .hp-bar-inner {
+    background: linear-gradient(180deg, var(--warn) 0%, #b8a000 100%);
+    box-shadow: 0 0 15px rgba(255, 230, 0, 0.3);
+  }
+
+  body.phase-critical .hp-bar-inner,
+  body.phase-ended .hp-bar-inner {
+    background: linear-gradient(180deg, var(--critical) 0%, #991030 100%);
+    box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
+    animation: hp-pulse 0.5s infinite;
+  }
+
+  @keyframes hp-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Ring container (cyber only) */
+  .ring-container {
+    position: absolute;
+    width: clamp(300px, 50vw, 600px);
+    height: clamp(300px, 50vw, 600px);
+    pointer-events: none;
+    display: none;
+  }
+
+  body.theme-cyber .ring-container { display: block; }
+
+  .ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .ring-track { fill: none; stroke: var(--border); stroke-width: 2; }
+
+  .ring-progress {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke 0.5s;
+    filter: drop-shadow(0 0 6px var(--primary));
+  }
+
+  body.phase-warning .ring-progress {
+    stroke: var(--warn);
+    filter: drop-shadow(0 0 6px var(--warn));
+  }
+
+  body.phase-critical .ring-progress,
+  body.phase-ended .ring-progress {
+    stroke: var(--critical);
+    filter: drop-shadow(0 0 10px var(--critical));
+  }
+
+  /* Timer label */
+  .timer-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: var(--primary-dim);
+    transition: color 0.5s;
+    display: none;
+  }
+
+  body.theme-cyber .timer-label { display: block; }
+  body.phase-warning .timer-label { color: var(--warn); }
+  body.phase-critical .timer-label,
+  body.phase-ended .timer-label { color: var(--critical); }
+
+  /* Timer display */
+  .timer-display {
+    font-size: clamp(5rem, 15vw, 14rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    transition: text-shadow 0.5s, color 0.5s;
+  }
+
+  /* Cyber timer styles */
+  body.theme-cyber .timer-display {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary);
+    text-shadow:
+      0 0 20px var(--primary),
+      0 0 60px var(--primary-dark),
+      0 0 100px var(--primary-dark);
+  }
+
+  body.theme-cyber.phase-warning .timer-display {
+    color: var(--warn);
+    text-shadow:
+      0 0 20px var(--warn),
+      0 0 60px rgba(255, 170, 0, 0.3),
+      0 0 100px rgba(255, 170, 0, 0.15);
+  }
+
+  body.theme-cyber.phase-critical .timer-display {
+    color: var(--critical);
+    text-shadow:
+      0 0 20px var(--critical),
+      0 0 60px var(--critical-glow),
+      0 0 120px rgba(255, 0, 51, 0.2);
+    animation: glitch-text 0.3s infinite;
+  }
+
+  body.theme-cyber.phase-ended .timer-display {
+    color: var(--critical);
+    text-shadow:
+      0 0 30px var(--critical),
+      0 0 80px var(--critical),
+      0 0 150px rgba(255, 0, 51, 0.5);
+    animation: glitch-text 0.1s infinite;
+  }
+
+  @keyframes glitch-text {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(2px, -1px); }
+    60% { transform: translate(-1px, -2px); }
+    80% { transform: translate(1px, 2px); }
+    100% { transform: translate(0); }
+  }
+
+  /* Mecha timer styles */
+  body.theme-mecha .timer-display {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(5rem, 15vw, 14rem);
+    font-weight: 700;
+    color: var(--primary);
+    text-shadow:
+      0 0 15px rgba(255, 140, 0, 0.4),
+      0 0 50px rgba(255, 140, 0, 0.15);
+  }
+
+  body.theme-mecha.phase-warning .timer-display {
+    color: var(--warn);
+    text-shadow:
+      0 0 15px rgba(255, 204, 0, 0.4),
+      0 0 50px rgba(255, 204, 0, 0.15);
+  }
+
+  body.theme-mecha.phase-critical .timer-display {
+    color: var(--critical);
+    text-shadow:
+      0 0 20px rgba(255, 32, 32, 0.5),
+      0 0 60px rgba(255, 32, 32, 0.2);
+    animation: mecha-glitch 0.4s infinite;
+  }
+
+  body.theme-mecha.phase-ended .timer-display {
+    color: var(--critical);
+    text-shadow:
+      0 0 30px rgba(255, 32, 32, 0.6),
+      0 0 80px rgba(255, 32, 32, 0.3);
+    animation: mecha-glitch 0.15s infinite;
+  }
+
+  @keyframes mecha-glitch {
+    0% { transform: translate(0); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, 0); }
+    100% { transform: translate(0); }
+  }
+
+  body.theme-mecha .timer-sub {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: var(--mecha-steel);
+    opacity: 1;
+  }
+
+  /* Mecha timer label (reuse cyber label slot) */
+  body.theme-mecha .timer-label {
+    display: block;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+
+  body.theme-mecha.phase-warning .timer-label { color: var(--warn); }
+  body.theme-mecha.phase-critical .timer-label,
+  body.theme-mecha.phase-ended .timer-label { color: var(--critical); }
+
+  /* Gaming timer styles */
+  body.theme-gaming .timer-display {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(4rem, 12vw, 10rem);
+    color: var(--text);
+    text-shadow:
+      0 0 10px rgba(224, 224, 255, 0.3),
+      0 4px 0 #1a1a3a,
+      0 5px 0 #151530;
+  }
+
+  body.theme-gaming.phase-warning .timer-display {
+    color: var(--warn);
+    text-shadow:
+      0 0 20px rgba(255, 230, 0, 0.4),
+      0 4px 0 #665c00,
+      0 5px 0 #4d4500;
+  }
+
+  body.theme-gaming.phase-critical .timer-display {
+    color: var(--critical);
+    text-shadow:
+      0 0 20px rgba(255, 23, 68, 0.5),
+      0 4px 0 #660a1f,
+      0 5px 0 #4d0818;
+    animation: shake 0.4s infinite;
+  }
+
+  body.theme-gaming.phase-ended .timer-display {
+    color: var(--critical);
+    text-shadow: 0 0 30px rgba(255, 23, 68, 0.6);
+    animation: shake 0.15s infinite;
+  }
+
+  @keyframes shake {
+    0% { transform: translate(0); }
+    25% { transform: translate(-3px, 2px); }
+    50% { transform: translate(3px, -2px); }
+    75% { transform: translate(-2px, -3px); }
+    100% { transform: translate(2px, 3px); }
+  }
+
+  /* Timer sub text */
+  .timer-sub {
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    margin-top: 10px;
+    opacity: 0.6;
+    transition: color 0.5s;
+  }
+
+  body.theme-gaming .timer-sub {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    margin-top: 15px;
+    color: #666;
+    opacity: 1;
+  }
+
+  body.phase-warning .timer-sub { color: var(--warn); }
+  body.phase-critical .timer-sub,
+  body.phase-ended .timer-sub { color: var(--critical); }
+
+  /* ══════════════════════════════════════════
+     XP BAR (gaming only)
+     ══════════════════════════════════════════ */
+
+  .xp-bar-container {
+    display: none;
+    padding: 8px 0;
+  }
+
+  body.theme-gaming .xp-bar-container { display: block; }
+
+  .xp-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.45rem;
+    margin-bottom: 4px;
+    color: #555;
+  }
+
+  .xp-bar-outer {
+    width: 100%;
+    height: 12px;
+    background: #1a1a35;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .xp-bar-inner {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4a00e0, #b388ff, #e040fb);
+    border-radius: 1px;
+    transition: width 0.5s;
+    box-shadow: 0 0 8px rgba(179, 136, 255, 0.4);
+  }
+
+  /* ══════════════════════════════════════════
+     BOTTOM LOG PANEL
+     ══════════════════════════════════════════ */
+
+  .bottom-panel {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    padding: 12px 20px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    max-height: 140px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body.theme-mecha .bottom-panel {
+    border-left: 3px solid var(--primary);
+    border-radius: 0;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    line-height: 1.7;
+  }
+
+  body.theme-gaming .bottom-panel {
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.45rem;
+    line-height: 2;
+    max-height: 100px;
+  }
+
+  .bottom-panel::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 30px;
+    background: linear-gradient(transparent, var(--panel));
+    pointer-events: none;
+  }
+
+  .log-line {
+    opacity: 0;
+    animation: log-appear 0.3s forwards;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body.theme-gaming .log-line {
+    animation: event-pop 0.2s forwards;
+  }
+
+  .log-line .timestamp { color: #555; }
+  .log-line .tag { color: var(--accent); }
+  .log-line .warn-tag { color: var(--warn); }
+  .log-line .alert-tag { color: var(--critical); }
+  .log-line .data { color: var(--primary-dim); }
+
+  /* Gaming event colors */
+  .log-line .e-icon { margin-right: 8px; }
+  .log-line .e-dmg { color: var(--critical); }
+  .log-line .e-heal { color: var(--primary); }
+  .log-line .e-xp { color: var(--purple); }
+  .log-line .e-gold { color: var(--gold); }
+  .log-line .e-crit { color: var(--critical); font-size: 0.55rem; }
+  .log-line .e-info { color: #888; }
+
+  @keyframes log-appear {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes event-pop {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ══════════════════════════════════════════
+     SETUP OVERLAY
+     ══════════════════════════════════════════ */
+
+  .setup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+
+  .setup-overlay.hidden { display: none; }
+
+  .setup-panel {
+    background: var(--panel);
+    border: 1px solid var(--primary-dim);
+    padding: 50px 60px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    transition: all 0.3s;
+  }
+
+  body.theme-gaming .setup-panel {
+    border: 2px solid var(--purple);
+    border-radius: 8px;
+    box-shadow: 0 0 60px rgba(179, 136, 255, 0.15);
+  }
+
+  body.theme-mecha .setup-panel {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 2px;
+    box-shadow: 0 0 40px rgba(255, 140, 0, 0.08);
+  }
+
+  body.theme-mecha .setup-panel h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 8px;
+    text-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+  }
+
+  body.theme-mecha .setup-panel .subtitle {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--mecha-steel);
+    letter-spacing: 2px;
+  }
+
+  body.theme-cyber .setup-panel {
+    box-shadow: 0 0 40px rgba(0, 255, 65, 0.1);
+  }
+
+  .setup-panel h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+  }
+
+  body.theme-gaming .setup-panel h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    color: var(--gold);
+    text-shadow: 0 0 15px rgba(255, 215, 64, 0.4);
+    letter-spacing: 3px;
+  }
+
+  .setup-panel .subtitle {
+    font-size: 0.75rem;
+    color: #555;
+    letter-spacing: 3px;
+    margin-bottom: 40px;
+  }
+
+  body.theme-gaming .setup-panel .subtitle {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 35px;
+  }
+
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .preset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--primary);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 18px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 2px;
+  }
+
+  .preset-btn:hover {
+    background: var(--primary);
+    color: var(--bg);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+  }
+
+  body.theme-mecha .preset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+  }
+
+  body.theme-mecha .preset-btn:hover {
+    background: var(--primary);
+    color: var(--bg);
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.25);
+  }
+
+  body.theme-mecha .preset-btn span {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--accent);
+    opacity: 1;
+  }
+
+  body.theme-mecha .preset-btn:hover span { color: var(--bg); }
+
+  body.theme-gaming .preset-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 16px 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  body.theme-gaming .preset-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 50%, rgba(179, 136, 255, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  body.theme-gaming .preset-btn:hover {
+    background: var(--bg);
+    border-color: var(--purple);
+    color: var(--text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(179, 136, 255, 0.2);
+  }
+
+  body.theme-gaming .preset-btn:hover::before { opacity: 1; }
+
+  .preset-btn span {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    opacity: 0.6;
+  }
+
+  body.theme-gaming .preset-btn span {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.4rem;
+    color: var(--purple);
+    opacity: 1;
+    margin-top: 6px;
+  }
+
+  .custom-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .custom-input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--primary);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.2rem;
+    padding: 14px 16px;
+    text-align: center;
+    outline: none;
+    letter-spacing: 2px;
+  }
+
+  body.theme-mecha .custom-input {
+    border-radius: 2px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+  }
+
+  body.theme-mecha .custom-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.15);
+  }
+
+  body.theme-mecha .go-btn {
+    background: var(--primary);
+    border-radius: 2px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+  }
+
+  body.theme-mecha .go-btn:hover {
+    box-shadow: 0 0 25px rgba(255, 140, 0, 0.35);
+  }
+
+  body.theme-gaming .custom-input {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+  }
+
+  .custom-input::placeholder { color: #333; }
+  .custom-input:focus {
+    border-color: var(--primary-dim);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+  }
+
+  body.theme-gaming .custom-input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 10px rgba(179, 136, 255, 0.2);
+  }
+
+  .go-btn {
+    background: var(--primary);
+    border: none;
+    color: var(--bg);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 0.9rem;
+    padding: 14px 28px;
+    cursor: pointer;
+    letter-spacing: 4px;
+    transition: all 0.2s;
+  }
+
+  .go-btn:hover {
+    box-shadow: 0 0 25px rgba(0, 255, 65, 0.4);
+  }
+
+  body.theme-gaming .go-btn {
+    background: linear-gradient(135deg, #7c4dff, var(--purple));
+    border-radius: 4px;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    padding: 14px 24px;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  body.theme-gaming .go-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(179, 136, 255, 0.4);
+  }
+
+  .voice-row {
+    margin-top: 24px;
+    text-align: left;
+  }
+
+  .voice-label {
+    font-size: 0.65rem;
+    color: #555;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  body.theme-mecha .voice-label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--mecha-steel);
+  }
+
+  body.theme-mecha .voice-select {
+    border-radius: 2px;
+    color: var(--text);
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  body.theme-mecha .voice-select:focus { border-color: var(--primary); }
+
+  body.theme-mecha .preview-btn {
+    border-radius: 2px;
+    color: var(--primary);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  body.theme-mecha .preview-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.15);
+  }
+
+  body.theme-gaming .voice-label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.4rem;
+  }
+
+  .voice-select-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .voice-select {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--primary);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    padding: 10px 12px;
+    outline: none;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body.theme-gaming .voice-select {
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Russo One', sans-serif;
+    font-size: 0.75rem;
+  }
+
+  .voice-select:focus { border-color: var(--primary-dim); }
+  body.theme-gaming .voice-select:focus { border-color: var(--purple); }
+  .voice-select option { background: var(--bg); color: var(--text); }
+
+  .preview-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--primary-dim);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+  }
+
+  .preview-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+  }
+
+  body.theme-gaming .preview-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    color: var(--purple);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.5rem;
+    padding: 10px 16px;
+  }
+
+  body.theme-gaming .preview-btn:hover {
+    border-color: var(--purple);
+    box-shadow: 0 0 10px rgba(179, 136, 255, 0.2);
+  }
+
+  /* ══════════════════════════════════════════
+     CONTROLS
+     ══════════════════════════════════════════ */
+
+  .controls {
+    position: fixed;
+    bottom: 170px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  body.theme-gaming .controls { bottom: 140px; z-index: 10000; }
+
+  .controls.visible { opacity: 1; pointer-events: auto; }
+
+  .ctrl-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--primary-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    padding: 8px 20px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .ctrl-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+  }
+
+  body.theme-mecha .ctrl-btn {
+    border-radius: 2px;
+    color: var(--mecha-steel);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+
+  body.theme-mecha .ctrl-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.15);
+  }
+
+  body.theme-gaming .ctrl-btn {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    color: #888;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.45rem;
+    padding: 8px 18px;
+    letter-spacing: 1px;
+  }
+
+  body.theme-gaming .ctrl-btn:hover {
+    border-color: var(--purple);
+    color: var(--purple);
+    box-shadow: 0 0 10px rgba(179, 136, 255, 0.15);
+  }
+
+  /* ══════════════════════════════════════════
+     SOUND TOGGLE
+     ══════════════════════════════════════════ */
+
+  .sound-toggle {
+    position: fixed;
+    top: 15px;
+    right: 80px;
+    z-index: 200;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--primary-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    display: none;
+  }
+
+  body.timer-active .sound-toggle { display: block; }
+
+  body.theme-mecha .sound-toggle {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.6rem;
+    border-radius: 2px;
+  }
+
+  body.theme-gaming .sound-toggle {
+    right: 20px;
+    background: var(--panel);
+    border-radius: 3px;
+    color: #555;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.4rem;
+    padding: 5px 10px;
+    opacity: 1;
+  }
+
+  .sound-toggle:hover { opacity: 1; }
+  body.theme-gaming .sound-toggle:hover { color: var(--text); }
+
+  /* ══════════════════════════════════════════
+     END STATE FLASH + BANNER
+     ══════════════════════════════════════════ */
+
+  .end-flash {
+    position: fixed;
+    inset: 0;
+    background: var(--critical);
+    z-index: 5000;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .end-flash.active {
+    animation: end-flash-anim 2s forwards;
+  }
+
+  @keyframes end-flash-anim {
+    0% { opacity: 0; }
+    5% { opacity: 0.6; }
+    10% { opacity: 0; }
+    15% { opacity: 0.4; }
+    20% { opacity: 0; }
+    25% { opacity: 0.3; }
+    30% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .end-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 6000;
+    font-weight: 900;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  body.theme-cyber .end-banner {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 8vw, 6rem);
+    color: var(--critical);
+    text-shadow: 0 0 40px var(--critical), 0 0 80px var(--critical-glow);
+    letter-spacing: 15px;
+  }
+
+  body.theme-mecha .end-banner {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(2rem, 8vw, 6rem);
+    color: var(--critical);
+    text-shadow: 0 0 40px rgba(255, 32, 32, 0.6), 0 0 80px rgba(255, 32, 32, 0.3);
+    letter-spacing: 12px;
+  }
+
+  body.theme-gaming .end-banner {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(1.5rem, 6vw, 4rem);
+    color: var(--critical);
+    text-shadow: 0 0 30px var(--critical), 0 4px 0 #660a1f;
+    letter-spacing: 8px;
+  }
+
+  .end-banner.active {
+    animation: banner-in 0.5s 0.3s forwards;
+  }
+
+  .end-banner .sub {
+    display: block;
+    font-size: 0.5em;
+    color: #888;
+    text-shadow: none;
+    letter-spacing: 3px;
+  }
+
+  @keyframes banner-in {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+
+  /* ══════════════════════════════════════════
+     FLOATING PARTICLES (cyber)
+     ══════════════════════════════════════════ */
+
+  .particle {
+    position: fixed;
+    font-size: 0.6rem;
+    color: var(--primary);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    animation: float-particle linear forwards;
+  }
+
+  @keyframes float-particle {
+    0% { opacity: 0; transform: translateY(0); }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.4; }
+    100% { opacity: 0; transform: translateY(-200px); }
+  }
+
+  /* ══════════════════════════════════════════
+     FLOATING SPARKS (mecha)
+     ══════════════════════════════════════════ */
+
+  .spark {
+    position: fixed;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--primary);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    animation: spark-float linear forwards;
+  }
+
+  @keyframes spark-float {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg); }
+    10% { opacity: 0.5; }
+    80% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-180px) rotate(45deg); }
+  }
+
+  /* ══════════════════════════════════════════
+     FLOATING DAMAGE NUMBERS (gaming)
+     ══════════════════════════════════════════ */
+
+  .dmg-number {
+    position: fixed;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 500;
+    animation: dmg-float 1.2s forwards;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.5);
+  }
+
+  .dmg-number.crit {
+    font-size: 2rem;
+    animation: dmg-float-crit 1.5s forwards;
+  }
+
+  @keyframes dmg-float {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    60% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-120px) scale(0.6); }
+  }
+
+  @keyframes dmg-float-crit {
+    0% { opacity: 1; transform: translateY(0) scale(0.5); }
+    15% { transform: translateY(-10px) scale(1.4); }
+    60% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-150px) scale(0.5); }
+  }
+
+  /* Spaceships (gaming) */
+  .spaceship {
+    position: fixed;
+    z-index: 3;
+    pointer-events: none;
+    image-rendering: pixelated;
+  }
+
+  .spaceship svg { filter: drop-shadow(0 0 6px rgba(0, 176, 255, 0.5)); }
+  .spaceship.enemy svg { filter: drop-shadow(0 0 6px rgba(255, 23, 68, 0.5)); }
+
+  .exhaust {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #39ff14;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    animation: exhaust-fade 0.6s forwards;
+  }
+
+  @keyframes exhaust-fade {
+    0% { opacity: 0.8; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.2); }
+  }
+
+  /* Robots (mecha) */
+  .robo {
+    position: fixed;
+    z-index: 3;
+    pointer-events: none;
+    image-rendering: pixelated;
+  }
+
+  .robo svg {
+    filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.4));
+  }
+
+  .robo.robo-alert svg {
+    filter: drop-shadow(0 0 8px rgba(255, 32, 32, 0.5));
+  }
+
+  .robo-trail {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    animation: robo-trail-fade 0.8s forwards;
+  }
+
+  @keyframes robo-trail-fade {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.3); }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background canvas (matrix rain or starfield) -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Cyber decorations -->
+  <div class="hex-grid"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- ═══════════ LANDING PAGE ═══════════ -->
+  <div class="landing" id="landing">
+    <div class="landing-inner">
+      <h1>CLASSROOM TIMER</h1>
+      <div class="landing-sub">// select a theme</div>
+
+      <div class="theme-grid">
+        <div class="theme-card cyber" id="card-cyber" onclick="selectTheme('cyber')">
+          <div class="theme-icon">&#x1F6E1;</div>
+          <div class="theme-name">BREACH TIMER</div>
+          <div class="theme-desc">Matrix rain // security logs // cyber HUD</div>
+        </div>
+        <div class="theme-card gaming" id="card-gaming" onclick="selectTheme('gaming')">
+          <div class="theme-icon">&#x1F3AE;</div>
+          <div class="theme-name">BOSS FIGHT</div>
+          <div class="theme-desc">Starfield // HP bar // pixel spaceships</div>
+        </div>
+        <div class="theme-card mecha" id="card-mecha" onclick="selectTheme('mecha')">
+          <div class="theme-icon">&#x1F916;</div>
+          <div class="theme-name">MECHA LAB</div>
+          <div class="theme-desc">Circuit boards // servo logs // robot diagnostics</div>
+        </div>
+      </div>
+
+      <div class="landing-voice-row">
+        <label class="landing-voice-label">// announcer voice</label>
+        <div class="landing-voice-select-row">
+          <select id="landing-voice-select" class="landing-voice-select"><option>Loading voices...</option></select>
+          <button class="landing-preview-btn" id="landing-voice-preview">TEST</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TIMER VIEW ═══════════ -->
+  <div class="container">
+    <!-- Cyber top bar -->
+    <div class="top-bar-cyber">
+      <div><span class="status-dot"></span> <span class="threat-level" id="threat-level">THREAT LEVEL: LOW</span></div>
+      <div id="sys-info">SYS://FIREWALL.ACTIVE &mdash; NODE 7F:3A:9C</div>
+    </div>
+
+    <!-- Mecha top bar -->
+    <div class="mecha-bar">
+      <div class="mecha-status" id="mecha-status">&#x2699; SYSTEMS NOMINAL</div>
+      <div class="mecha-readouts">
+        <span>TEMP: <span class="val" id="mecha-temp">42&deg;C</span></span>
+        <span>RPM: <span class="val" id="mecha-rpm">2400</span></span>
+        <span>V: <span class="val" id="mecha-volts">12.6V</span></span>
+      </div>
+    </div>
+
+    <!-- Gaming HUD bar -->
+    <div class="hud-bar">
+      <div class="hud-section">
+        <span class="player-name" id="player-name">PLAYER 1</span>
+        <span class="level-badge" id="level-badge">LV 1</span>
+      </div>
+      <div class="hud-section">
+        <div class="hearts" id="hearts"></div>
+      </div>
+      <div class="hud-section">
+        <span class="score-display" id="score-display">SCORE: 0</span>
+      </div>
+      <div class="hud-section">
+        <span class="combo-display" id="combo-display">COMBO x1</span>
+      </div>
+    </div>
+
+    <!-- Timer area -->
+    <div class="timer-area">
+      <div class="ring-container">
+        <svg class="ring-svg" viewBox="0 0 200 200">
+          <circle class="ring-track" cx="100" cy="100" r="92" />
+          <circle class="ring-progress" id="ring-progress" cx="100" cy="100" r="92"
+            stroke-dasharray="578.05" stroke-dashoffset="0" />
+        </svg>
+      </div>
+      <div class="boss-name" id="boss-name">BOSS APPROACHING...</div>
+      <div class="hp-bar-container">
+        <div class="hp-bar-label">
+          <span id="hp-label">HP</span>
+          <span id="hp-value">100%</span>
+        </div>
+        <div class="hp-bar-outer">
+          <div class="hp-bar-inner" id="hp-bar"></div>
+        </div>
+      </div>
+      <div class="timer-label" id="timer-label">TIME REMAINING</div>
+      <div class="timer-display" id="timer-display">00:00</div>
+      <div class="timer-sub" id="timer-sub">SYSTEM SECURE</div>
+    </div>
+
+    <div>
+      <div class="xp-bar-container">
+        <div class="xp-bar-label">
+          <span>EXP</span>
+          <span id="xp-value">0 / 1000</span>
+        </div>
+        <div class="xp-bar-outer">
+          <div class="xp-bar-inner" id="xp-bar"></div>
+        </div>
+      </div>
+      <div class="bottom-panel" id="log-panel"></div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls" id="controls">
+    <button class="ctrl-btn" id="btn-pause">[ PAUSE ]</button>
+    <button class="ctrl-btn" id="btn-reset">[ RESET ]</button>
+    <button class="ctrl-btn" id="btn-add60">[ +60s ]</button>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle">SFX: OFF</button>
+
+  <!-- End state overlays -->
+  <div class="end-flash" id="end-flash"></div>
+  <div class="end-banner" id="end-banner">BREACH DETECTED</div>
+
+  <!-- Setup overlay (duration select within a theme) -->
+  <div class="setup-overlay hidden" id="setup-overlay">
+    <div class="setup-panel">
+      <h2 id="setup-title">BREACH TIMER</h2>
+      <div class="subtitle" id="setup-subtitle">// set countdown duration</div>
+      <div class="preset-grid" id="preset-grid"></div>
+      <div class="custom-row">
+        <input class="custom-input" id="custom-minutes" type="number" min="1" max="60" placeholder="MINUTES" />
+        <button class="go-btn" id="go-btn" onclick="startCustom()">INIT</button>
+      </div>
+      <div class="voice-row">
+        <label class="voice-label" id="voice-label-text">// voice</label>
+        <div class="voice-select-row">
+          <select id="voice-select" class="voice-select"><option>Loading voices...</option></select>
+          <button class="preview-btn" id="voice-preview">TEST</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// THEME CONFIGURATIONS
+// ═══════════════════════════════════════════════════
+
+const THEMES = {
+  cyber: {
+    id: 'cyber',
+    name: 'BREACH TIMER',
+    setupSubtitle: '// set countdown duration',
+    goLabel: 'INIT',
+    voiceLabel: '// voice',
+    voicePreview: 'Warning. 5 minutes to go.',
+    pauseLabel: '[ PAUSE ]',
+    resumeLabel: '[ RESUME ]',
+    presets: [
+      { seconds: 300,  label: '5:00',  subtitle: 'recon' },
+      { seconds: 600,  label: '10:00', subtitle: 'standard' },
+      { seconds: 900,  label: '15:00', subtitle: 'extended' },
+      { seconds: 1200, label: '20:00', subtitle: 'deep scan' },
+      { seconds: 1800, label: '30:00', subtitle: 'full audit' },
+      { seconds: 2400, label: '40:00', subtitle: 'siege mode' },
+    ],
+    phases: {
+      safe:     { label: 'TIME REMAINING', sub: 'PERIMETER HOLDING',       threat: 'THREAT LEVEL: LOW' },
+      warning:  { label: 'TIME REMAINING', sub: 'DEFENSES WEAKENING',      threat: 'THREAT LEVEL: ELEVATED' },
+      critical: { label: 'BREACH IN',      sub: 'BREACH IMMINENT',         threat: 'THREAT LEVEL: CRITICAL' },
+      ended:    { label: 'BREACH COMPLETE', sub: 'ALL SYSTEMS COMPROMISED', threat: 'SYSTEM BREACHED' },
+    },
+    defaultSub: 'SYSTEM SECURE',
+    endBanner: 'BREACH DETECTED',
+    endSubtext: null,
+    endSpeak: 'Breach detected. Time is up.',
+    halfwaySpeak: (time) => `${time} to go`,
+    oneMinuteSpeak: 'Warning. One minute remaining',
+    sounds: {
+      tick:    { freq: 800, type: 'square', gain: 0.03, dur: 0.05 },
+      warning: { freq: 440, type: 'sawtooth', gain: 0.06, dur: 0.2 },
+      halfway: { freqs: [520, 660, 880], type: 'triangle', gain: 0.12, dur: 0.3, gap: 120, reps: 3, repGap: 500 },
+      end:     { freqs: [200, 160, 120], type: 'sawtooth', gain: 0.15, dur: 0.5, gap: 150, reps: 3, repGap: 600 },
+    },
+    particles: {
+      chars: ['0x', '█░▒▓', '>>>', '10110', '{OK}', 'ACK', 'SYN', ':::'],
+      interval: 800,
+    },
+    logMessages: {
+      normal: [
+        'Scanning port 443... <span class="data">SECURE</span>',
+        'Firewall rule #<span class="data">%%HEX%%</span> validated',
+        'SSH handshake complete — key exchange <span class="data">OK</span>',
+        'TLS 1.3 certificate verified — <span class="data">%%DOMAIN%%</span>',
+        'Packet inspection: <span class="data">%%NUM%% packets</span> analyzed',
+        'Intrusion detection system — <span class="data">NO ANOMALIES</span>',
+        'DNS resolution: <span class="data">%%DOMAIN%%</span> → %%IP%%',
+        'Encrypted tunnel <span class="data">AES-256-GCM</span> established',
+        'Auth token refresh — session <span class="data">%%HEX%%</span>',
+        'Network segment <span class="data">VLAN-%%NUM%%</span> health check passed',
+        'Vulnerability scan progress: <span class="data">%%NUM%%/1024</span> hosts',
+        'Certificate pinning verified for <span class="data">%%DOMAIN%%</span>',
+        'Honeypot node <span class="data">%%IP%%</span> — no interaction detected',
+      ],
+      warning: [
+        '<span class="warn-tag">[WARN]</span> Unusual traffic pattern on port <span class="data">%%NUM%%</span>',
+        '<span class="warn-tag">[WARN]</span> Failed login attempt from <span class="data">%%IP%%</span>',
+        '<span class="warn-tag">[WARN]</span> Brute force detected — <span class="data">%%NUM%% attempts/min</span>',
+        '<span class="warn-tag">[WARN]</span> Suspicious payload in request header',
+        '<span class="warn-tag">[WARN]</span> Rate limit exceeded — source: <span class="data">%%IP%%</span>',
+        '<span class="warn-tag">[WARN]</span> Anomalous DNS query for <span class="data">%%DOMAIN%%</span>',
+      ],
+      critical: [
+        '<span class="alert-tag">[ALERT]</span> PRIVILEGE ESCALATION ATTEMPT — PID <span class="data">%%NUM%%</span>',
+        '<span class="alert-tag">[ALERT]</span> Encryption bypass detected on <span class="data">%%IP%%</span>',
+        '<span class="alert-tag">[ALERT]</span> Rootkit signature match — <span class="data">%%HEX%%</span>',
+        '<span class="alert-tag">[ALERT]</span> SQL injection payload intercepted',
+        '<span class="alert-tag">[ALERT]</span> Zero-day exploit pattern identified',
+        '<span class="alert-tag">[ALERT]</span> Firewall rules being rewritten — UNAUTHORIZED',
+        '<span class="alert-tag">[ALERT]</span> Data exfiltration in progress — <span class="data">%%NUM%% MB</span>',
+      ],
+    },
+    formatLog(msg) {
+      const ts = new Date().toTimeString().split(' ')[0];
+      return `<span class="timestamp">${ts}</span> <span class="tag">[MONITOR]</span> ${fillTemplate(msg)}`;
+    },
+    logInterval: 1500,
+    maxLogs: 30,
+  },
+
+  gaming: {
+    id: 'gaming',
+    name: 'BOSS FIGHT',
+    setupSubtitle: 'SELECT ROUND TIME',
+    goLabel: 'START',
+    voiceLabel: 'ANNOUNCER VOICE',
+    voicePreview: 'Round 1. Fight!',
+    pauseLabel: 'PAUSE',
+    resumeLabel: 'RESUME',
+    presets: [
+      { seconds: 300,  label: '5:00',  subtitle: 'SKIRMISH' },
+      { seconds: 600,  label: '10:00', subtitle: 'STANDARD' },
+      { seconds: 900,  label: '15:00', subtitle: 'RAID' },
+      { seconds: 1200, label: '20:00', subtitle: 'DUNGEON' },
+      { seconds: 1800, label: '30:00', subtitle: 'BOSS RUSH' },
+      { seconds: 2400, label: '40:00', subtitle: 'MARATHON' },
+    ],
+    phases: {
+      safe:     { sub: 'FIGHT IN PROGRESS' },
+      warning:  { sub: 'BOSS ENRAGED!' },
+      critical: { sub: 'FINAL STAND!' },
+      ended:    { sub: 'GAME OVER' },
+    },
+    defaultSub: 'READY?',
+    endBanner: 'GAME OVER',
+    endSubtext: 'CONTINUE? INSERT COIN',
+    endSpeak: 'Game over!',
+    halfwaySpeak: (time) => `${time} remaining. Hurry up!`,
+    oneMinuteSpeak: 'Final minute! Time is almost up!',
+    sounds: {
+      tick:    { freq: 1200, type: 'square', gain: 0.02, dur: 0.03 },
+      warning: { freq: 330, type: 'square', gain: 0.07, dur: 0.15 },
+      halfway: { freqs: [440, 554, 659], type: 'square', gain: 0.08, dur: 0.2, gap: 100, reps: 3, repGap: 500 },
+      end:     { freqs: [392, 330, 262, 196], type: 'square', gain: 0.1, dur: 0.35, gap: 160, reps: 3, repGap: 700 },
+    },
+    bossNames: [
+      'CHRONOS THE TIMEBENDER', 'VEXAR SHADOW LORD', 'PIXEL DESTROYER MK-II',
+      'NEON DRAGON OMEGA', 'GLITCH PHANTOM', 'THE VOID WARDEN',
+      'CYBER KRAKEN', 'DARK COMPILER', 'INFINITE LOOP DEMON',
+      'STACK OVERFLOW TITAN',
+    ],
+    logMessages: {
+      normal: [
+        { icon: '&#x2694;', msg: 'Player attacks! <span class="e-dmg">-%%NUM%% DMG</span>' },
+        { icon: '&#x1F6E1;', msg: 'Shield block! Deflected <span class="e-dmg">%%NUM%% damage</span>' },
+        { icon: '&#x2728;', msg: 'Spell cast: <span class="e-xp">Arcane Bolt</span> hits!' },
+        { icon: '&#x1F48E;', msg: 'Loot drop: <span class="e-gold">%%NUM%% gold</span> collected' },
+        { icon: '&#x1F3AF;', msg: 'Combo attack! <span class="e-xp">x%%COMBO%% multiplier</span>' },
+        { icon: '&#x26A1;', msg: 'Power surge! <span class="e-xp">+%%NUM%% EXP</span> gained' },
+        { icon: '&#x1F525;', msg: 'Fire strike! <span class="e-dmg">%%NUM%% burn damage</span>' },
+        { icon: '&#x2B50;', msg: 'Perfect dodge! <span class="e-gold">Style bonus +%%NUM%%</span>' },
+      ],
+      warning: [
+        { icon: '&#x26A0;', msg: '<span class="e-dmg">Boss enraged!</span> Attack speed doubled' },
+        { icon: '&#x1F480;', msg: '<span class="e-dmg">Critical zone!</span> HP running low' },
+        { icon: '&#x1F525;', msg: 'Boss uses <span class="e-dmg">MEGA FLARE</span>!' },
+        { icon: '&#x26A0;', msg: '<span class="e-dmg">Warning:</span> Boss charging ultimate!' },
+        { icon: '&#x2764;', msg: 'Healing potion used! <span class="e-heal">+%%NUM%% HP</span>' },
+      ],
+      critical: [
+        { icon: '&#x1F4A5;', msg: '<span class="e-crit">CRITICAL HIT!</span> <span class="e-dmg">-%%NUM%% DMG</span>' },
+        { icon: '&#x1F480;', msg: '<span class="e-crit">BOSS FURY!</span> Unavoidable attack incoming!' },
+        { icon: '&#x26A1;', msg: '<span class="e-crit">LAST STAND!</span> Attack power x3' },
+        { icon: '&#x1F525;', msg: '<span class="e-crit">DESPERATION MOVE!</span> All stats maxed' },
+        { icon: '&#x2620;', msg: '<span class="e-crit">FINAL PHASE!</span> No more continues!' },
+      ],
+    },
+    formatLog(msg) {
+      const evt = typeof msg === 'object' ? msg : { icon: '', msg: msg };
+      const text = evt.msg
+        .replace(/%%NUM%%/g, Math.floor(Math.random() * 900 + 100))
+        .replace(/%%COMBO%%/g, gameState.combo);
+      return `<span class="e-icon">${evt.icon}</span>${text}`;
+    },
+    logInterval: 1800,
+    maxLogs: 20,
+    shipDesigns: [
+      { svg: `<svg width="32" height="32" viewBox="0 0 16 16"><rect x="7" y="1" width="2" height="3" fill="#00b0ff"/><rect x="6" y="4" width="4" height="4" fill="#0088cc"/><rect x="5" y="5" width="6" height="3" fill="#00b0ff"/><rect x="3" y="7" width="10" height="2" fill="#0088cc"/><rect x="2" y="8" width="3" height="3" fill="#005577"/><rect x="11" y="8" width="3" height="3" fill="#005577"/><rect x="6" y="8" width="4" height="4" fill="#00b0ff"/><rect x="7" y="12" width="2" height="2" fill="#39ff14"/></svg>`, enemy: false },
+      { svg: `<svg width="28" height="28" viewBox="0 0 14 14"><rect x="6" y="0" width="2" height="2" fill="#b388ff"/><rect x="5" y="2" width="4" height="3" fill="#9c64ff"/><rect x="4" y="4" width="6" height="3" fill="#b388ff"/><rect x="2" y="6" width="10" height="2" fill="#7c4dff"/><rect x="5" y="8" width="4" height="3" fill="#9c64ff"/><rect x="6" y="11" width="2" height="2" fill="#39ff14"/></svg>`, enemy: false },
+      { svg: `<svg width="30" height="30" viewBox="0 0 15 15"><rect x="6" y="0" width="3" height="2" fill="#ff1744"/><rect x="5" y="2" width="5" height="3" fill="#cc1133"/><rect x="3" y="4" width="9" height="3" fill="#ff1744"/><rect x="1" y="6" width="13" height="2" fill="#cc1133"/><rect x="3" y="8" width="3" height="3" fill="#991122"/><rect x="9" y="8" width="3" height="3" fill="#991122"/><rect x="6" y="8" width="3" height="2" fill="#ff1744"/><rect x="6" y="10" width="3" height="2" fill="#ff4400"/></svg>`, enemy: true },
+      { svg: `<svg width="20" height="20" viewBox="0 0 10 10"><rect x="4" y="0" width="2" height="2" fill="#ffd740"/><rect x="3" y="2" width="4" height="2" fill="#ffaa00"/><rect x="1" y="4" width="8" height="2" fill="#ffd740"/><rect x="3" y="6" width="4" height="2" fill="#ffaa00"/><rect x="4" y="8" width="2" height="1" fill="#39ff14"/></svg>`, enemy: false },
+    ],
+  },
+
+  mecha: {
+    id: 'mecha',
+    name: 'MECHA LAB',
+    setupSubtitle: '// configure build timer',
+    goLabel: 'DEPLOY',
+    voiceLabel: '// voice module',
+    voicePreview: 'System online. All servos nominal.',
+    pauseLabel: '[ HALT ]',
+    resumeLabel: '[ RESUME ]',
+    presets: [
+      { seconds: 300,  label: '5:00',  subtitle: 'calibrate' },
+      { seconds: 600,  label: '10:00', subtitle: 'prototype' },
+      { seconds: 900,  label: '15:00', subtitle: 'assemble' },
+      { seconds: 1200, label: '20:00', subtitle: 'full build' },
+      { seconds: 1800, label: '30:00', subtitle: 'stress test' },
+      { seconds: 2400, label: '40:00', subtitle: 'endurance' },
+    ],
+    phases: {
+      safe:     { label: 'CYCLE TIME', sub: 'ALL SYSTEMS NOMINAL',       status: '\u2699 SYSTEMS NOMINAL' },
+      warning:  { label: 'CYCLE TIME', sub: 'THERMAL WARNING',           status: '\u26A0 THERMAL WARNING' },
+      critical: { label: 'SHUTDOWN IN', sub: 'CRITICAL FAILURE IMMINENT', status: '\u2622 CRITICAL FAILURE' },
+      ended:    { label: 'CYCLE ENDED', sub: 'EMERGENCY STOP ENGAGED',   status: '\u26D4 EMERGENCY STOP' },
+    },
+    defaultSub: 'AWAITING DEPLOYMENT',
+    endBanner: 'E-STOP',
+    endSubtext: 'EMERGENCY SHUTDOWN COMPLETE',
+    endSpeak: 'Emergency stop. Cycle complete.',
+    halfwaySpeak: (time) => `${time} remaining in build cycle`,
+    oneMinuteSpeak: 'Warning. One minute to shutdown.',
+    sounds: {
+      tick:    { freq: 600, type: 'sine', gain: 0.025, dur: 0.04 },
+      warning: { freq: 380, type: 'triangle', gain: 0.06, dur: 0.2 },
+      halfway: { freqs: [440, 550, 660], type: 'sine', gain: 0.1, dur: 0.25, gap: 110, reps: 2, repGap: 450 },
+      end:     { freqs: [330, 260, 200, 150], type: 'triangle', gain: 0.12, dur: 0.4, gap: 140, reps: 3, repGap: 650 },
+    },
+    particles: {
+      chars: ['\u2699', '\u26A1', '\u2B23', '0x', 'PWM', 'I2C', 'SPI', 'GPIO', '12V', '>>>'],
+      interval: 900,
+    },
+    robotNames: [
+      'UNIT-7 ASSEMBLER', 'SERVO ARM DELTA-3', 'ROBO-FORGE MK-IV',
+      'ACTUATOR PRIME', 'MECHA-CORE ALPHA', 'CIRCUIT BREAKER X1',
+      'NANO-BOT SWARM', 'TORQUE MASTER 9000', 'PID CONTROLLER OMEGA',
+      'STEPPER MATRIX V2',
+    ],
+    logMessages: {
+      normal: [
+        '<span class="tag">[SERVO]</span> Joint <span class="data">%%JOINT%%</span> moved to <span class="data">%%DEG%%&deg;</span> — OK',
+        '<span class="tag">[MOTOR]</span> Stepper <span class="data">#%%SMALL%%</span> running at <span class="data">%%NUM%% RPM</span>',
+        '<span class="tag">[SENSOR]</span> Ultrasonic range: <span class="data">%%SMALL%% cm</span> — clear',
+        '<span class="tag">[I2C]</span> Device <span class="data">0x%%HEXS%%</span> responded — <span class="data">ACK</span>',
+        '<span class="tag">[PID]</span> Kp=<span class="data">%%PID%%</span> Ki=<span class="data">%%PID%%</span> Kd=<span class="data">%%PID%%</span> — tuned',
+        '<span class="tag">[PWM]</span> Channel <span class="data">%%SMALL%%</span> duty cycle: <span class="data">%%PCT%%%</span>',
+        '<span class="tag">[GPIO]</span> Pin <span class="data">%%SMALL%%</span> set HIGH — LED <span class="data">ON</span>',
+        '<span class="tag">[ADC]</span> Analog read A<span class="data">%%SMALL%%</span>: <span class="data">%%NUM%%</span> (%%VOLTS%%V)',
+        '<span class="tag">[SPI]</span> Transfer complete — <span class="data">%%SMALL%% bytes</span> sent',
+        '<span class="tag">[BATT]</span> Cell voltage: <span class="data">%%VOLTS%%V</span> — nominal',
+        '<span class="tag">[IMU]</span> Gyro drift: <span class="data">0.%%SMALL%%&deg;/s</span> — within spec',
+        '<span class="tag">[WIFI]</span> Telemetry uplink <span class="data">%%NUM%% bps</span> — stable',
+      ],
+      warning: [
+        '<span class="warn-tag">[WARN]</span> Motor <span class="data">#%%SMALL%%</span> current draw exceeds <span class="data">%%SMALL%%A</span>',
+        '<span class="warn-tag">[WARN]</span> Servo <span class="data">%%JOINT%%</span> stall detected — retrying',
+        '<span class="warn-tag">[WARN]</span> Core temperature rising: <span class="data">%%TEMP%%&deg;C</span>',
+        '<span class="warn-tag">[WARN]</span> Battery dropping — <span class="data">%%VOLTS%%V</span>',
+        '<span class="warn-tag">[WARN]</span> I2C bus timeout on device <span class="data">0x%%HEXS%%</span>',
+        '<span class="warn-tag">[WARN]</span> PID oscillation on axis <span class="data">%%JOINT%%</span>',
+      ],
+      critical: [
+        '<span class="alert-tag">[FAULT]</span> MOTOR <span class="data">#%%SMALL%%</span> OVERCURRENT — <span class="data">SHUTDOWN</span>',
+        '<span class="alert-tag">[FAULT]</span> THERMAL LIMIT EXCEEDED — <span class="data">%%TEMP%%&deg;C</span>',
+        '<span class="alert-tag">[FAULT]</span> SERVO <span class="data">%%JOINT%%</span> MECHANICAL JAM DETECTED',
+        '<span class="alert-tag">[FAULT]</span> BATTERY CRITICAL — <span class="data">%%VOLTS%%V</span>',
+        '<span class="alert-tag">[FAULT]</span> ENCODER FAILURE — AXIS <span class="data">%%JOINT%%</span> LOST',
+        '<span class="alert-tag">[FAULT]</span> E-STOP SIGNAL RECEIVED — ALL MOTORS OFF',
+        '<span class="alert-tag">[FAULT]</span> H-BRIDGE SHORT DETECTED — CHANNEL <span class="data">%%SMALL%%</span>',
+      ],
+    },
+    formatLog(msg) {
+      const ts = new Date().toTimeString().split(' ')[0];
+      return `<span class="timestamp">${ts}</span> ${fillMechaTemplate(msg)}`;
+    },
+    logInterval: 1600,
+    maxLogs: 28,
+    robotDesigns: [
+      // Walking robot (orange) — boxy body, two legs, antenna
+      { svg: `<svg width="36" height="40" viewBox="0 0 18 20"><rect x="7" y="0" width="4" height="2" fill="#ff8c00"/><rect x="8" y="0" width="2" height="1" fill="#ffab40"/><rect x="4" y="2" width="10" height="6" fill="#cc7000"/><rect x="5" y="3" width="3" height="2" fill="#4a9eff"/><rect x="10" y="3" width="3" height="2" fill="#4a9eff"/><rect x="3" y="4" width="1" height="4" fill="#ff8c00"/><rect x="14" y="4" width="1" height="4" fill="#ff8c00"/><rect x="5" y="8" width="8" height="4" fill="#ff8c00"/><rect x="7" y="9" width="4" height="2" fill="#333"/><rect x="5" y="12" width="3" height="3" fill="#cc7000"/><rect x="10" y="12" width="3" height="3" fill="#cc7000"/><rect x="5" y="15" width="3" height="2" fill="#607d8b"/><rect x="10" y="15" width="3" height="2" fill="#607d8b"/><rect x="4" y="17" width="4" height="2" fill="#455a64"/><rect x="10" y="17" width="4" height="2" fill="#455a64"/></svg>`, alert: false, trail: '#ff8c00' },
+      // Wheeled rover (teal) — low profile, big wheels
+      { svg: `<svg width="40" height="28" viewBox="0 0 20 14"><rect x="5" y="0" width="2" height="3" fill="#607d8b"/><rect x="6" y="0" width="1" height="1" fill="#ff2020"/><rect x="3" y="3" width="14" height="5" fill="#00bfa5"/><rect x="5" y="4" width="4" height="3" fill="#004d40"/><rect x="11" y="4" width="4" height="3" fill="#333"/><rect x="2" y="8" width="16" height="2" fill="#37474f"/><rect x="2" y="10" width="4" height="4" fill="#455a64"/><rect x="3" y="11" width="2" height="2" fill="#263238"/><rect x="14" y="10" width="4" height="4" fill="#455a64"/><rect x="15" y="11" width="2" height="2" fill="#263238"/></svg>`, alert: false, trail: '#00bfa5' },
+      // Drone quadcopter (blue) — X shape with rotors
+      { svg: `<svg width="36" height="36" viewBox="0 0 18 18"><rect x="2" y="2" width="4" height="2" fill="#4a9eff"/><rect x="12" y="2" width="4" height="2" fill="#4a9eff"/><rect x="4" y="4" width="2" height="4" fill="#37474f"/><rect x="12" y="4" width="2" height="4" fill="#37474f"/><rect x="6" y="6" width="6" height="6" fill="#455a64"/><rect x="7" y="7" width="4" height="4" fill="#4a9eff"/><rect x="8" y="8" width="2" height="2" fill="#ff8c00"/><rect x="4" y="12" width="2" height="4" fill="#37474f"/><rect x="12" y="12" width="2" height="4" fill="#37474f"/><rect x="2" y="14" width="4" height="2" fill="#4a9eff"/><rect x="12" y="14" width="4" height="2" fill="#4a9eff"/></svg>`, alert: false, trail: '#4a9eff' },
+      // Red alert bot — warning stripes, danger feel
+      { svg: `<svg width="32" height="36" viewBox="0 0 16 18"><rect x="5" y="0" width="6" height="2" fill="#ff2020"/><rect x="4" y="2" width="8" height="6" fill="#cc1818"/><rect x="5" y="3" width="2" height="2" fill="#ff6060"/><rect x="9" y="3" width="2" height="2" fill="#ff6060"/><rect x="3" y="3" width="1" height="5" fill="#ff2020"/><rect x="12" y="3" width="1" height="5" fill="#ff2020"/><rect x="5" y="8" width="6" height="4" fill="#ff2020"/><rect x="6" y="9" width="4" height="1" fill="#ffcc00"/><rect x="6" y="11" width="4" height="1" fill="#ffcc00"/><rect x="4" y="12" width="3" height="3" fill="#cc1818"/><rect x="9" y="12" width="3" height="3" fill="#cc1818"/><rect x="4" y="15" width="3" height="2" fill="#991010"/><rect x="9" y="15" width="3" height="2" fill="#991010"/></svg>`, alert: true, trail: '#ff2020' },
+      // Small servo arm (steel) — industrial
+      { svg: `<svg width="28" height="28" viewBox="0 0 14 14"><rect x="6" y="0" width="2" height="3" fill="#607d8b"/><rect x="4" y="3" width="6" height="4" fill="#455a64"/><rect x="5" y="4" width="4" height="2" fill="#ff8c00"/><rect x="3" y="7" width="8" height="2" fill="#37474f"/><rect x="2" y="9" width="4" height="3" fill="#607d8b"/><rect x="8" y="9" width="4" height="3" fill="#607d8b"/><rect x="3" y="12" width="2" height="2" fill="#455a64"/><rect x="9" y="12" width="2" height="2" fill="#455a64"/></svg>`, alert: false, trail: '#607d8b' },
+    ],
+  },
+};
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+
+let currentTheme = null;
+let totalSeconds = 0;
+let remainingMs = 0;
+let timerInterval = null;
+let paused = false;
+let lastTickSecond = -1;
+let halfwayPlayed = false;
+let oneMinutePlayed = false;
+let audioCtx = null;
+let soundEnabled = false;
+let selectedVoice = null;
+
+// Gaming-specific state
+const gameState = { score: 0, combo: 1, xp: 0, level: 1, hearts: 3 };
+
+const CIRCUMFERENCE = 2 * Math.PI * 92;
+
+// Active intervals/animation frames to clean up
+let logIntervalId = null;
+let particleIntervalId = null;
+let bgAnimFrameId = null;
+let shipTimeoutId = null;
+let dmgIntervalId = null;
+
+// ═══════════════════════════════════════════════════
+// CANVAS BACKGROUNDS
+// ═══════════════════════════════════════════════════
+
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+
+// Matrix rain state
+let matrixColumns, matrixDrops;
+const matrixChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF<>/{}[];:'.split('');
+let matrixIntervalId = null;
+
+function initMatrixRain() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  const fontSize = 14;
+  matrixColumns = Math.floor(bgCanvas.width / fontSize);
+  matrixDrops = Array.from({ length: matrixColumns }, () => Math.random() * -100);
+}
+
+function drawMatrixRain() {
+  bgCtx.fillStyle = 'rgba(10, 10, 10, 0.06)';
+  bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+  const fontSize = 14;
+  bgCtx.font = `${fontSize}px monospace`;
+
+  const isRed = document.body.classList.contains('phase-critical') || document.body.classList.contains('phase-ended');
+  bgCtx.fillStyle = isRed ? '#ff003366' : '#00ff4122';
+
+  for (let i = 0; i < matrixDrops.length; i++) {
+    const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+    bgCtx.fillText(char, i * fontSize, matrixDrops[i] * fontSize);
+    if (matrixDrops[i] * fontSize > bgCanvas.height && Math.random() > 0.975) {
+      matrixDrops[i] = 0;
+    }
+    matrixDrops[i]++;
+  }
+}
+
+// Starfield state
+let stars = [];
+let starfieldRunning = false;
+let shipAnimationsActive = false;
+
+function initStarfield() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  stars = Array.from({ length: 120 }, () => ({
+    x: Math.random() * bgCanvas.width,
+    y: Math.random() * bgCanvas.height,
+    size: Math.random() * 2 + 0.5,
+    speed: Math.random() * 0.3 + 0.05,
+    brightness: Math.random(),
+    phase: Math.random() * Math.PI * 2,
+  }));
+}
+
+function drawStarfield() {
+  if (!starfieldRunning) return;
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  const time = Date.now() * 0.001;
+
+  for (const s of stars) {
+    const twinkle = 0.4 + 0.6 * Math.sin(time * s.speed * 3 + s.phase);
+    const alpha = s.brightness * twinkle;
+
+    const isRed = document.body.classList.contains('phase-critical') || document.body.classList.contains('phase-ended');
+    const r = isRed ? 255 : 180 + Math.floor(75 * s.brightness);
+    const g = isRed ? 100 : 180 + Math.floor(75 * s.brightness);
+    const b = 255;
+
+    bgCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.6})`;
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    bgCtx.fill();
+
+    if (s.size > 1.5) {
+      bgCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.1})`;
+      bgCtx.beginPath();
+      bgCtx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2);
+      bgCtx.fill();
+    }
+
+    s.y += s.speed;
+    if (s.y > bgCanvas.height) {
+      s.y = 0;
+      s.x = Math.random() * bgCanvas.width;
+    }
+  }
+  bgAnimFrameId = requestAnimationFrame(drawStarfield);
+}
+
+// Circuit board state
+let circuitTraces = [];
+let circuitRunning = false;
+
+function initCircuitBoard() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  circuitTraces = [];
+  const count = 40;
+  for (let i = 0; i < count; i++) {
+    circuitTraces.push(createTrace());
+  }
+}
+
+function createTrace() {
+  const w = bgCanvas.width, h = bgCanvas.height;
+  const startX = Math.random() * w;
+  const startY = Math.random() * h;
+  const segments = Math.floor(Math.random() * 5) + 3;
+  const points = [{ x: startX, y: startY }];
+  let cx = startX, cy = startY;
+  for (let s = 0; s < segments; s++) {
+    // Move in right angles like a PCB trace
+    if (Math.random() < 0.5) {
+      cx += (Math.random() - 0.5) * 200;
+    } else {
+      cy += (Math.random() - 0.5) * 200;
+    }
+    cx = Math.max(0, Math.min(w, cx));
+    cy = Math.max(0, Math.min(h, cy));
+    points.push({ x: cx, y: cy });
+  }
+  return {
+    points,
+    progress: Math.random(),
+    speed: 0.0003 + Math.random() * 0.0008,
+    hasPad: Math.random() < 0.4,
+  };
+}
+
+function drawCircuitBoard() {
+  if (!circuitRunning) return;
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+  const isWarn = document.body.classList.contains('phase-critical') || document.body.classList.contains('phase-ended');
+  const traceColor = isWarn ? 'rgba(255, 32, 32, 0.12)' : 'rgba(74, 158, 255, 0.08)';
+  const glowColor = isWarn ? 'rgba(255, 32, 32, 0.5)' : 'rgba(255, 140, 0, 0.5)';
+  const padColor = isWarn ? 'rgba(255, 32, 32, 0.15)' : 'rgba(74, 158, 255, 0.12)';
+
+  for (const trace of circuitTraces) {
+    const pts = trace.points;
+
+    // Draw static trace lines
+    bgCtx.strokeStyle = traceColor;
+    bgCtx.lineWidth = 1;
+    bgCtx.beginPath();
+    bgCtx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      bgCtx.lineTo(pts[i].x, pts[i].y);
+    }
+    bgCtx.stroke();
+
+    // Draw pads at endpoints
+    if (trace.hasPad) {
+      bgCtx.fillStyle = padColor;
+      bgCtx.beginPath();
+      bgCtx.arc(pts[pts.length - 1].x, pts[pts.length - 1].y, 3, 0, Math.PI * 2);
+      bgCtx.fill();
+    }
+
+    // Animated pulse traveling along the trace
+    trace.progress += trace.speed;
+    if (trace.progress > 1) trace.progress = 0;
+
+    // Find position along trace at progress
+    const totalLen = getTotalLength(pts);
+    const targetLen = trace.progress * totalLen;
+    const pos = getPointAtLength(pts, targetLen);
+
+    bgCtx.fillStyle = glowColor;
+    bgCtx.beginPath();
+    bgCtx.arc(pos.x, pos.y, 2.5, 0, Math.PI * 2);
+    bgCtx.fill();
+
+    // Small glow
+    bgCtx.fillStyle = glowColor.replace('0.5', '0.15');
+    bgCtx.beginPath();
+    bgCtx.arc(pos.x, pos.y, 6, 0, Math.PI * 2);
+    bgCtx.fill();
+  }
+
+  bgAnimFrameId = requestAnimationFrame(drawCircuitBoard);
+}
+
+function getTotalLength(pts) {
+  let len = 0;
+  for (let i = 1; i < pts.length; i++) {
+    len += Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
+  }
+  return len;
+}
+
+function getPointAtLength(pts, targetLen) {
+  let accum = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const segLen = Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
+    if (accum + segLen >= targetLen) {
+      const t = segLen > 0 ? (targetLen - accum) / segLen : 0;
+      return {
+        x: pts[i-1].x + (pts[i].x - pts[i-1].x) * t,
+        y: pts[i-1].y + (pts[i].y - pts[i-1].y) * t,
+      };
+    }
+    accum += segLen;
+  }
+  return pts[pts.length - 1];
+}
+
+// ═══════════════════════════════════════════════════
+// AUDIO SYSTEM
+// ═══════════════════════════════════════════════════
+
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playTone(freq, type, gain, dur) {
+  if (!soundEnabled || !audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.frequency.value = freq;
+  o.type = type;
+  g.gain.value = gain;
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  o.start();
+  o.stop(audioCtx.currentTime + dur);
+}
+
+function playTick() {
+  if (!currentTheme) return;
+  const s = currentTheme.sounds.tick;
+  playTone(s.freq, s.type, s.gain, s.dur);
+}
+
+function playWarning() {
+  if (!currentTheme) return;
+  const s = currentTheme.sounds.warning;
+  playTone(s.freq, s.type, s.gain, s.dur);
+}
+
+function playSequence(config) {
+  if (!soundEnabled) return;
+  if (!audioCtx) initAudio();
+  if (!audioCtx) return;
+  for (let r = 0; r < config.reps; r++) {
+    config.freqs.forEach((freq, i) => {
+      setTimeout(() => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.frequency.value = freq;
+        o.type = config.type;
+        g.gain.value = config.gain;
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + config.dur);
+        o.start();
+        o.stop(audioCtx.currentTime + config.dur);
+      }, r * config.repGap + i * config.gap);
+    });
+  }
+}
+
+function playHalfway() {
+  if (!currentTheme) return;
+  playSequence(currentTheme.sounds.halfway);
+}
+
+function playEnd() {
+  if (!currentTheme) return;
+  playSequence(currentTheme.sounds.end);
+}
+
+function playHit() {
+  if (!soundEnabled || !audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.frequency.value = 150 + Math.random() * 100;
+  o.type = 'sawtooth';
+  g.gain.value = 0.05;
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+  o.start();
+  o.stop(audioCtx.currentTime + 0.1);
+}
+
+function playLevelUp() {
+  if (!soundEnabled) return;
+  if (!audioCtx) initAudio();
+  if (!audioCtx) return;
+  [523, 659, 784, 1047].forEach((freq, i) => {
+    setTimeout(() => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.frequency.value = freq;
+      o.type = 'square';
+      g.gain.value = 0.07;
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      o.start();
+      o.stop(audioCtx.currentTime + 0.15);
+    }, i * 80);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// SPEECH
+// ═══════════════════════════════════════════════════
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return;
+
+  const savedVoiceName = localStorage.getItem('timer-voice');
+
+  // Update both selects
+  ['landing-voice-select', 'voice-select'].forEach(id => {
+    const select = document.getElementById(id);
+    select.innerHTML = '';
+    voices.forEach((voice, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${voice.name} (${voice.lang})`;
+      if (savedVoiceName && voice.name === savedVoiceName) opt.selected = true;
+      select.appendChild(opt);
+    });
+  });
+
+  // Restore saved or pick first
+  if (savedVoiceName) {
+    const idx = voices.findIndex(v => v.name === savedVoiceName);
+    selectedVoice = idx >= 0 ? voices[idx] : voices[0];
+  } else {
+    selectedVoice = voices[0];
+  }
+}
+
+function onVoiceChange(selectEl) {
+  const voices = speechSynthesis.getVoices();
+  const idx = parseInt(selectEl.value);
+  selectedVoice = voices[idx];
+  localStorage.setItem('timer-voice', selectedVoice.name);
+
+  // Sync the other select
+  const otherId = selectEl.id === 'landing-voice-select' ? 'voice-select' : 'landing-voice-select';
+  document.getElementById(otherId).value = selectEl.value;
+}
+
+if (window.speechSynthesis) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+document.getElementById('landing-voice-select').addEventListener('change', function() { onVoiceChange(this); });
+document.getElementById('voice-select').addEventListener('change', function() { onVoiceChange(this); });
+
+document.getElementById('landing-voice-preview').addEventListener('click', () => {
+  speak('Timer ready. Select a theme to begin.');
+});
+
+document.getElementById('voice-preview').addEventListener('click', () => {
+  if (currentTheme) speak(currentTheme.voicePreview);
+});
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(text);
+  if (selectedVoice) u.voice = selectedVoice;
+  u.rate = currentTheme && currentTheme.id === 'gaming' ? 1.0 : 0.95;
+  u.pitch = currentTheme && currentTheme.id === 'gaming' ? 0.9 : 0.8;
+  u.volume = 1;
+  speechSynthesis.speak(u);
+}
+
+function formatSpokenTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m > 0 && s > 0) return `${m} minute${m !== 1 ? 's' : ''} and ${s} seconds`;
+  if (m > 0) return `${m} minute${m !== 1 ? 's' : ''}`;
+  return `${s} second${s !== 1 ? 's' : ''}`;
+}
+
+// ═══════════════════════════════════════════════════
+// TEMPLATE HELPERS
+// ═══════════════════════════════════════════════════
+
+function randHex() { return Math.random().toString(16).substring(2, 8).toUpperCase(); }
+function randIP() { return `${Math.floor(Math.random()*223)+1}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`; }
+function randNum() { return Math.floor(Math.random() * 9000 + 100); }
+function randDomain() {
+  const parts = ['shadow', 'dark', 'ghost', 'phantom', 'cipher', 'vault', 'nexus', 'zero', 'hex', 'byte'];
+  const tlds = ['.net', '.io', '.sys', '.sec', '.dev'];
+  return parts[Math.floor(Math.random()*parts.length)] + parts[Math.floor(Math.random()*parts.length)] + tlds[Math.floor(Math.random()*tlds.length)];
+}
+
+function fillTemplate(msg) {
+  return msg
+    .replace(/%%HEX%%/g, randHex())
+    .replace(/%%IP%%/g, randIP())
+    .replace(/%%NUM%%/g, randNum())
+    .replace(/%%DOMAIN%%/g, randDomain());
+}
+
+// Mecha-specific template helpers
+function randJoint() {
+  const joints = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'X', 'Y', 'Z', 'GRIPPER'];
+  return joints[Math.floor(Math.random() * joints.length)];
+}
+function randDeg() { return Math.floor(Math.random() * 180); }
+function randSmall() { return Math.floor(Math.random() * 16) + 1; }
+function randPID() { return (Math.random() * 2).toFixed(2); }
+function randPct() { return Math.floor(Math.random() * 100); }
+function randVolts() { return (10 + Math.random() * 4).toFixed(1); }
+function randTemp() { return Math.floor(55 + Math.random() * 40); }
+function randHexShort() { return Math.random().toString(16).substring(2, 4).toUpperCase(); }
+
+function fillMechaTemplate(msg) {
+  return msg
+    .replace(/%%JOINT%%/g, randJoint())
+    .replace(/%%DEG%%/g, randDeg())
+    .replace(/%%SMALL%%/g, randSmall())
+    .replace(/%%NUM%%/g, randNum())
+    .replace(/%%PID%%/g, randPID())
+    .replace(/%%PCT%%/g, randPct())
+    .replace(/%%VOLTS%%/g, randVolts())
+    .replace(/%%TEMP%%/g, randTemp())
+    .replace(/%%HEXS%%/g, randHexShort())
+    .replace(/%%HEX%%/g, randHex());
+}
+
+// ═══════════════════════════════════════════════════
+// LOG PANEL
+// ═══════════════════════════════════════════════════
+
+function addLog(type) {
+  if (!currentTheme) return;
+  type = type || 'normal';
+  const pool = currentTheme.logMessages[type] || currentTheme.logMessages.normal;
+  const msg = pool[Math.floor(Math.random() * pool.length)];
+
+  const panel = document.getElementById('log-panel');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = currentTheme.formatLog(msg);
+  panel.prepend(line);
+
+  while (panel.children.length > currentTheme.maxLogs) {
+    panel.removeChild(panel.lastChild);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// FLOATING ELEMENTS
+// ═══════════════════════════════════════════════════
+
+// Cyber particles
+function spawnParticle() {
+  if (!currentTheme || !currentTheme.particles) return;
+  const el = document.createElement('div');
+  el.className = currentTheme.id === 'mecha' ? 'spark' : 'particle';
+  const chars = currentTheme.particles.chars;
+  el.textContent = chars[Math.floor(Math.random() * chars.length)];
+  if (el.textContent.startsWith('0x')) el.textContent = '0x' + randHex();
+  el.style.left = Math.random() * 100 + '%';
+  el.style.top = (50 + Math.random() * 50) + '%';
+  el.style.animationDuration = (4 + Math.random() * 4) + 's';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+// Gaming damage numbers
+function spawnDmgNumber() {
+  if (paused || remainingMs <= 0) return;
+  const el = document.createElement('div');
+  el.className = 'dmg-number';
+  const isCrit = Math.random() < 0.15;
+  const dmg = isCrit ? Math.floor(Math.random() * 5000 + 2000) : Math.floor(Math.random() * 500 + 50);
+
+  if (isCrit) {
+    el.classList.add('crit');
+    el.textContent = dmg + '!';
+    el.style.color = '#ff1744';
+  } else {
+    el.textContent = dmg.toString();
+    const colors = ['#ff1744', '#ffe600', '#39ff14', '#00b0ff', '#b388ff'];
+    el.style.color = colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  el.style.left = (15 + Math.random() * 70) + '%';
+  el.style.top = (25 + Math.random() * 35) + '%';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+  playHit();
+}
+
+// Gaming spaceships
+function spawnShip() {
+  if (!currentTheme || currentTheme.id !== 'gaming') return;
+  const designs = currentTheme.shipDesigns;
+  const design = designs[Math.floor(Math.random() * designs.length)];
+  const el = document.createElement('div');
+  el.className = 'spaceship' + (design.enemy ? ' enemy' : '');
+  el.innerHTML = design.svg;
+
+  const direction = Math.floor(Math.random() * 4);
+  const duration = 6000 + Math.random() * 8000;
+  let startX, startY, endX, endY;
+  const w = window.innerWidth, h = window.innerHeight;
+
+  switch (direction) {
+    case 0: startX = -40; endX = w + 40; startY = 50 + Math.random() * (h - 100); endY = startY + (Math.random() - 0.5) * 200; break;
+    case 1: startX = w + 40; endX = -40; startY = 50 + Math.random() * (h - 100); endY = startY + (Math.random() - 0.5) * 200; break;
+    case 2: startY = -40; endY = h + 40; startX = 50 + Math.random() * (w - 100); endX = startX + (Math.random() - 0.5) * 200; break;
+    case 3: startY = h + 40; endY = -40; startX = 50 + Math.random() * (w - 100); endX = startX + (Math.random() - 0.5) * 200; break;
+  }
+
+  const angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI) + 90;
+  el.style.left = startX + 'px';
+  el.style.top = startY + 'px';
+  el.style.transform = `rotate(${angle}deg)`;
+  document.body.appendChild(el);
+
+  const startTime = performance.now();
+  let lastTrailTime = 0;
+
+  function animate(now) {
+    if (!shipAnimationsActive || !el.isConnected) return;
+    const progress = Math.min((now - startTime) / duration, 1);
+    const cx = startX + (endX - startX) * progress;
+    const cy = startY + (endY - startY) * progress;
+    el.style.left = cx + 'px';
+    el.style.top = cy + 'px';
+
+    if (now - lastTrailTime > 80) {
+      lastTrailTime = now;
+      const trail = document.createElement('div');
+      trail.className = 'exhaust';
+      trail.style.left = (cx + 12) + 'px';
+      trail.style.top = (cy + 12) + 'px';
+      trail.style.background = design.enemy ? '#ff4400' : '#39ff14';
+      document.body.appendChild(trail);
+      trail.addEventListener('animationend', () => trail.remove());
+    }
+
+    if (progress < 1) requestAnimationFrame(animate);
+    else el.remove();
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function scheduleShip() {
+  shipTimeoutId = setTimeout(() => {
+    spawnShip();
+    scheduleShip();
+  }, 2000 + Math.random() * 4000);
+}
+
+// ─── Mecha Robots ───
+let robotAnimationsActive = false;
+let robotTimeoutId = null;
+
+function spawnRobot() {
+  if (!currentTheme || currentTheme.id !== 'mecha') return;
+  const designs = currentTheme.robotDesigns;
+  const design = designs[Math.floor(Math.random() * designs.length)];
+  const el = document.createElement('div');
+  el.className = 'robo' + (design.alert ? ' robo-alert' : '');
+  el.innerHTML = design.svg;
+
+  const direction = Math.floor(Math.random() * 4);
+  const duration = 8000 + Math.random() * 10000;
+  let startX, startY, endX, endY;
+  const w = window.innerWidth, h = window.innerHeight;
+
+  switch (direction) {
+    case 0: startX = -50; endX = w + 50; startY = 80 + Math.random() * (h - 160); endY = startY + (Math.random() - 0.5) * 150; break;
+    case 1: startX = w + 50; endX = -50; startY = 80 + Math.random() * (h - 160); endY = startY + (Math.random() - 0.5) * 150; break;
+    case 2: startY = -50; endY = h + 50; startX = 80 + Math.random() * (w - 160); endX = startX + (Math.random() - 0.5) * 150; break;
+    case 3: startY = h + 50; endY = -50; startX = 80 + Math.random() * (w - 160); endX = startX + (Math.random() - 0.5) * 150; break;
+  }
+
+  // Slight bobbing motion for walking feel
+  el.style.left = startX + 'px';
+  el.style.top = startY + 'px';
+  document.body.appendChild(el);
+
+  const startTime = performance.now();
+  let lastTrailTime = 0;
+
+  function animate(now) {
+    if (!robotAnimationsActive || !el.isConnected) return;
+    const progress = Math.min((now - startTime) / duration, 1);
+    const cx = startX + (endX - startX) * progress;
+    // Add a subtle bobbing motion
+    const bob = Math.sin(progress * Math.PI * 12) * 3;
+    const cy = (startY + (endY - startY) * progress) + bob;
+    el.style.left = cx + 'px';
+    el.style.top = cy + 'px';
+
+    // Exhaust/spark trail
+    if (now - lastTrailTime > 120) {
+      lastTrailTime = now;
+      const trail = document.createElement('div');
+      trail.className = 'robo-trail';
+      trail.style.left = (cx + 16) + 'px';
+      trail.style.top = (cy + 20) + 'px';
+      trail.style.background = design.trail;
+      document.body.appendChild(trail);
+      trail.addEventListener('animationend', () => trail.remove());
+    }
+
+    if (progress < 1) requestAnimationFrame(animate);
+    else el.remove();
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function scheduleRobot() {
+  robotTimeoutId = setTimeout(() => {
+    spawnRobot();
+    scheduleRobot();
+  }, 3000 + Math.random() * 5000);
+}
+
+// ═══════════════════════════════════════════════════
+// GAMING STATE HELPERS
+// ═══════════════════════════════════════════════════
+
+function renderHearts() {
+  const container = document.getElementById('hearts');
+  container.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const heart = document.createElement('span');
+    heart.className = 'heart' + (i >= gameState.hearts ? ' lost' : '');
+    heart.innerHTML = '<svg viewBox="0 0 16 16"><path d="M8 14s-5.5-4-5.5-7.5C2.5 4 4 2.5 5.5 2.5c1 0 2 .5 2.5 1.5.5-1 1.5-1.5 2.5-1.5C12 2.5 13.5 4 13.5 6.5 13.5 10 8 14 8 14z" fill="' + (i >= gameState.hearts ? '#333' : '#ff1744') + '"/></svg>';
+    container.appendChild(heart);
+  }
+}
+
+function addScore(pts) {
+  gameState.score += pts * gameState.combo;
+  document.getElementById('score-display').textContent = 'SCORE: ' + gameState.score.toLocaleString();
+}
+
+function addXP(pts) {
+  gameState.xp += pts;
+  const needed = gameState.level * 1000;
+  if (gameState.xp >= needed) {
+    gameState.xp -= needed;
+    gameState.level++;
+    document.getElementById('level-badge').textContent = 'LV ' + gameState.level;
+    playLevelUp();
+    addLog('normal');
+  }
+  const pct = (gameState.xp / (gameState.level * 1000)) * 100;
+  document.getElementById('xp-bar').style.width = pct + '%';
+  document.getElementById('xp-value').textContent = `${gameState.xp} / ${gameState.level * 1000}`;
+}
+
+function bumpCombo() {
+  gameState.combo = Math.min(gameState.combo + 1, 99);
+  const el = document.getElementById('combo-display');
+  el.textContent = 'COMBO x' + gameState.combo;
+  el.classList.add('bump');
+  setTimeout(() => el.classList.remove('bump'), 150);
+}
+
+// ═══════════════════════════════════════════════════
+// TIMER ENGINE
+// ═══════════════════════════════════════════════════
+
+function formatTime(totalSec) {
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function getPhase(fraction) {
+  if (fraction > 0.5) return 'safe';
+  if (fraction > 0.2) return 'warning';
+  if (fraction > 0) return 'critical';
+  return 'ended';
+}
+
+function updateDisplay() {
+  const sec = Math.ceil(remainingMs / 1000);
+  const fraction = remainingMs / (totalSeconds * 1000);
+  const phase = getPhase(fraction);
+  const theme = currentTheme;
+
+  document.getElementById('timer-display').textContent = formatTime(sec);
+
+  // Phase class on body (keep theme class)
+  document.body.className = `theme-${theme.id} timer-active phase-${phase}`;
+
+  // Theme-specific UI updates
+  if (theme.id === 'cyber') {
+    const offset = CIRCUMFERENCE * (1 - fraction);
+    document.getElementById('ring-progress').setAttribute('stroke-dashoffset', offset);
+    document.getElementById('threat-level').textContent = theme.phases[phase].threat;
+    document.getElementById('timer-label').textContent = theme.phases[phase].label;
+  }
+
+  if (theme.id === 'gaming') {
+    document.getElementById('hp-bar').style.width = (fraction * 100) + '%';
+    document.getElementById('hp-value').textContent = Math.round(fraction * 100) + '%';
+
+    // Hearts
+    if (fraction > 0.66) gameState.hearts = 3;
+    else if (fraction > 0.33) gameState.hearts = 2;
+    else if (fraction > 0) gameState.hearts = 1;
+    else gameState.hearts = 0;
+    renderHearts();
+  }
+
+  if (theme.id === 'mecha') {
+    document.getElementById('hp-bar').style.width = (fraction * 100) + '%';
+    document.getElementById('hp-value').textContent = Math.round(fraction * 100) + '%';
+    document.getElementById('hp-label').textContent = 'POWER';
+    document.getElementById('mecha-status').innerHTML = theme.phases[phase].status;
+    document.getElementById('timer-label').textContent = theme.phases[phase].label;
+
+    // Simulated readouts
+    const baseTemp = phase === 'critical' || phase === 'ended' ? 85 : phase === 'warning' ? 65 : 40;
+    document.getElementById('mecha-temp').textContent = (baseTemp + Math.floor(Math.random() * 8)) + '\u00B0C';
+    const baseRPM = phase === 'ended' ? 0 : phase === 'critical' ? 800 : phase === 'warning' ? 1600 : 2400;
+    document.getElementById('mecha-rpm').textContent = baseRPM + Math.floor(Math.random() * 200);
+    const baseV = phase === 'critical' || phase === 'ended' ? 9 : phase === 'warning' ? 11 : 12;
+    document.getElementById('mecha-volts').textContent = (baseV + Math.random() * 1.5).toFixed(1) + 'V';
+  }
+
+  document.getElementById('timer-sub').textContent = theme.phases[phase].sub;
+
+  // Halfway voice
+  if (!halfwayPlayed && fraction <= 0.5 && fraction > 0) {
+    halfwayPlayed = true;
+    playHalfway();
+    const halfSec = Math.ceil(totalSeconds / 2);
+    speak(theme.halfwaySpeak(formatSpokenTime(halfSec)));
+  }
+
+  // One minute remaining
+  if (!oneMinutePlayed && sec <= 60 && sec > 0 && totalSeconds > 60) {
+    oneMinutePlayed = true;
+    playWarning();
+    speak(theme.oneMinuteSpeak);
+  }
+
+  // Tick
+  if (sec !== lastTickSecond && sec > 0) {
+    lastTickSecond = sec;
+    if (phase === 'critical') playWarning();
+    else playTick();
+  }
+}
+
+function tick() {
+  if (paused) return;
+  remainingMs -= 50;
+
+  // Gaming score ticks
+  if (currentTheme.id === 'gaming') {
+    if (Math.random() < 0.08) { addScore(Math.floor(Math.random() * 50 + 10)); addXP(Math.floor(Math.random() * 20 + 5)); }
+    if (Math.random() < 0.02) bumpCombo();
+  }
+
+  if (remainingMs <= 0) {
+    remainingMs = 0;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    triggerEnd();
+  }
+  updateDisplay();
+}
+
+let burstIntervalId = null;
+
+function triggerEnd() {
+  updateDisplay();
+  playEnd();
+  speak(currentTheme.endSpeak);
+
+  // Stop ambient effects
+  if (logIntervalId) { clearInterval(logIntervalId); logIntervalId = null; }
+  if (dmgIntervalId) { clearInterval(dmgIntervalId); dmgIntervalId = null; }
+  if (particleIntervalId) { clearInterval(particleIntervalId); particleIntervalId = null; }
+
+  document.getElementById('end-flash').classList.add('active');
+  document.getElementById('end-banner').classList.add('active');
+
+  addLog('critical');
+  addLog('critical');
+  addLog('critical');
+
+  let burst = 0;
+  burstIntervalId = setInterval(() => {
+    addLog('critical');
+    burst++;
+    if (burst > 8) { clearInterval(burstIntervalId); burstIntervalId = null; }
+  }, 300);
+}
+
+// ═══════════════════════════════════════════════════
+// SOUND TOGGLE
+// ═══════════════════════════════════════════════════
+
+document.getElementById('sound-toggle').addEventListener('click', () => {
+  initAudio();
+  soundEnabled = !soundEnabled;
+  document.getElementById('sound-toggle').textContent = soundEnabled ? 'SFX: ON' : 'SFX: OFF';
+});
+
+// ═══════════════════════════════════════════════════
+// THEME SELECTION & LANDING
+// ═══════════════════════════════════════════════════
+
+function selectTheme(themeId) {
+  // Highlight card
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('card-' + themeId).classList.add('selected');
+
+  // Set theme
+  currentTheme = THEMES[themeId];
+  localStorage.setItem('timer-theme', themeId);
+
+  // Apply theme class for setup overlay styling
+  document.body.className = `theme-${themeId}`;
+
+  // Stop any running background
+  stopAllEffects();
+
+  // Start background
+  startBackground(themeId);
+
+  // Populate setup overlay
+  populateSetup();
+
+  // Hide landing, show setup
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('setup-overlay').classList.remove('hidden');
+}
+
+function populateSetup() {
+  const theme = currentTheme;
+  document.getElementById('setup-title').textContent = theme.name;
+  document.getElementById('setup-subtitle').textContent = theme.setupSubtitle;
+  document.getElementById('go-btn').textContent = theme.goLabel;
+  document.getElementById('voice-label-text').textContent = theme.voiceLabel;
+
+  // End banner
+  if (theme.endSubtext) {
+    document.getElementById('end-banner').innerHTML = theme.endBanner + '<span class="sub">' + theme.endSubtext + '</span>';
+  } else {
+    document.getElementById('end-banner').textContent = theme.endBanner;
+  }
+
+  // Presets
+  const grid = document.getElementById('preset-grid');
+  grid.innerHTML = '';
+  theme.presets.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn';
+    btn.innerHTML = `${p.label}<span>${p.subtitle}</span>`;
+    btn.addEventListener('click', () => startTimer(p.seconds));
+    grid.appendChild(btn);
+  });
+
+  // Sync voice select
+  const landing = document.getElementById('landing-voice-select');
+  const setup = document.getElementById('voice-select');
+  setup.innerHTML = landing.innerHTML;
+  setup.value = landing.value;
+}
+
+function startBackground(themeId) {
+  if (themeId === 'cyber') {
+    initMatrixRain();
+    matrixIntervalId = setInterval(drawMatrixRain, 50);
+  } else if (themeId === 'mecha') {
+    initCircuitBoard();
+    circuitRunning = true;
+    robotAnimationsActive = true;
+    drawCircuitBoard();
+    scheduleRobot();
+  } else {
+    initStarfield();
+    starfieldRunning = true;
+    shipAnimationsActive = true;
+    drawStarfield();
+    scheduleShip();
+  }
+}
+
+function stopAllEffects() {
+  starfieldRunning = false;
+  shipAnimationsActive = false;
+  circuitRunning = false;
+  robotAnimationsActive = false;
+  if (robotTimeoutId) { clearTimeout(robotTimeoutId); robotTimeoutId = null; }
+  if (matrixIntervalId) { clearInterval(matrixIntervalId); matrixIntervalId = null; }
+  if (bgAnimFrameId) { cancelAnimationFrame(bgAnimFrameId); bgAnimFrameId = null; }
+  if (logIntervalId) { clearInterval(logIntervalId); logIntervalId = null; }
+  if (particleIntervalId) { clearInterval(particleIntervalId); particleIntervalId = null; }
+  if (shipTimeoutId) { clearTimeout(shipTimeoutId); shipTimeoutId = null; }
+  if (dmgIntervalId) { clearInterval(dmgIntervalId); dmgIntervalId = null; }
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  if (burstIntervalId) { clearInterval(burstIntervalId); burstIntervalId = null; }
+
+  // Remove floating elements
+  document.querySelectorAll('.particle, .spark, .dmg-number, .spaceship, .exhaust, .robo, .robo-trail').forEach(el => el.remove());
+
+  // Clear canvas
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+}
+
+// ═══════════════════════════════════════════════════
+// START / CONTROLS
+// ═══════════════════════════════════════════════════
+
+function startAmbientEffects() {
+  const theme = currentTheme;
+  if (!theme) return;
+  if (!logIntervalId) {
+    logIntervalId = setInterval(() => {
+      if (paused) return;
+      const fraction = remainingMs / (totalSeconds * 1000);
+      const phase = getPhase(fraction);
+      if (phase === 'safe') addLog('normal');
+      else if (phase === 'warning') addLog(Math.random() < 0.5 ? 'warning' : 'normal');
+      else if (phase === 'critical') addLog(Math.random() < 0.6 ? 'critical' : 'warning');
+    }, theme.logInterval);
+  }
+  if ((theme.id === 'cyber' || theme.id === 'mecha') && !particleIntervalId) {
+    particleIntervalId = setInterval(spawnParticle, theme.particles.interval);
+  }
+  if (theme.id === 'gaming' && !dmgIntervalId) {
+    dmgIntervalId = setInterval(spawnDmgNumber, 600);
+  }
+}
+
+function startTimer(seconds) {
+  const theme = currentTheme;
+  totalSeconds = seconds;
+  remainingMs = seconds * 1000;
+  paused = false;
+  lastTickSecond = -1;
+  halfwayPlayed = false;
+  oneMinutePlayed = false;
+
+  // Mecha state init
+  if (theme.id === 'mecha') {
+    document.getElementById('hp-label').textContent = 'POWER';
+    document.getElementById('hp-bar').style.width = '100%';
+    document.getElementById('hp-value').textContent = '100%';
+    document.getElementById('boss-name').textContent = theme.robotNames[Math.floor(Math.random() * theme.robotNames.length)];
+  }
+
+  // Gaming state reset
+  if (theme.id === 'gaming') {
+    gameState.score = 0;
+    gameState.combo = 1;
+    gameState.xp = 0;
+    gameState.level = 1;
+    gameState.hearts = 3;
+    document.getElementById('score-display').textContent = 'SCORE: 0';
+    document.getElementById('combo-display').textContent = 'COMBO x1';
+    document.getElementById('level-badge').textContent = 'LV 1';
+    document.getElementById('xp-bar').style.width = '0%';
+    document.getElementById('xp-value').textContent = '0 / 1000';
+    document.getElementById('boss-name').textContent = theme.bossNames[Math.floor(Math.random() * theme.bossNames.length)];
+    renderHearts();
+  }
+
+  document.getElementById('setup-overlay').classList.add('hidden');
+  document.getElementById('controls').classList.add('visible');
+  document.getElementById('btn-pause').textContent = theme.pauseLabel;
+
+  document.body.className = `theme-${theme.id} timer-active`;
+  document.getElementById('end-flash').classList.remove('active');
+  document.getElementById('end-banner').classList.remove('active');
+
+  updateDisplay();
+
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(tick, 50);
+
+  addLog('normal');
+
+  // Ambient log feed
+  startAmbientEffects();
+}
+
+function startCustom() {
+  const val = parseInt(document.getElementById('custom-minutes').value);
+  if (val && val >= 1 && val <= 60) startTimer(val * 60);
+}
+
+document.getElementById('custom-minutes').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') startCustom();
+});
+
+document.getElementById('btn-pause').addEventListener('click', () => {
+  if (remainingMs <= 0) return;
+  paused = !paused;
+  document.getElementById('btn-pause').textContent = paused ? currentTheme.resumeLabel : currentTheme.pauseLabel;
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  // Clean up intervals
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  if (logIntervalId) { clearInterval(logIntervalId); logIntervalId = null; }
+  if (particleIntervalId) { clearInterval(particleIntervalId); particleIntervalId = null; }
+  if (dmgIntervalId) { clearInterval(dmgIntervalId); dmgIntervalId = null; }
+
+  paused = false;
+  remainingMs = 0;
+  totalSeconds = 0;
+
+  // Remove floating elements
+  document.querySelectorAll('.particle, .spark, .dmg-number, .robo, .robo-trail').forEach(el => el.remove());
+
+  document.getElementById('controls').classList.remove('visible');
+  document.getElementById('end-flash').classList.remove('active');
+  document.getElementById('end-banner').classList.remove('active');
+  document.getElementById('timer-display').textContent = '00:00';
+  document.getElementById('timer-sub').textContent = currentTheme.defaultSub;
+  document.getElementById('log-panel').innerHTML = '';
+
+  if (currentTheme.id === 'cyber') {
+    document.getElementById('timer-label').textContent = 'TIME REMAINING';
+    document.getElementById('threat-level').textContent = 'THREAT LEVEL: LOW';
+    document.getElementById('ring-progress').setAttribute('stroke-dashoffset', '0');
+  }
+
+  if (currentTheme.id === 'gaming') {
+    document.getElementById('boss-name').textContent = 'BOSS APPROACHING...';
+    document.getElementById('hp-bar').style.width = '100%';
+    document.getElementById('hp-value').textContent = '100%';
+    gameState.hearts = 3;
+    renderHearts();
+  }
+
+  if (currentTheme.id === 'mecha') {
+    document.getElementById('boss-name').textContent = 'AWAITING DEPLOYMENT...';
+    document.getElementById('hp-bar').style.width = '100%';
+    document.getElementById('hp-value').textContent = '100%';
+    document.getElementById('hp-label').textContent = 'POWER';
+    document.getElementById('mecha-status').innerHTML = '\u2699 SYSTEMS NOMINAL';
+    document.getElementById('mecha-temp').textContent = '42\u00B0C';
+    document.getElementById('mecha-rpm').textContent = '2400';
+    document.getElementById('mecha-volts').textContent = '12.6V';
+  }
+
+  // Back to landing
+  stopAllEffects();
+  document.body.className = '';
+  document.getElementById('setup-overlay').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+});
+
+document.getElementById('btn-add60').addEventListener('click', () => {
+  if (remainingMs <= 0 && totalSeconds > 0) {
+    remainingMs = 60000;
+    totalSeconds += 60;
+    document.getElementById('end-flash').classList.remove('active');
+    document.getElementById('end-banner').classList.remove('active');
+    paused = false;
+    document.getElementById('btn-pause').textContent = currentTheme.pauseLabel;
+    if (!timerInterval) timerInterval = setInterval(tick, 50);
+    startAmbientEffects();
+  } else {
+    remainingMs += 60000;
+    totalSeconds += 60;
+  }
+  updateDisplay();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.code === 'Space') { e.preventDefault(); document.getElementById('btn-pause').click(); }
+  if (e.key === 'r' || e.key === 'R') document.getElementById('btn-reset').click();
+  if (e.key === 'Escape') document.getElementById('btn-reset').click();
+});
+
+// ═══════════════════════════════════════════════════
+// INIT: RESTORE LAST THEME
+// ═══════════════════════════════════════════════════
+
+window.addEventListener('resize', () => {
+  if (currentTheme) {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+    if (currentTheme.id === 'cyber') initMatrixRain();
+    if (currentTheme.id === 'gaming') initStarfield();
+    if (currentTheme.id === 'mecha') initCircuitBoard();
+  }
+});
+
+// Restore last selected theme highlight on landing
+(function() {
+  const saved = localStorage.getItem('timer-theme');
+  if (saved && document.getElementById('card-' + saved)) {
+    document.getElementById('card-' + saved).classList.add('selected');
+  }
+})();
+</script>
+</body>
+</html>

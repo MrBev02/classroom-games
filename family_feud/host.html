@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Feud — Host Controls</title>
+  <link rel="stylesheet" href="host.css">
+</head>
+<body>
+
+  <!-- ===== SETUP ===== -->
+  <div id="host-setup">
+    <h1>FAMILY FEUD</h1>
+    <p class="subtitle">Host Control Panel</p>
+    <p class="hint">Open <strong>index.html</strong> on the projector as the student display.</p>
+
+    <div class="setup-form">
+      <label for="team1-input">Team 1 Name</label>
+      <input type="text" id="team1-input" value="Team 1" maxlength="20">
+
+      <label for="team2-input">Team 2 Name</label>
+      <input type="text" id="team2-input" value="Team 2" maxlength="20">
+
+      <label for="rounds-select">Number of Rounds</label>
+      <select id="rounds-select">
+        <option value="5">5 rounds</option>
+        <option value="10" selected>10 rounds</option>
+        <option value="15">15 rounds</option>
+        <option value="20">20 rounds</option>
+      </select>
+
+      <button id="start-btn">START GAME</button>
+    </div>
+  </div>
+
+  <!-- ===== HOST GAME VIEW ===== -->
+  <div id="host-game" style="display:none">
+
+    <!-- Header -->
+    <div class="host-header">
+      <div class="host-team team1">
+        <span class="host-team-name">Team 1</span>
+        <span class="host-team-score">0</span>
+      </div>
+      <div class="host-title">
+        <span class="host-round-info">Round 1 of 10</span>
+      </div>
+      <div class="host-team team2">
+        <span class="host-team-name">Team 2</span>
+        <span class="host-team-score">0</span>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div class="host-question">
+      <h2 id="host-question-text">Question</h2>
+    </div>
+
+    <!-- Answer Key -->
+    <div class="answer-key">
+      <table id="answer-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Answer</th>
+            <th>Points</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Round Points + Strikes -->
+    <div class="host-status">
+      <div class="status-item">
+        Round Points: <strong id="host-round-points">0</strong>
+      </div>
+      <div class="status-item">
+        Strikes: <strong id="host-strikes">0</strong> / 3
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="host-controls">
+      <div class="control-group">
+        <button class="btn btn-strike" id="btn-strike">STRIKE X</button>
+        <button class="btn btn-clear" id="btn-clear-strikes">Clear Strikes</button>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-team1" id="btn-award-team1">Award to Team 1</button>
+        <button class="btn btn-team2" id="btn-award-team2">Award to Team 2</button>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-reveal-all" id="btn-reveal-all">Reveal All</button>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-nav" id="btn-prev">← Prev</button>
+        <button class="btn btn-nav" id="btn-next">Next →</button>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-new-game" id="btn-new-game">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GAME OVER ===== -->
+  <div id="host-gameover" style="display:none">
+    <h1>GAME OVER</h1>
+    <p id="host-winner-text" class="winner-text"></p>
+    <div class="final-scores">
+      <div class="final-card team1">
+        <div class="final-name" id="final-team1-name">Team 1</div>
+        <div class="final-score" id="final-team1-score">0</div>
+      </div>
+      <div class="final-card team2">
+        <div class="final-name" id="final-team2-name">Team 2</div>
+        <div class="final-score" id="final-team2-score">0</div>
+      </div>
+    </div>
+    <button class="btn btn-new-game" id="btn-gameover-new">PLAY AGAIN</button>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="host.js"></script>
+</body>
+</html>

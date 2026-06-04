@@ -1,0 +1,185 @@
+{
+  "title": "Aussie High School General Knowledge",
+  "rounds": [
+    {
+      "roundNumber": 1,
+      "questions": [
+        {
+          "category": "Australian Animals",
+          "question": "Name an animal native to Australia",
+          "answers": {
+            "kangaroo": { "score": 95, "aliases": ["roo", "red kangaroo", "grey kangaroo"] },
+            "koala": { "score": 92, "aliases": ["koala bear"] },
+            "emu": 78,
+            "platypus": { "score": 72, "aliases": ["duck-billed platypus", "duck billed platypus"] },
+            "wombat": 65,
+            "tasmanian devil": { "score": 55, "aliases": ["tassie devil"] },
+            "dingo": 50,
+            "kookaburra": { "score": 40, "aliases": ["laughing kookaburra"] },
+            "echidna": { "score": 35, "aliases": ["spiny anteater"] },
+            "quokka": 28,
+            "cockatoo": { "score": 20, "aliases": ["sulphur-crested cockatoo", "sulphur crested cockatoo"] },
+            "cassowary": { "score": 12, "aliases": ["southern cassowary"] },
+            "bilby": { "score": 8, "aliases": ["greater bilby"] },
+            "numbat": 5,
+            "quoll": 3,
+            "potoroo": { "score": 0, "aliases": ["long-nosed potoroo"] },
+            "bettong": 0,
+            "pademelon": 0,
+            "dugong": 0,
+            "tree kangaroo": { "score": 0, "aliases": ["tree-kangaroo"] },
+            "bandicoot": { "score": 0, "aliases": ["long-nosed bandicoot"] }
+          }
+        },
+        {
+          "category": "Summer Olympic Sports",
+          "question": "Name a sport at the Summer Olympic Games",
+          "answers": {
+            "swimming": 95,
+            "athletics": { "score": 88, "aliases": ["track and field", "running", "sprinting"] },
+            "basketball": { "score": 82, "aliases": ["bball"] },
+            "soccer": { "score": 78, "aliases": ["football"] },
+            "gymnastics": 72,
+            "tennis": 65,
+            "volleyball": 55,
+            "hockey": { "score": 48, "aliases": ["field hockey"] },
+            "boxing": 42,
+            "cycling": { "score": 38, "aliases": ["road cycling", "track cycling"] },
+            "diving": 32,
+            "rowing": 25,
+            "archery": 18,
+            "badminton": 15,
+            "fencing": 10,
+            "sailing": { "score": 8, "aliases": ["yachting"] },
+            "water polo": 5,
+            "equestrian": { "score": 3, "aliases": ["horse riding", "dressage", "show jumping"] },
+            "modern pentathlon": { "score": 0, "aliases": ["pentathlon"] },
+            "sport climbing": { "score": 0, "aliases": ["climbing", "rock climbing"] },
+            "trampoline": { "score": 0, "aliases": ["trampolining", "trampoline gymnastics"] },
+            "handball": { "score": 0, "aliases": ["team handball"] },
+            "shooting": { "score": 0, "aliases": ["sport shooting"] }
+          }
+        }
+      ]
+    },
+    {
+      "roundNumber": 2,
+      "questions": [
+        {
+          "category": "The Periodic Table",
+          "question": "Name an element on the periodic table",
+          "answers": {
+            "oxygen": 95,
+            "hydrogen": 90,
+            "gold": { "score": 82, "aliases": ["au"] },
+            "carbon": 78,
+            "iron": { "score": 72, "aliases": ["fe"] },
+            "helium": 65,
+            "nitrogen": 55,
+            "silver": { "score": 48, "aliases": ["ag"] },
+            "sodium": { "score": 40, "aliases": ["na"] },
+            "calcium": 35,
+            "uranium": 28,
+            "lithium": 22,
+            "neon": 18,
+            "mercury": { "score": 15, "aliases": ["hg", "quicksilver"] },
+            "titanium": 12,
+            "argon": 8,
+            "tungsten": { "score": 5, "aliases": ["wolfram"] },
+            "antimony": 2,
+            "ytterbium": 0,
+            "praseodymium": 0,
+            "tellurium": 0,
+            "gadolinium": 0,
+            "hafnium": 0
+          }
+        },
+        {
+          "category": "Shakespeare Plays",
+          "question": "Name a play written by William Shakespeare",
+          "answers": {
+            "romeo and juliet": { "score": 92, "aliases": ["romeo & juliet", "romeo juliet"] },
+            "hamlet": 78,
+            "macbeth": 72,
+            "a midsummer night's dream": { "score": 55, "aliases": ["midsummer nights dream", "midsummer night's dream"] },
+            "much ado about nothing": 40,
+            "othello": 35,
+            "the tempest": { "score": 28, "aliases": ["tempest"] },
+            "julius caesar": 22,
+            "king lear": 15,
+            "twelfth night": 10,
+            "the merchant of venice": { "score": 8, "aliases": ["merchant of venice"] },
+            "the taming of the shrew": { "score": 5, "aliases": ["taming of the shrew"] },
+            "titus andronicus": 0,
+            "coriolanus": 0,
+            "cymbeline": 0,
+            "pericles": { "score": 0, "aliases": ["pericles prince of tyre"] },
+            "timon of athens": 0
+          }
+        }
+      ]
+    },
+    {
+      "roundNumber": 3,
+      "questions": [
+        {
+          "category": "Countries in Asia",
+          "question": "Name a country in Asia",
+          "answers": {
+            "china": 95,
+            "japan": 92,
+            "india": 85,
+            "thailand": 68,
+            "south korea": { "score": 60, "aliases": ["korea"] },
+            "indonesia": { "score": 52, "aliases": ["indo"] },
+            "vietnam": 45,
+            "singapore": 38,
+            "malaysia": 32,
+            "philippines": { "score": 25, "aliases": ["the philippines"] },
+            "nepal": 18,
+            "mongolia": 12,
+            "cambodia": 10,
+            "sri lanka": 8,
+            "bangladesh": 5,
+            "laos": 3,
+            "bhutan": 0,
+            "brunei": 0,
+            "timor-leste": { "score": 0, "aliases": ["east timor"] },
+            "turkmenistan": 0,
+            "kyrgyzstan": 0,
+            "tajikistan": 0
+          }
+        }
+      ]
+    }
+  ],
+  "final": {
+    "category": "Bones in the Human Body",
+    "question": "Name a bone in the human body",
+    "answers": {
+      "skull": { "score": 88, "aliases": ["cranium"] },
+      "ribs": { "score": 85, "aliases": ["rib", "rib cage", "ribcage"] },
+      "spine": { "score": 82, "aliases": ["vertebra", "vertebrae", "spinal column", "backbone"] },
+      "femur": { "score": 72, "aliases": ["thigh bone", "thighbone"] },
+      "pelvis": { "score": 55, "aliases": ["hip bone", "hip"] },
+      "humerus": 45,
+      "tibia": { "score": 38, "aliases": ["shin bone", "shinbone"] },
+      "radius": 35,
+      "fibula": 30,
+      "clavicle": { "score": 25, "aliases": ["collarbone", "collar bone"] },
+      "patella": { "score": 20, "aliases": ["kneecap", "knee cap"] },
+      "scapula": { "score": 15, "aliases": ["shoulder blade"] },
+      "sternum": { "score": 12, "aliases": ["breastbone"] },
+      "ulna": 10,
+      "phalanges": { "score": 8, "aliases": ["phalanx", "finger bones"] },
+      "coccyx": { "score": 5, "aliases": ["tailbone", "tail bone"] },
+      "metacarpal": { "score": 3, "aliases": ["metacarpals"] },
+      "hyoid": 0,
+      "trapezoid": { "score": 0, "aliases": ["trapezoid bone"] },
+      "navicular": { "score": 0, "aliases": ["navicular bone"] },
+      "ethmoid": { "score": 0, "aliases": ["ethmoid bone"] },
+      "pisiform": 0,
+      "calcaneus": { "score": 0, "aliases": ["heel bone"] }
+    }
+  }
+}
