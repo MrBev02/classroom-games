@@ -108,23 +108,113 @@
         }
     }, 10000);
 
-    // ── File loading ────────────────────────────────────────
-    $('fileInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    // ── Load your own questions ─────────────────────────────
+    const CUSTOM_PROMPT = `Create a "Pointless" style question set as JSON for a classroom game.
+In Pointless, LOWER scores are better: a score is how many of 100 surveyed
+people gave that answer, so obscure-but-correct answers score low (0 = "pointless").
 
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            try {
-                state.gameData = JSON.parse(ev.target.result);
-                $('fileName').textContent = `Loaded: ${file.name} (${state.gameData.title || 'Untitled'})`;
-                $('startGameBtn').disabled = false;
-            } catch (err) {
-                $('fileName').textContent = `Error: Invalid JSON — ${err.message}`;
-                $('startGameBtn').disabled = true;
+Topic: [TOPIC]
+Year/grade level: [YEAR LEVEL]
+Make 3 rounds with 1-2 questions each, plus 1 final question.
+Give each question about 10-12 valid answers, from common (high score) to obscure (score 0).
+
+Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
+{
+  "title": "Short game title",
+  "rounds": [
+    {
+      "roundNumber": 1,
+      "questions": [
+        {
+          "category": "Category name",
+          "question": "Name a ...",
+          "answers": {
+            "common answer": 90,
+            "rarer answer": { "score": 12, "aliases": ["alt spelling"] },
+            "obscure correct answer": 0
+          }
+        }
+      ]
+    }
+  ],
+  "final": {
+    "category": "Category name",
+    "question": "Name a ...",
+    "answers": { "an answer": 40, "a pointless answer": 0 }
+  }
+}
+
+Rules:
+- Each score is a whole number from 0 to 100 (lower = more obscure/better).
+- Include at least one answer scoring 0 per question where possible.
+- "aliases" is optional: alternative spellings/abbreviations that should also match.
+- Write answer keys and aliases in lowercase.`;
+
+    function validateQuestion(q, where) {
+        const { err } = CustomQuestions;
+        if (!q || typeof q !== 'object' || Array.isArray(q))
+            return err(`${where} must be an object.`);
+        if (typeof q.category !== 'string' || !q.category.trim())
+            return err(`${where} is missing a "category".`);
+        if (typeof q.question !== 'string' || !q.question.trim())
+            return err(`${where} is missing "question" text.`);
+        if (!q.answers || typeof q.answers !== 'object' || Array.isArray(q.answers))
+            return err(`${where} must have an "answers" object.`);
+        const keys = Object.keys(q.answers);
+        if (keys.length === 0) return err(`${where} has no answers.`);
+        for (const k of keys) {
+            const v = q.answers[k];
+            let score;
+            if (typeof v === 'number') score = v;
+            else if (v && typeof v === 'object' && typeof v.score === 'number') score = v.score;
+            else return err(`${where}: answer "${k}" must be a number, or an object with a numeric "score".`);
+            if (!isFinite(score)) return err(`${where}: answer "${k}" has a non-numeric score.`);
+        }
+        return null; // valid
+    }
+
+    function validatePointlessGame(d) {
+        const { ok, err } = CustomQuestions;
+        if (!d || typeof d !== 'object' || Array.isArray(d))
+            return err('The top level must be a JSON object.');
+        if (typeof d.title !== 'string' || !d.title.trim())
+            return err('Missing "title" (a non-empty string).');
+        if (!Array.isArray(d.rounds) || d.rounds.length === 0)
+            return err('"rounds" must be a non-empty array.');
+
+        for (let i = 0; i < d.rounds.length; i++) {
+            const r = d.rounds[i];
+            const w = `Round ${i + 1}`;
+            if (!r || typeof r !== 'object' || Array.isArray(r))
+                return err(`${w} must be an object.`);
+            if (typeof r.roundNumber !== 'number')
+                return err(`${w} is missing a numeric "roundNumber".`);
+            if (!Array.isArray(r.questions) || r.questions.length === 0)
+                return err(`${w} must have a non-empty "questions" array.`);
+            for (let j = 0; j < r.questions.length; j++) {
+                const e = validateQuestion(r.questions[j], `${w} question ${j + 1}`);
+                if (e) return e;
             }
-        };
-        reader.readAsText(file);
+        }
+
+        if (!d.final || typeof d.final !== 'object' || Array.isArray(d.final))
+            return err('Missing a "final" round object.');
+        const fe = validateQuestion(d.final, 'The "final" round');
+        if (fe) return fe;
+
+        const qCount = d.rounds.reduce((n, r) => n + r.questions.length, 0);
+        return ok(d, `${d.title} — ${d.rounds.length} rounds, ${qCount} questions + final`);
+    }
+
+    const customUI = CustomQuestions.mount({
+        mount: $('customQuestions'),
+        promptText: CUSTOM_PROMPT,
+        readyHint: 'Questions loaded — set team names and click Start Game.',
+        validate: validatePointlessGame,
+        onLoad: (data) => {
+            state.gameData = data;
+            $('startGameBtn').disabled = false;
+        },
     });
 
     // ── Start Game ──────────────────────────────────────────
@@ -687,8 +777,7 @@
         state.history = [];
         state.teams.forEach(t => { t.score = 0; t.eliminated = false; });
 
-        $('fileInput').value = '';
-        $('fileName').textContent = '';
+        customUI.reset();
         $('startGameBtn').disabled = true;
 
         channel.send('RESET_GAME', {});

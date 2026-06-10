@@ -36,6 +36,11 @@
       <select id="game-select"></select>
     </label>
 
+    <details class="field">
+      <summary>Load your own questions <small>(AI-friendly — no files to edit)</small></summary>
+      <div id="custom-questions"></div>
+    </details>
+
     <label class="field">
       <span>Teams</span>
       <select id="team-count"></select>
@@ -62,11 +67,11 @@
     <details class="help">
       <summary>Two-screen setup</summary>
       <ol>
-        <li>In this folder run: <code>python -m http.server 8080</code></li>
-        <li>On <strong>your laptop</strong> open <code>http://localhost:8080/host.html</code> (this page)</li>
-        <li>Drag a second window to the <strong>projector</strong> and open <code>http://localhost:8080/index.html</code> (or use the button above)</li>
-        <li>Start the game here — both screens stay in sync automatically</li>
+        <li>You're on the <strong>host</strong> page — keep it on your laptop.</li>
+        <li>Click <strong>Open display window</strong> above and drag that window to the <strong>projector</strong> — it's the students' board.</li>
+        <li>Start the game here — both screens stay in sync automatically.</li>
       </ol>
+      <p style="opacity:.7;font-size:.9em;margin:.5em 0 0;">Keep both windows in the <strong>same browser on the same computer</strong>. Running your own copy offline instead of the web link? Serve the folder first (e.g. <code>python -m http.server 8080</code>) and use the <code>http://localhost:8080/…</code> addresses — opening the files directly won't sync.</p>
     </details>
   </section>
 
@@ -134,6 +139,7 @@
   <script src="js/channel.js"></script>
   <script src="js/sounds.js"></script>
   <script src="data/games.js"></script>
+  <script src="../shared/custom-questions.js"></script>
   <script src="js/host.js"></script>
 </body>
 </html>

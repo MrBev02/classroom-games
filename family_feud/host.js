@@ -15,6 +15,10 @@ const host = {
 
 const channel = new BroadcastChannel("family-feud");
 
+// The pool of questions to draw rounds from. Defaults to the built-in
+// QUESTIONS, but "Load your own questions" can replace it at runtime.
+let questionPool = QUESTIONS;
+
 // ---------------------
 // DOM helpers
 // ---------------------
@@ -28,9 +32,12 @@ const $ = (sel) => document.querySelector(sel);
 document.getElementById("start-btn").addEventListener("click", () => {
   host.teamNames[0] = $("#team1-input").value.trim() || "Team 1";
   host.teamNames[1] = $("#team2-input").value.trim() || "Team 2";
-  host.totalRounds = parseInt($("#rounds-select").value, 10);
 
-  const shuffled = [...QUESTIONS].sort(() => Math.random() - 0.5);
+  // Never ask for more rounds than there are questions in the pool.
+  const requested = parseInt($("#rounds-select").value, 10);
+  host.totalRounds = Math.min(requested, questionPool.length);
+
+  const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
   host.questions = shuffled.slice(0, host.totalRounds);
 
   host.scores = [0, 0];
@@ -239,3 +246,74 @@ $("#btn-next").addEventListener("click", sendNextRound);
 $("#btn-prev").addEventListener("click", sendPrevRound);
 $("#btn-new-game").addEventListener("click", sendNewGame);
 $("#btn-gameover-new").addEventListener("click", sendNewGame);
+
+// ---------------------
+// Load your own questions
+// ---------------------
+
+const CUSTOM_PROMPT = `Create a Family Feud style question set as JSON for a classroom game.
+
+Topic: [TOPIC]
+Year/grade level: [YEAR LEVEL]
+Make about 10 questions, each with 5-7 ranked answers.
+
+Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
+[
+  {
+    "question": "Name something ...",
+    "answers": [
+      { "text": "Most popular answer", "points": 30 },
+      { "text": "Next answer", "points": 22 }
+    ]
+  }
+]
+
+Rules:
+- List answers from highest points (most popular) to lowest.
+- Points are whole numbers; a question's answers should total roughly 100.
+- Keep answers short (a word or two) and classroom-appropriate.`;
+
+function validateFeudQuestions(d) {
+  const { ok, err } = CustomQuestions;
+  const arr = Array.isArray(d)
+    ? d
+    : d && Array.isArray(d.questions)
+    ? d.questions
+    : null;
+  if (!arr)
+    return err('The top level must be an array of questions (or an object with a "questions" array).');
+  if (arr.length === 0) return err("Need at least one question.");
+
+  for (let i = 0; i < arr.length; i++) {
+    const q = arr[i];
+    const w = `Question ${i + 1}`;
+    if (!q || typeof q !== "object" || Array.isArray(q))
+      return err(`${w} must be an object.`);
+    if (typeof q.question !== "string" || !q.question.trim())
+      return err(`${w} is missing "question" text.`);
+    if (!Array.isArray(q.answers) || q.answers.length === 0)
+      return err(`${w} must have a non-empty "answers" array.`);
+    for (let j = 0; j < q.answers.length; j++) {
+      const a = q.answers[j];
+      const aw = `${w} answer ${j + 1}`;
+      if (!a || typeof a !== "object" || Array.isArray(a))
+        return err(`${aw} must be an object with "text" and "points".`);
+      if (typeof a.text !== "string" || !a.text.trim())
+        return err(`${aw} is missing "text".`);
+      if (typeof a.points !== "number" || !isFinite(a.points))
+        return err(`${aw} is missing a numeric "points" value.`);
+    }
+  }
+
+  return ok(arr, `${arr.length} question${arr.length === 1 ? "" : "s"} loaded`);
+}
+
+CustomQuestions.mount({
+  mount: $("#custom-questions"),
+  promptText: CUSTOM_PROMPT,
+  readyHint: "These questions are loaded — click START GAME.",
+  validate: validateFeudQuestions,
+  onLoad: (arr) => {
+    questionPool = arr;
+  },
+});

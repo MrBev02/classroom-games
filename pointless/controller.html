@@ -20,11 +20,7 @@
             <!-- ── Setup ───────────────────────────────────── -->
             <section id="setupPanel" class="panel">
                 <h2>Game Setup</h2>
-                <div class="file-input">
-                    <label for="fileInput">Load Questions (JSON)</label>
-                    <input type="file" id="fileInput" accept=".json">
-                    <div id="fileName"></div>
-                </div>
+                <div id="customQuestions"></div>
                 <div class="team-names">
                     <h3>Team Names</h3>
                     <input type="text" id="setupTeam0" value="Team 1" placeholder="Team 1">
@@ -128,6 +124,7 @@
 
     <script src="js/channel.js"></script>
     <script src="js/scorer.js"></script>
+    <script src="../shared/custom-questions.js"></script>
     <script src="js/controller.js"></script>
 </body>
 </html>

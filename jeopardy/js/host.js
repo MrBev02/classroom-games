@@ -123,6 +123,92 @@ function populateSetup() {
   }
 }
 
+// ---------------------
+// Load your own questions (custom game set)
+// ---------------------
+
+const CUSTOM_PROMPT = `Create a Jeopardy question set as JSON for a classroom game.
+
+Topic: [TOPIC]
+Year/grade level: [YEAR LEVEL]
+Board: 5 categories with 5 clues each, easiest clue first, hardest last.
+
+Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
+{
+  "title": "Short game title",
+  "categories": [
+    {
+      "name": "Category name",
+      "clues": [
+        { "clue": "A statement students must respond to", "answer": "What is ...?" }
+      ]
+    }
+  ]
+}
+
+Rules:
+- "clue" is the prompt shown to students; "answer" is the correct response.
+- Answers may be in Jeopardy style ("What is ...?") or plain — either is fine.
+- Do NOT include dollar values; they are added automatically by row.
+- Keep clues factual and suitable for the year level.`;
+
+function validateCustomGame(d) {
+  const { ok, err } = CustomQuestions;
+  if (!d || typeof d !== "object" || Array.isArray(d))
+    return err('The top level must be an object with "title" and "categories".');
+  if (typeof d.title !== "string" || !d.title.trim())
+    return err('Missing "title" (a non-empty string).');
+  if (!Array.isArray(d.categories) || d.categories.length === 0)
+    return err('"categories" must be a non-empty array.');
+
+  for (let i = 0; i < d.categories.length; i++) {
+    const c = d.categories[i];
+    const where = `Category ${i + 1}`;
+    if (!c || typeof c !== "object" || Array.isArray(c))
+      return err(`${where} must be an object.`);
+    if (typeof c.name !== "string" || !c.name.trim())
+      return err(`${where} is missing a "name".`);
+    if (!Array.isArray(c.clues) || c.clues.length === 0)
+      return err(`${where} ("${c.name}") must have a non-empty "clues" array.`);
+    for (let j = 0; j < c.clues.length; j++) {
+      const cl = c.clues[j];
+      const cw = `${where} ("${c.name}") clue ${j + 1}`;
+      if (!cl || typeof cl !== "object" || Array.isArray(cl))
+        return err(`${cw} must be an object.`);
+      if (typeof cl.clue !== "string" || !cl.clue.trim())
+        return err(`${cw} is missing "clue" text.`);
+      if (typeof cl.answer !== "string" || !cl.answer.trim())
+        return err(`${cw} is missing an "answer".`);
+      if (cl.value != null && (typeof cl.value !== "number" || !isFinite(cl.value)))
+        return err(`${cw} has a non-numeric "value".`);
+    }
+  }
+
+  const rows = Math.max(...d.categories.map((c) => c.clues.length));
+  return ok(d, `${d.title} — ${d.categories.length} categories × up to ${rows} clues`);
+}
+
+function addCustomGameSet(set) {
+  GAME_SETS.push(set);
+  const i = GAME_SETS.length - 1;
+  const rows = Math.max(...set.categories.map((c) => c.clues.length));
+  const opt = document.createElement("option");
+  opt.value = i;
+  opt.textContent = `★ ${set.title} (${set.categories.length} categories × ${rows} clues)`;
+  $("#game-select").appendChild(opt);
+  $("#game-select").value = String(i);
+}
+
+function setupCustomQuestions() {
+  CustomQuestions.mount({
+    mount: $("#custom-questions"),
+    promptText: CUSTOM_PROMPT,
+    readyHint: "Added as the selected game set — click Start Game ▶.",
+    validate: validateCustomGame,
+    onLoad: addCustomGameSet,
+  });
+}
+
 function buildTeamInputs() {
   const count = parseInt($("#team-count").value, 10);
   const wrap = $("#team-names");
@@ -585,6 +671,7 @@ document.addEventListener("keydown", (e) => {
 // ---------------------
 
 populateSetup();
+setupCustomQuestions();
 render();
 // Tell any already-open display we're here (it shows the waiting screen)
 channel.send("STATE", publicState());
