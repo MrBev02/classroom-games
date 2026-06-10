@@ -4,22 +4,31 @@ A classroom Jeopardy game with a **dual-screen** setup: students see the game
 board on the projector while you control everything (and see the answers) from
 your laptop.
 
-## Quick start
+## Quick start — just open the link
 
-1. Open a terminal in this folder and start a local server:
-
-   ```
-   python -m http.server 8080
-   ```
-
-2. On **your laptop**, open <http://localhost:8080/host.html>
-3. On the **projector**, open <http://localhost:8080/index.html>
-   (or click **"Open display window"** on the host screen and drag it across)
-4. Pick a game set, number of teams (2–10) and team names, then **Start Game**.
+1. On **your laptop**, open the host console:
+   <https://mrbev02.github.io/classroom-games/jeopardy/host.html>
+2. Click **"Open display window"** and drag it to the **projector** — that's the
+   students' board.
+3. Pick a game set, number of teams (2–10) and team names, then **Start Game**.
    Both screens sync automatically.
 
-> The two tabs talk via `BroadcastChannel`, so they must be opened from the
-> same server in the same browser — exactly like the Family Feud game.
+No installs, no terminal. The two windows talk via `BroadcastChannel`, so keep
+them in the **same browser on the same computer**.
+
+<details>
+<summary>Running it offline instead (optional)</summary>
+
+To run your own copy without internet, serve the folder from a local server
+(the windows won't sync if you just double-click the files):
+
+```
+python -m http.server 8080
+```
+
+Then open <http://localhost:8080/host.html> on your laptop and
+<http://localhost:8080/index.html> on the projector.
+</details>
 
 ## Running the game
 

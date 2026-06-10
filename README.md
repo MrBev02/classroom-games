@@ -3,21 +3,45 @@
 Browser-based game-show games for the classroom. Each lives in its own folder
 and is pure static HTML/CSS/JS — no build step and no backend.
 
-**Play online:** https://mrbev02.github.io/classroom-games/
+## For teachers — just open the link
 
-- **jeopardy/** — Jeopardy. `index.html` (board) + `host.html` (host console). Flexible board size, 2–10 teams.
-- **family_feud/** — Family Feud. `index.html` (board) + `host.html` (host controller).
-- **pointless/** — Pointless. `display.html` + `controller.html`.
+**https://mrbev02.github.io/classroom-games/**
 
-## Running locally
+Open it in any browser, pick a game, and you're playing. There is nothing to
+install — no Python, no terminal, no downloads. Bookmark the link and that's it.
 
-From the repo root, start any static server and open the landing page:
+The three games:
+
+- **Jeopardy** — flexible board, 2–10 teams. (board + host console)
+- **Family Feud** — two teams, survey answers and strikes. (board + host)
+- **Pointless** — low-score-wins quiz. (board + host)
+
+<details>
+<summary>Running it offline instead (optional, technical)</summary>
+
+You only need this if you want to run your own copy without internet. The games
+must be served from a local server — just double-clicking the files won't let the
+two screens sync. From the repo root:
 
 ```
 python -m http.server 8080
 ```
 
-Then visit http://localhost:8080/ and pick a game.
+Then visit <http://localhost:8080/> and pick a game.
+</details>
+
+## Load your own questions
+
+Every game's **Host** screen has a **"Load your own questions"** panel:
+
+1. Copy the built-in AI prompt.
+2. Paste it into ChatGPT, Claude, or any AI and fill in your topic / year level.
+3. Paste the JSON it returns (or pick a `.json` file) back on the same screen.
+4. The browser validates it and either starts the game or shows a precise error.
+
+It all runs in the browser (`FileReader` / `JSON.parse`) — nothing is uploaded,
+committed, or shared, and it works even from `file://`. A bad paste only affects
+that one attempt. The shared loader lives in `shared/custom-questions.js`.
 
 ## Dual-screen setup
 

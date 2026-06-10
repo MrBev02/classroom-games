@@ -351,17 +351,16 @@ function printAnswerKey() {
   html += `
 <div style="background:#f4f4f4;border:1px solid #ccc;border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0;">
   <h2 style="margin:0 0 0.5rem;font-size:1rem;">Two-Screen Setup (Optional)</h2>
-  <p style="font-size:0.85rem;margin:0 0 0.5rem;">If you have Python installed, you can run a second screen where you see the answers
-  and control the game from your laptop while students only see the game board on the projector.</p>
+  <p style="font-size:0.85rem;margin:0 0 0.5rem;">Run a second screen where you see the answers and control the game from your
+  laptop, while students only see the game board on the projector. Nothing to install &mdash; just open the links:</p>
   <ol style="font-size:0.85rem;margin:0;padding-left:1.3rem;">
-    <li>Open <strong>Terminal</strong> (Mac) or <strong>Command Prompt</strong> (Windows)</li>
-    <li>Navigate to the game folder: <code>cd path/to/family_feud</code></li>
-    <li>Start a local server: <code>python3 -m http.server 8080</code><br>
-        <span style="color:#888;">(On Windows you may need <code>python -m http.server 8080</code>)</span></li>
-    <li>On your <strong>laptop</strong>, open: <code>http://localhost:8080/host.html</code></li>
-    <li>On the <strong>projector</strong>, open: <code>http://localhost:8080/index.html</code></li>
-    <li>Start the game from <strong>host.html</strong> &mdash; both screens sync automatically</li>
+    <li>On your <strong>laptop</strong>, open the host page:<br>
+        <code>https://mrbev02.github.io/classroom-games/family_feud/host.html</code></li>
+    <li>On the <strong>projector</strong>, open the board:<br>
+        <code>https://mrbev02.github.io/classroom-games/family_feud/index.html</code></li>
+    <li>Start the game from the host page &mdash; both screens sync automatically (keep them in the same browser on the same computer).</li>
   </ol>
+  <p style="font-size:0.8rem;color:#888;margin:0.5rem 0 0;">Running your own copy offline instead? Serve the folder with <code>python3 -m http.server 8080</code> (Windows: <code>python -m http.server 8080</code>) and use the matching <code>http://localhost:8080/&hellip;</code> addresses.</p>
 </div>`;
 
   QUESTIONS.forEach((q, qi) => {
