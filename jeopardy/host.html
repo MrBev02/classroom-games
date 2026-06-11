@@ -81,6 +81,15 @@
       <div id="team-names" class="team-names"></div>
     </div>
 
+    <div class="field">
+      <span>Think music <small>(optional — upload your own track; the "Think!" jingle is copyrighted so none is bundled)</small></span>
+      <input type="file" id="think-upload" accept="audio/*">
+      <div class="think-music-row">
+        <span id="think-music-status" class="think-music-status"></span>
+        <button id="think-clear-btn" class="btn ghost" hidden>Remove</button>
+      </div>
+    </div>
+
     <label class="check">
       <input type="checkbox" id="autoplay-music">
       <span>Auto-play think music when a clue opens <small>(a countdown shows on the projector while it plays)</small></span>
@@ -148,7 +157,7 @@
       <div id="cm-teams" class="cm-teams"></div>
 
       <div class="modal-actions">
-        <button id="cm-music-btn" class="btn" title="Plays sounds/think.mp3 if you've added one, otherwise a built-in thinking clock (~30s)">🎵 Think music</button>
+        <button id="cm-music-btn" class="btn" title="Plays your uploaded track (or sounds/think.mp3), otherwise a built-in thinking clock (~30s)">🎵 Think music</button>
         <button id="cm-reveal-btn" class="btn">Reveal answer on display</button>
         <button id="cm-done-btn" class="btn primary">Done — back to board</button>
         <button id="cm-cancel-btn" class="btn ghost" title="Close without using up the clue (Esc)">Oops — keep clue available</button>

@@ -6,12 +6,58 @@
 // through the room speakers — and because the host is
 // clicking buttons, browser autoplay rules are satisfied.
 //
-// Think music: drop an MP3 at sounds/think.mp3 (source
-// the Jeopardy "Think!" track yourself — it's copyrighted,
-// so it isn't bundled). If the file is missing, a built-in
-// synthesised "thinking clock" loop is used instead,
-// running ~30 seconds like the real thing.
+// Think music: the host can upload their own track on the
+// setup screen (kept in the browser via IndexedDB so it
+// survives a refresh / resume), or drop an MP3 at
+// sounds/think.mp3. With neither, a built-in synthesised
+// "thinking clock" loop runs ~30 seconds like the real thing.
+// (The real "Think!" jingle is copyrighted, so nothing is
+// bundled — bring your own.)
 // =====================================================
+
+// Tiny IndexedDB wrapper to persist an uploaded think track. Object URLs
+// don't survive a page reload and audio files are too big for localStorage,
+// so the raw Blob is stored here under a single key.
+const ThinkStore = {
+  _db: null,
+  _open() {
+    if (this._db) return Promise.resolve(this._db);
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return reject(new Error("IndexedDB unavailable"));
+      const req = indexedDB.open("jeopardy-media", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("kv");
+      req.onsuccess = () => resolve((this._db = req.result));
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async save(blob, name) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("kv", "readwrite");
+      tx.objectStore("kv").put({ blob, name }, "think");
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+  async load() {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("kv", "readonly");
+      const req = tx.objectStore("kv").get("think");
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async clear() {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("kv", "readwrite");
+      tx.objectStore("kv").delete("think");
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+};
 
 class SoundManager {
   constructor() {
@@ -27,6 +73,11 @@ class SoundManager {
     this.thinkFileBroken = false;
     this.thinkAudio.addEventListener("error", () => (this.thinkFileBroken = true));
     this.thinkAudio.addEventListener("ended", () => this._thinkEnded());
+
+    // A track the host uploaded on the setup screen overrides think.mp3.
+    this.hasCustomThink = false;
+    this.customThinkName = null;
+    this._customUrl = null;
 
     this._tickTimer = null;
     this._tickCount = 0;
@@ -107,6 +158,84 @@ class SoundManager {
   _thinkEnded() {
     this.thinkPlaying = false;
     if (this.onThinkEnd) this.onThinkEnd();
+  }
+
+  // ---------------------
+  // Custom uploaded think track
+  // ---------------------
+
+  /**
+   * Use an uploaded audio File/Blob as the think track. Resolves once the
+   * file is confirmed playable (and, unless persist:false, saved for next
+   * time); rejects if the browser can't decode it. Pass persist:false when
+   * re-applying a track that's already stored.
+   */
+  setCustomThink(blob, name, { persist = true } = {}) {
+    return new Promise((resolve, reject) => {
+      this.stopThink();
+      if (this._customUrl) URL.revokeObjectURL(this._customUrl);
+      this._customUrl = URL.createObjectURL(blob);
+
+      const audio = this.thinkAudio;
+      const cleanup = () => {
+        audio.removeEventListener("loadedmetadata", onOk);
+        audio.removeEventListener("error", onErr);
+      };
+      const onOk = () => {
+        cleanup();
+        this.thinkFileBroken = false;
+        this.hasCustomThink = true;
+        this.customThinkName = name || "your track";
+        if (persist) {
+          ThinkStore.save(blob, this.customThinkName).catch((e) =>
+            console.warn("Could not save think track for next time:", e)
+          );
+        }
+        resolve();
+      };
+      const onErr = () => {
+        cleanup();
+        reject(new Error("Could not decode the uploaded audio file"));
+      };
+      audio.addEventListener("loadedmetadata", onOk);
+      audio.addEventListener("error", onErr);
+      audio.src = this._customUrl;
+      audio.load();
+    });
+  }
+
+  /** Forget the uploaded track and go back to sounds/think.mp3 (or the loop). */
+  clearCustomThink() {
+    this.stopThink();
+    if (this._customUrl) {
+      URL.revokeObjectURL(this._customUrl);
+      this._customUrl = null;
+    }
+    this.hasCustomThink = false;
+    this.customThinkName = null;
+    this.thinkFileBroken = false;
+    this.thinkAudio.src = "sounds/think.mp3";
+    this.thinkAudio.load();
+    ThinkStore.clear().catch(() => {});
+  }
+
+  /** On startup, re-apply a previously uploaded track if there is one. */
+  async restoreCustomThink() {
+    let saved;
+    try {
+      saved = await ThinkStore.load();
+    } catch (e) {
+      console.warn("Could not read saved think track:", e);
+      return false;
+    }
+    if (!saved || !saved.blob) return false;
+    try {
+      await this.setCustomThink(saved.blob, saved.name, { persist: false });
+      return true;
+    } catch {
+      ThinkStore.clear().catch(() => {});
+      return false;
+    }
   }
 
   // Built-in fallback: a gentle "thinking clock" — two alternating

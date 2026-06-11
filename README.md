@@ -56,8 +56,9 @@ network.
 All effects (ding, buzzer, the Jeopardy "thinking clock") are synthesised in the
 browser, so no audio files are required. The real Jeopardy "Think!" track is
 copyrighted and is **not** included; the game falls back to the synthesised loop.
-If you want the real track for your own classroom, drop an MP3 at
-`jeopardy/sounds/think.mp3` locally — it is gitignored and never published.
+If you want your own thinking music in Jeopardy, **upload it on the host setup
+screen** (kept in your browser, nothing to commit) — or drop an MP3 at
+`jeopardy/sounds/think.mp3` locally, which is gitignored and never published.
 
 ## Hosting on GitHub Pages
 

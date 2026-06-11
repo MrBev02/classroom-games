@@ -113,6 +113,11 @@ function populateSetup() {
     localStorage.setItem("jeopardy-autoplay", autoPlayMusic ? "on" : "off");
   });
 
+  // Bring back an uploaded think track from a previous session, then
+  // reflect whatever we ended up with in the status line.
+  refreshThinkMusicUI();
+  sounds.restoreCustomThink().then(refreshThinkMusicUI);
+
   // Offer to resume a saved game
   const saved = loadSave();
   if (saved) {
@@ -239,6 +244,41 @@ function setupCustomQuestions() {
     validate: validateCustomGame,
     onLoad: addCustomGameSet,
   });
+}
+
+// ---------------------
+// Think music upload
+// ---------------------
+
+/** Reflect the current think track (uploaded or not) in the setup UI. */
+function refreshThinkMusicUI() {
+  const status = $("#think-music-status");
+  const clearBtn = $("#think-clear-btn");
+  if (sounds.hasCustomThink) {
+    status.textContent = `🎵 "${sounds.customThinkName}" — plays when you open a clue.`;
+    status.classList.add("is-set");
+    clearBtn.hidden = false;
+  } else {
+    status.textContent = "No track uploaded — a built-in thinking clock plays instead.";
+    status.classList.remove("is-set");
+    clearBtn.hidden = true;
+  }
+}
+
+async function handleThinkUpload(file) {
+  if (!file) return;
+  const status = $("#think-music-status");
+  status.textContent = `Loading "${file.name}"…`;
+  status.classList.remove("is-set");
+  try {
+    await sounds.setCustomThink(file, file.name);
+  } catch {
+    sounds.clearCustomThink();
+    refreshThinkMusicUI();
+    status.textContent = `Couldn't read "${file.name}". Please choose an audio file (MP3, M4A, WAV…).`;
+    return;
+  }
+  refreshThinkMusicUI();
 }
 
 function buildTeamInputs() {
@@ -661,6 +701,14 @@ $("#test-sound-btn").addEventListener("click", () => {
 $("#open-display-btn").addEventListener("click", () =>
   window.open("index.html", "_blank")
 );
+$("#think-upload").addEventListener("change", (e) =>
+  handleThinkUpload(e.target.files && e.target.files[0])
+);
+$("#think-clear-btn").addEventListener("click", () => {
+  sounds.clearCustomThink();
+  $("#think-upload").value = "";
+  refreshThinkMusicUI();
+});
 
 $("#final-results-btn").addEventListener("click", showFinalResults);
 $("#new-game-btn").addEventListener("click", newGame);

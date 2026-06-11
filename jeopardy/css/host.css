@@ -56,6 +56,26 @@
   color: var(--text-dim);
 }
 
+.think-music-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.think-music-status {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.think-music-status.is-set { color: var(--accent); }
+
+.think-music-row .btn {
+  flex-shrink: 0;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
 /* ---------- game screen ---------- */
 
 .game-top {

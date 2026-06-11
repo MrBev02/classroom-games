@@ -57,9 +57,11 @@ with the **🔊** button next to the board.
 
 - **✓ / ✗** play a correct-answer ding and a wrong-answer buzzer (synthesised
   in the browser, no files needed).
-- **🎵 Think music** plays `sounds/think.mp3` if you've added one (the real
-  Jeopardy "Think!" track is copyrighted, so it isn't bundled — source it
-  yourself and drop it in the `sounds/` folder). Without the file, a built-in
+- **🎵 Think music** plays a track of your choosing (the real Jeopardy
+  "Think!" track is copyrighted, so none is bundled — bring your own). Either
+  **upload one on the setup screen** — the easiest way, with nothing to edit;
+  it's kept in your browser and remembered next time, and a **Remove** button
+  clears it — or drop an MP3 at `sounds/think.mp3`. Without either, a built-in
   ~30-second "thinking clock" plays instead, ending with a time's-up chime.
 - With **"Auto-play think music when a clue opens"** ticked on the setup
   screen (on by default), the music starts by itself on every clue; otherwise
