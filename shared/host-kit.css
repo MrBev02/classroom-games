@@ -1,0 +1,540 @@
+/* ============================================================
+   HOST KIT — shared "control room" chrome for every game's
+   host screen (Jeopardy · Family Feud · Pointless).
+
+   The teacher's host screen is a calm, dark cockpit so it is
+   never confused with the bright board on the projector. Every
+   game shares this chrome — top bar, setup card, buttons, fields,
+   the onboarding legend — so a teacher learns it once. Each game
+   carries ONE signature accent (set via <body data-game="…">) so
+   colour tells them which game they're running.
+
+   Game-specific surfaces (Jeopardy board, Feud strikes, Pointless
+   answer flow) live in each game's own stylesheet and inherit the
+   tokens below.
+   ============================================================ */
+
+:root {
+  /* ---- structural palette (identical across all games) ---- */
+  --bg:          #11141b;   /* page */
+  --bg-sunken:   #0b0e14;   /* top bar, wells, board backing */
+  --panel:       #1b1f2a;   /* card surface */
+  --panel-raised:#232838;   /* raised chips, inputs-on-card */
+  --line:        #2f3545;   /* borders */
+  --line-soft:   #242b3a;   /* hairlines */
+  --ink:         #e9ecf3;   /* primary text */
+  --dim:         #8b93a8;   /* secondary text */
+  --faint:       #5a6275;   /* tertiary / disabled */
+
+  /* ---- shared semantic colours ---- */
+  --good:        #46d98a;   /* correct · award · linked */
+  --good-ink:    #06210f;
+  --bad:         #ff5d6c;   /* wrong · strike · disconnected */
+  --bad-ink:     #2a060a;
+  --warn:        #ffb547;
+
+  /* ---- per-game accent (overridden below) ---- */
+  --accent:      #f5b83d;
+  --accent-soft: rgba(245, 184, 61, 0.14);
+  --accent-line: rgba(245, 184, 61, 0.45);
+  --accent-ink:  #1c1605;   /* text that sits ON the accent */
+
+  /* ---- type ---- */
+  --font-ui:   "Saira Semi Condensed", "Saira", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+
+  /* ---- shape ---- */
+  --radius:    9px;
+  --radius-sm: 6px;
+  --shadow:    0 10px 30px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- signature accents per game ---- */
+body[data-game="jeopardy"] {
+  --accent: #f5b83d; --accent-ink: #1c1605;
+  --accent-soft: rgba(245, 184, 61, 0.14);
+  --accent-line: rgba(245, 184, 61, 0.45);
+}
+body[data-game="feud"] {
+  --accent: #ffd23f; --accent-ink: #241a00;
+  --accent-soft: rgba(255, 210, 63, 0.14);
+  --accent-line: rgba(255, 210, 63, 0.45);
+}
+body[data-game="pointless"] {
+  --accent: #4f8cff; --accent-ink: #06122b;
+  --accent-soft: rgba(79, 140, 255, 0.16);
+  --accent-line: rgba(79, 140, 255, 0.5);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =====================================================
+   TOP BAR — the orientation strip on every host screen
+   ===================================================== */
+
+.console {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 1.2rem;
+  background: var(--bg-sunken);
+  border-bottom: 2px solid var(--accent);
+}
+
+.console__id {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-ui);
+}
+
+.console__badge {
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--accent);
+  padding: 0.18rem 0.5rem;
+  border-radius: 4px;
+}
+
+.console__game {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.console__meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--dim);
+}
+
+.console__hint { font-family: var(--font-body); }
+.console__hint strong { color: var(--ink); font-weight: 600; }
+
+/* live link / orientation chip (e.g. Pointless board connection) */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.link__dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--faint); flex-shrink: 0;
+}
+.link__dot.is-on  { background: var(--good); box-shadow: 0 0 8px rgba(70, 217, 138, 0.6); }
+.link__dot.is-off { background: var(--bad);  animation: linkblink 2s ease-in-out infinite; }
+@keyframes linkblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* =====================================================
+   PANELS / CARDS
+   ===================================================== */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.7rem;
+}
+
+/* centred setup column shared by Jeopardy & Feud */
+.setup-col {
+  max-width: 640px;
+  margin: 1.6rem auto;
+  padding: 0 1rem;
+}
+
+.panel-title,
+.panel > h2 {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 1.05rem;
+  color: var(--accent);
+  margin-bottom: 1.2rem;
+}
+
+/* =====================================================
+   ONBOARDING — "how the host works" + colour legend.
+   Identical wording on every game so it reads once.
+   ===================================================== */
+
+.guide {
+  background: linear-gradient(180deg, var(--accent-soft), transparent 80%);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.4rem;
+}
+
+.guide__steps {
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+}
+.guide__steps li {
+  position: relative;
+  padding-left: 2.1rem;
+  min-height: 1.45rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--dim);
+}
+.guide__steps li b { color: var(--ink); font-weight: 600; }
+.guide__steps li > span:first-child {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-align: center;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-radius: 50%;
+  width: 1.45rem; height: 1.45rem;
+  line-height: 1.45rem;
+}
+
+.legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  margin-top: 0.9rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.legend li { display: inline-flex; align-items: center; gap: 0.45rem; color: var(--dim); }
+.legend li::before {
+  content: "";
+  width: 0.8rem; height: 0.8rem; border-radius: 3px;
+  background: var(--swatch, var(--accent));
+}
+.legend .is-accent { --swatch: var(--accent); }
+.legend .is-good   { --swatch: var(--good); }
+.legend .is-bad    { --swatch: var(--bad); }
+
+/* =====================================================
+   "MAKE YOUR OWN QUIZ" — the headline call-to-action.
+   A loud accent panel (collapsible) that hosts the shared
+   question loader, so teachers can't miss that they can
+   build a quiz on any topic.
+   ===================================================== */
+
+.makeown {
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--accent-soft), transparent 75%);
+  margin-bottom: 1.3rem;
+}
+
+.makeown > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius);
+}
+.makeown > summary::-webkit-details-marker { display: none; }
+.makeown > summary:hover { background: var(--accent-soft); }
+
+.makeown__icon {
+  flex-shrink: 0;
+  width: 2.4rem; height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 50%;
+}
+
+.makeown__text { flex: 1; min-width: 0; }
+
+.makeown__title {
+  display: block;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.98rem;
+  color: var(--accent);
+}
+
+.makeown__sub {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--dim);
+  margin-top: 0.15rem;
+  line-height: 1.4;
+}
+
+.makeown__cue {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--accent-ink);
+  background: var(--accent);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.makeown[open] > summary .makeown__cue { display: none; }
+
+.makeown__body { padding: 0 1.15rem 1.15rem; }
+.makeown__note {
+  font-size: 0.82rem;
+  color: var(--dim);
+  margin-bottom: 0.3rem;
+}
+
+/* "— or pick a ready-made set —" separator */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0 0 1.2rem;
+  font-family: var(--font-ui);
+  font-size: 0.73rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* =====================================================
+   FORM FIELDS
+   ===================================================== */
+
+.field { display: block; margin-bottom: 1.1rem; }
+
+.field > span,
+.field > label,
+.field-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.76rem;
+  color: var(--dim);
+  margin-bottom: 0.4rem;
+}
+.field small { text-transform: none; letter-spacing: 0; opacity: 0.8; font-size: 0.82em; }
+
+/* a <details class="field"> uses its <summary> as the field label */
+.field > summary {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.76rem;
+  color: var(--dim);
+  cursor: pointer;
+  margin-bottom: 0.4rem;
+  list-style: none;
+}
+.field > summary::-webkit-details-marker { display: none; }
+.field > summary::before { content: "▸ "; color: var(--accent); }
+.field[open] > summary::before { content: "▾ "; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 0.55rem 0.75rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+input::placeholder { color: var(--faint); }
+select option { background: var(--bg-sunken); color: var(--ink); }
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+  cursor: pointer;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+.check input { width: auto; margin-top: 0.2rem; accent-color: var(--accent); }
+.check small { color: var(--dim); }
+
+/* =====================================================
+   BUTTON KIT — one system, every game
+   ===================================================== */
+
+.btn {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+  line-height: 1.15;
+  padding: 0.58rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--panel-raised);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.08s, filter 0.15s;
+}
+.btn:hover:not(:disabled)  { background: #2c3242; border-color: #434b62; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+
+.btn.good { background: var(--good); border-color: var(--good); color: var(--good-ink); }
+.btn.bad  { background: var(--bad);  border-color: var(--bad);  color: #fff; }
+.btn.good:hover:not(:disabled),
+.btn.bad:hover:not(:disabled) { filter: brightness(1.08); }
+
+.btn.ghost { background: transparent; color: var(--dim); border-color: var(--line); }
+.btn.ghost:hover:not(:disabled) { color: var(--ink); background: var(--panel-raised); }
+
+.btn.big   { font-size: 1.05rem; padding: 0.72rem 1.6rem; }
+.btn.block { display: block; width: 100%; }
+
+.btn.pulse { animation: btnpulse 1.2s ease-in-out infinite; }
+@keyframes btnpulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-line); }
+  50%      { box-shadow: 0 0 0 7px transparent; }
+}
+
+.btn-row { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+
+/* =====================================================
+   IN-GAME STATUS STRIP — round / remaining / scores
+   ===================================================== */
+
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.statusbar__title {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.statusbar__spacer { margin-left: auto; }
+
+.pill {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.22rem 0.85rem;
+}
+.pill strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* numeric helper for any score readout */
+.num { font-family: var(--font-ui); font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* =====================================================
+   HELP DISCLOSURE — two-screen setup details
+   ===================================================== */
+
+.help {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+.help > summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--dim);
+  list-style: none;
+}
+.help > summary::-webkit-details-marker { display: none; }
+.help > summary::before { content: "▸ "; color: var(--accent); }
+.help[open] > summary::before { content: "▾ "; }
+.help ol { margin: 0.8rem 0 0 1.3rem; font-size: 0.88rem; line-height: 1.7; color: var(--dim); }
+.help p  { margin-top: 0.6rem; font-size: 0.85rem; color: var(--dim); line-height: 1.6; }
+.help code {
+  background: var(--bg-sunken);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+/* =====================================================
+   SCROLLBAR
+   ===================================================== */
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--faint); }

@@ -6,14 +6,20 @@
   <title>Jeopardy — Host Console</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Bitter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/host-kit.css">
   <link rel="stylesheet" href="css/host.css">
 </head>
-<body>
+<body data-game="jeopardy">
 
-  <header class="topbar">
-    <span class="topbar-title">JEOPARDY <em>host console</em></span>
-    <span class="topbar-hint">students see <strong>index.html</strong> — keep this screen to yourself</span>
+  <header class="console">
+    <span class="console__id">
+      <span class="console__badge">Host</span>
+      <span class="console__game">Jeopardy</span>
+    </span>
+    <span class="console__meta">
+      <span class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
+    </span>
   </header>
 
   <!-- ===== Setup ===== -->
@@ -31,15 +37,39 @@
 
     <h2>New Game</h2>
 
+    <div class="guide">
+      <ol class="guide__steps">
+        <li><span>1</span> This is the <b>Host</b> screen — yours. Open the <b>Board</b> on the projector for students.</li>
+        <li><span>2</span> Pick a game set and your teams, then <b>Start Game</b>.</li>
+        <li><span>3</span> Click a clue here to put it on the Board — the two screens stay in sync.</li>
+      </ol>
+      <ul class="legend">
+        <li class="is-accent">Tap to play a clue</li>
+        <li class="is-good">Correct — award</li>
+        <li class="is-bad">Wrong</li>
+      </ul>
+    </div>
+
+    <details class="makeown">
+      <summary>
+        <span class="makeown__icon">✨</span>
+        <span class="makeown__text">
+          <span class="makeown__title">Make your own quiz</span>
+          <span class="makeown__sub">Turn any topic into a game — paste your notes or use the AI prompt. No files to edit.</span>
+        </span>
+        <span class="makeown__cue">Create a quiz →</span>
+      </summary>
+      <div class="makeown__body">
+        <div id="custom-questions"></div>
+      </div>
+    </details>
+
+    <div class="or-divider">or pick a ready-made set</div>
+
     <label class="field">
       <span>Game set <small>(edit data/games.js to add your own)</small></span>
       <select id="game-select"></select>
     </label>
-
-    <details class="field">
-      <summary>Load your own questions <small>(AI-friendly — no files to edit)</small></summary>
-      <div id="custom-questions"></div>
-    </details>
 
     <label class="field">
       <span>Teams</span>
@@ -51,7 +81,7 @@
       <div id="team-names" class="team-names"></div>
     </div>
 
-    <label class="checkbox-field">
+    <label class="check">
       <input type="checkbox" id="autoplay-music">
       <span>Auto-play think music when a clue opens <small>(a countdown shows on the projector while it plays)</small></span>
     </label>

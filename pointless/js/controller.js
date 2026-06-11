@@ -67,7 +67,7 @@
         const dot = $('statusDot');
         const text = $('statusText');
         dot.className = `status-dot ${connected ? 'connected' : 'disconnected'}`;
-        text.textContent = `Display: ${connected ? 'Connected' : 'Disconnected'}`;
+        text.textContent = `Board: ${connected ? 'connected' : 'disconnected'}`;
     }
 
     channel.on('READY', () => {
@@ -109,16 +109,46 @@
     }, 10000);
 
     // ── Load your own questions ─────────────────────────────
-    const CUSTOM_PROMPT = `Create a "Pointless" style question set as JSON for a classroom game.
-In Pointless, LOWER scores are better: a score is how many of 100 surveyed
-people gave that answer, so obscure-but-correct answers score low (0 = "pointless").
+    const CUSTOM_PROMPT = `You are creating a "Pointless"-style game for my class. Output a single valid
+JSON object that I will load into a game tool. Follow the format exactly.
 
-Topic: [TOPIC]
-Year/grade level: [YEAR LEVEL]
-Make 3 rounds with 1-2 questions each, plus 1 final question.
-Give each question about 10-12 valid answers, from common (high score) to obscure (score 0).
+MY CONTENT
+- Subject / year level: <e.g. Year 9 Science>
+- Topic of this game: <e.g. The Water Cycle>
+- Number of rounds: 3 (with 1-2 questions each, plus one final question)
+- Answers per question: 10 to 12
+- Source material (paste your notes, a textbook section, or key terms — or leave
+  blank to use general knowledge of the topic):
+  <paste here or leave blank>
 
-Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
+HOW POINTLESS WORKS — LOWER scores are better:
+- A score is how many of 100 surveyed people gave that answer.
+- Common, obvious answers score HIGH (bad). Obscure-but-correct answers score
+  LOW (good). A score of 0 is "pointless" — correct but almost no one named it.
+- Every answer you list must be genuinely CORRECT; the game rewards finding the
+  obscure correct ones.
+- Example:  question = "Name a planet in our solar system"
+            "Earth" might score 80, "Neptune" might score 5, and a correct but
+            rarely-named one could score 0.
+
+RULES
+- Produce the number of rounds I asked for, with 1-2 questions each, plus one
+  final question.
+- Give each question the number of answers I asked for, from common (high score)
+  to obscure (score 0).
+- Every score is a whole number from 0 to 100 (lower = more obscure/better).
+- Include at least one answer scoring 0 per question where possible.
+- Write all answer keys (and any aliases) in lowercase.
+- "aliases" is OPTIONAL — alternative spellings or abbreviations that should also
+  be accepted as the same answer.
+- Answers should be drawn from the topic or source material.
+
+OUTPUT FORMAT — this must be valid JSON:
+- Use double quotes around every key and every text value.
+- No trailing commas. No comments. No markdown code fences.
+- Output ONLY the JSON object — nothing before or after it.
+
+Copy this structure exactly:
 {
   "title": "Short game title",
   "rounds": [
@@ -130,6 +160,7 @@ Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
           "question": "Name a ...",
           "answers": {
             "common answer": 90,
+            "less common answer": 45,
             "rarer answer": { "score": 12, "aliases": ["alt spelling"] },
             "obscure correct answer": 0
           }
@@ -144,11 +175,9 @@ Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
   }
 }
 
-Rules:
-- Each score is a whole number from 0 to 100 (lower = more obscure/better).
-- Include at least one answer scoring 0 per question where possible.
-- "aliases" is optional: alternative spellings/abbreviations that should also match.
-- Write answer keys and aliases in lowercase.`;
+If the tool says the file is invalid, paste the error back to me and I will fix it.
+
+Now generate the game.`;
 
     function validateQuestion(q, where) {
         const { err } = CustomQuestions;

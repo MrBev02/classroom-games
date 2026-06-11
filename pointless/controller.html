@@ -3,32 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POINTLESS — Controller</title>
+    <title>Pointless — Host</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/host-kit.css">
     <link rel="stylesheet" href="css/controller.css">
 </head>
-<body>
+<body data-game="pointless">
     <div id="app">
-        <header>
-            <h1>POINTLESS &mdash; Controller</h1>
-            <div class="connection-status" id="connectionStatus">
-                <span class="status-dot disconnected" id="statusDot"></span>
-                <span id="statusText">Display: Disconnected</span>
-            </div>
+        <header class="console">
+            <span class="console__id">
+                <span class="console__badge">Host</span>
+                <span class="console__game">Pointless</span>
+            </span>
+            <span class="console__meta">
+                <span class="console__hint">Students watch the <strong>Board</strong></span>
+                <span class="connection-status" id="connectionStatus">
+                    <span class="status-dot disconnected" id="statusDot"></span>
+                    <span id="statusText">Board: disconnected</span>
+                </span>
+            </span>
         </header>
 
         <div class="panels">
             <!-- ── Setup ───────────────────────────────────── -->
             <section id="setupPanel" class="panel">
                 <h2>Game Setup</h2>
-                <div id="customQuestions"></div>
+
+                <div class="guide">
+                    <ol class="guide__steps">
+                        <li><span>1</span> This is the <b>Host</b> screen — yours. Open the <b>Board</b> on the projector for students.</li>
+                        <li><span>2</span> Name your teams and load questions, then <b>Start Game</b>.</li>
+                        <li><span>3</span> Type each team's answer here — the <b>lower</b> the score, the better.</li>
+                    </ol>
+                    <ul class="legend">
+                        <li class="is-good">Low / pointless answer</li>
+                        <li class="is-bad">Wrong — full 100</li>
+                    </ul>
+                </div>
+
+                <details class="makeown" open>
+                    <summary>
+                        <span class="makeown__icon">✨</span>
+                        <span class="makeown__text">
+                            <span class="makeown__title">Make your own quiz</span>
+                            <span class="makeown__sub">Turn any topic into a game — paste your notes or use the AI prompt. No files to edit.</span>
+                        </span>
+                        <span class="makeown__cue">Create a quiz →</span>
+                    </summary>
+                    <div class="makeown__body">
+                        <p class="makeown__note">Pointless needs a question set to play — generate one below, or load a sample from the <code>data</code> folder. <strong>Start Game</strong> unlocks once a quiz is loaded.</p>
+                        <div id="customQuestions"></div>
+                    </div>
+                </details>
+
                 <div class="team-names">
-                    <h3>Team Names</h3>
+                    <h3>Team names</h3>
                     <input type="text" id="setupTeam0" value="Team 1" placeholder="Team 1">
                     <input type="text" id="setupTeam1" value="Team 2" placeholder="Team 2">
                     <input type="text" id="setupTeam2" value="Team 3" placeholder="Team 3">
                     <input type="text" id="setupTeam3" value="Team 4" placeholder="Team 4">
                 </div>
-                <button id="startGameBtn" disabled>Start Game</button>
+
+                <button id="startGameBtn" disabled>Start Game ▶</button>
+
+                <details class="help">
+                    <summary>Two-screen setup</summary>
+                    <ol>
+                        <li>You're on the <strong>Host</strong> page — keep it on your laptop.</li>
+                        <li>Open <strong>display.html</strong> on the <strong>projector</strong> — that's the students' Board.</li>
+                        <li>Start the game here — the dot above turns green when the Board is linked.</li>
+                    </ol>
+                    <p>Keep both windows in the <strong>same browser on the same computer</strong>. Running your own copy offline? Serve the folder first (e.g. <code>python -m http.server 8080</code>) and use the <code>http://localhost:8080/…</code> addresses — opening the files directly won't sync.</p>
+                </details>
             </section>
 
             <!-- ── Game Controls ───────────────────────────── -->

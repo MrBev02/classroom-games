@@ -1,275 +1,170 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* =====================================================
+   Family Feud — Host screen
+   Chrome (top bar, cards, buttons, fields, onboarding) comes
+   from ../shared/host-kit.css. This file maps Feud's older token
+   names onto the shared kit and styles only the surfaces unique
+   to Feud: the team scoreboard, the answer-key table, the strike
+   status and the game-over cards.
+   ===================================================== */
 
 :root {
-  --bg: #1a1a2e;
-  --surface: #16213e;
-  --border: #2a3a5c;
-  --gold: #ffd700;
-  --white: #f0f0f0;
-  --muted: #8899bb;
-  --team1: #1565c0;
-  --team2: #c62828;
-  --red: #e53935;
-  --green: #43a047;
-  --purple: #6a1b9a;
+  --surface: var(--panel);
+  --border:  var(--line);
+  --gold:    var(--accent);
+  --white:   var(--ink);
+  --muted:   var(--dim);
+  --team1:   #2f6fd0;
+  --team2:   #d65151;
+  --red:     var(--bad);
+  --green:   var(--good);
+  --purple:  #8b5cf6;
 }
 
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: var(--bg);
-  color: var(--white);
-  min-height: 100vh;
-  padding: 1rem;
-}
-
-/* ===== SETUP ===== */
-
-#host-setup {
-  max-width: 420px;
-  margin: 4rem auto;
-  text-align: center;
-}
-
-#host-setup h1 {
-  font-size: 2.5rem;
-  color: var(--gold);
-  letter-spacing: 0.08em;
-}
-
-#host-setup .subtitle {
-  color: var(--muted);
-  margin-bottom: 0.5rem;
-}
-
-#host-setup .hint {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-bottom: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  border: 1px dashed var(--border);
-}
-
-.setup-form {
-  text-align: left;
-}
-
-.setup-form label {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin-bottom: 0.3rem;
-  margin-top: 1rem;
-}
-
-.setup-form input,
-.setup-form select {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--white);
-  font-size: 1rem;
-}
-
-.setup-form input:focus,
-.setup-form select:focus {
-  outline: none;
-  border-color: var(--gold);
-}
-
-.setup-form select option {
-  background: var(--bg);
-}
-
-#start-btn {
-  display: block;
-  width: 100%;
-  margin-top: 1.5rem;
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: var(--bg);
-  background: var(--gold);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-#start-btn:hover {
-  background: #ffe44d;
-}
-
-/* ===== HOST GAME VIEW ===== */
+/* ===== GAME VIEW ===== */
 
 #host-game {
-  max-width: 700px;
-  margin: 0 auto;
+  max-width: 760px;
+  margin: 1.4rem auto;
+  padding: 0 1rem;
 }
 
-/* Header */
+/* Header scoreboard */
 
 .host-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
 }
 
 .host-team {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  gap: 0.7rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-sm);
   font-weight: bold;
 }
 
-.host-team.team1 {
-  background: var(--team1);
-}
-
-.host-team.team2 {
-  background: var(--team2);
-}
+.host-team.team1 { background: var(--team1); }
+.host-team.team2 { background: var(--team2); }
 
 .host-team-name {
+  font-family: var(--font-ui);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
-.host-team-score {
-  font-size: 1.5rem;
-}
+.host-team-score { font-family: var(--font-ui); font-size: 1.5rem; }
 
-.host-title {
-  text-align: center;
-}
+.host-title { text-align: center; }
 
 .host-round-info {
-  color: var(--muted);
-  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+  font-size: 0.85rem;
 }
 
 /* Question */
 
 .host-question {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.8rem 1.2rem;
-  margin-bottom: 0.8rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 0.9rem;
   text-align: center;
 }
 
 .host-question h2 {
+  font-family: var(--font-body);
   font-size: 1.2rem;
-  color: var(--gold);
+  font-weight: 600;
+  color: var(--accent);
 }
 
-/* Answer Key Table */
+/* Answer-key table (wrapper carries .panel from the kit) */
 
-.answer-key {
-  margin-bottom: 0.8rem;
-}
+.answer-key { margin-bottom: 0.9rem; padding: 0.6rem 0.8rem; }
 
-#answer-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+#answer-table { width: 100%; border-collapse: collapse; }
 
 #answer-table th {
   text-align: left;
   padding: 0.5rem 0.8rem;
-  font-size: 0.75rem;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
+  color: var(--dim);
+  border-bottom: 1px solid var(--line);
 }
 
-#answer-table th:last-child {
-  text-align: center;
-}
+#answer-table th:last-child { text-align: center; }
 
 #answer-table td {
   padding: 0.5rem 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 0.95rem;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 0.98rem;
 }
 
 #answer-table tr.revealed-row td {
-  color: var(--muted);
+  color: var(--dim);
   text-decoration: line-through;
   opacity: 0.6;
 }
 
-#answer-table .answer-num {
-  color: var(--muted);
-  font-weight: bold;
-  width: 30px;
-}
-
-#answer-table .answer-pts {
-  color: var(--gold);
-  font-weight: bold;
-  width: 60px;
-}
-
-#answer-table .answer-action {
-  text-align: center;
-  width: 90px;
-}
+#answer-table .answer-num { color: var(--faint); font-family: var(--font-ui); font-weight: bold; width: 30px; }
+#answer-table .answer-pts { color: var(--accent); font-family: var(--font-ui); font-weight: bold; font-variant-numeric: tabular-nums; width: 60px; }
+#answer-table .answer-action { text-align: center; width: 92px; }
 
 .btn-reveal {
-  padding: 0.3rem 0.8rem;
-  border: none;
-  border-radius: 4px;
+  font-family: var(--font-ui);
+  padding: 0.32rem 0.85rem;
+  border: 1px solid var(--accent-line);
+  border-radius: 5px;
   font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  background: var(--team1);
-  color: white;
-  transition: background 0.15s;
+  background: var(--accent-soft);
+  color: var(--accent);
+  transition: background 0.15s, filter 0.15s;
 }
 
-.btn-reveal:hover {
-  background: #1976d2;
-}
+.btn-reveal:hover:not(:disabled) { filter: brightness(1.25); }
 
 .btn-reveal:disabled {
-  background: #333;
-  color: #666;
+  background: transparent;
+  border-color: var(--line);
+  color: var(--faint);
   cursor: default;
 }
 
-/* Status bar */
+/* Strike / round-points status */
 
 .host-status {
   display: flex;
   gap: 2rem;
   justify-content: center;
   padding: 0.6rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  margin-bottom: 0.8rem;
-  font-size: 0.9rem;
-  color: var(--muted);
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.9rem;
+  font-family: var(--font-ui);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  color: var(--dim);
 }
 
-.host-status strong {
-  color: var(--gold);
-}
+.host-status strong { color: var(--accent); font-size: 1.05rem; margin-left: 0.3rem; }
 
 /* Controls */
 
@@ -280,111 +175,57 @@ body {
   justify-content: center;
 }
 
-.control-group {
-  display: flex;
-  gap: 0.4rem;
-}
+.control-group { display: flex; gap: 0.4rem; }
 
-.btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-  color: white;
-}
+/* button colour modifiers (base + hover come from the kit's .btn) */
 
-.btn:hover {
-  transform: scale(1.03);
-}
+.btn-strike      { background: var(--bad);    border-color: var(--bad);    color: #fff; }
+.btn-team1       { background: var(--team1);  border-color: var(--team1);  color: #fff; }
+.btn-team2       { background: var(--team2);  border-color: var(--team2);  color: #fff; }
+.btn-reveal-all  { background: var(--purple); border-color: var(--purple); color: #fff; }
 
-.btn:active {
-  transform: scale(0.97);
-}
-
-.btn-strike {
-  background: var(--red);
-}
-
-.btn-clear {
-  background: #555;
-}
-
-.btn-team1 {
-  background: var(--team1);
-}
-
-.btn-team2 {
-  background: var(--team2);
-}
-
-.btn-reveal-all {
-  background: var(--purple);
-}
-
-.btn-nav {
-  background: #37474f;
-}
-
-.btn-new-game {
-  background: var(--gold);
-  color: var(--bg);
-}
+.btn-strike:hover,
+.btn-team1:hover,
+.btn-team2:hover,
+.btn-reveal-all:hover { filter: brightness(1.12); }
 
 /* ===== GAME OVER ===== */
 
-#host-gameover {
-  max-width: 500px;
-  margin: 4rem auto;
-  text-align: center;
-}
-
-#host-gameover h1 {
-  font-size: 2.5rem;
-  color: var(--gold);
-  margin-bottom: 0.5rem;
-}
-
 .winner-text {
+  font-family: var(--font-ui);
   font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  letter-spacing: 0.03em;
+  margin: 0.4rem 0 1.5rem;
 }
 
 .final-scores {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
 }
 
 .final-card {
   padding: 1rem 2rem;
-  border-radius: 10px;
+  border-radius: var(--radius);
   text-align: center;
 }
 
-.final-card.team1 {
-  background: var(--team1);
-}
-
-.final-card.team2 {
-  background: var(--team2);
-}
+.final-card.team1 { background: var(--team1); }
+.final-card.team2 { background: var(--team2); }
 
 .final-name {
+  font-family: var(--font-ui);
   font-size: 0.85rem;
   text-transform: uppercase;
-  opacity: 0.9;
+  letter-spacing: 0.05em;
+  opacity: 0.92;
 }
 
-.final-score {
-  font-size: 2.5rem;
-  font-weight: bold;
-}
+.final-score { font-family: var(--font-ui); font-size: 2.5rem; font-weight: bold; }
 
 .final-card.winner {
-  border: 2px solid var(--gold);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 22px var(--accent-soft);
 }

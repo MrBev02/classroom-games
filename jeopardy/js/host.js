@@ -127,30 +127,62 @@ function populateSetup() {
 // Load your own questions (custom game set)
 // ---------------------
 
-const CUSTOM_PROMPT = `Create a Jeopardy question set as JSON for a classroom game.
+const CUSTOM_PROMPT = `You are creating a Jeopardy-style recall game for my class. Output a single
+valid JSON object that I will load into a game tool. Follow the format exactly.
 
-Topic: [TOPIC]
-Year/grade level: [YEAR LEVEL]
-Board: 5 categories with 5 clues each, easiest clue first, hardest last.
+MY CONTENT
+- Subject / year level: <e.g. Year 9 Science>
+- Topic of this game: <e.g. The Water Cycle>
+- Number of categories (these become the columns): 5
+- Clues per category (these become the rows): 5
+- Source material (paste your notes, a textbook section, or key terms — or leave
+  blank to use general knowledge of the topic):
+  <paste here or leave blank>
 
-Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
+HOW JEOPARDY WORKS — do not get this backwards:
+- The "clue" is a STATEMENT I read aloud. It is NOT a question.
+- The "answer" is the student's response, phrased AS A QUESTION: "What is...",
+  "What are...", "Who is...".
+- Example:  clue = "The closest planet to the sun"  ->  answer = "What is Mercury?"
+
+RULES
+- Produce exactly the number of categories and clues I asked for, and give every
+  category the same number of clues (the board must be a rectangle).
+- Within each category, order clues easiest first, hardest last — row 1 is the
+  simplest recall, the final row the most challenging.
+- Each clue is one sentence, answerable from the topic or source material.
+- Give every category a short, clear name.
+- Do NOT include dollar values; they are added automatically by row.
+
+OUTPUT FORMAT — this must be valid JSON:
+- Use double quotes around every key and every text value.
+- No trailing commas. No comments. No markdown code fences.
+- Output ONLY the JSON object — nothing before or after it.
+
+Copy this structure exactly:
 {
   "title": "Short game title",
   "categories": [
     {
       "name": "Category name",
       "clues": [
-        { "clue": "A statement students must respond to", "answer": "What is ...?" }
+        { "clue": "A statement to read aloud", "answer": "What is the response?" },
+        { "clue": "Next statement, slightly harder", "answer": "What is ...?" }
+      ]
+    },
+    {
+      "name": "Second category",
+      "clues": [
+        { "clue": "...", "answer": "What is ...?" },
+        { "clue": "...", "answer": "What is ...?" }
       ]
     }
   ]
 }
 
-Rules:
-- "clue" is the prompt shown to students; "answer" is the correct response.
-- Answers may be in Jeopardy style ("What is ...?") or plain — either is fine.
-- Do NOT include dollar values; they are added automatically by row.
-- Keep clues factual and suitable for the year level.`;
+If the tool says the file is invalid, paste the error back to me and I will fix it.
+
+Now generate the game.`;
 
 function validateCustomGame(d) {
   const { ok, err } = CustomQuestions;

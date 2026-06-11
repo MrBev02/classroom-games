@@ -251,27 +251,61 @@ $("#btn-gameover-new").addEventListener("click", sendNewGame);
 // Load your own questions
 // ---------------------
 
-const CUSTOM_PROMPT = `Create a Family Feud style question set as JSON for a classroom game.
+const CUSTOM_PROMPT = `You are creating a Family Feud-style survey game for my class. Output valid JSON
+that I will load into a game tool. Follow the format exactly.
 
-Topic: [TOPIC]
-Year/grade level: [YEAR LEVEL]
-Make about 10 questions, each with 5-7 ranked answers.
+MY CONTENT
+- Subject / year level: <e.g. Year 9 Science>
+- Topic of this game: <e.g. The Water Cycle>
+- Number of questions: 10
+- Answers per question: 5 to 7
+- Source material (paste your notes, a textbook section, or key terms — or leave
+  blank to use general knowledge of the topic):
+  <paste here or leave blank>
 
-Output ONLY valid JSON (no markdown, no commentary) in EXACTLY this shape:
+HOW FAMILY FEUD WORKS:
+- Each question is a "Name something..." style prompt with several acceptable
+  answers, as if 100 people were surveyed.
+- Every answer carries points: the most popular/obvious answer scores highest,
+  rarer answers score lower. Higher points = more popular.
+- Example:  question = "Name a part of the water cycle"
+            answers  = "Evaporation" (30), "Condensation" (25), "Rain" (20)...
+
+RULES
+- Produce exactly the number of questions I asked for.
+- Give each question the number of answers I asked for, ordered highest points
+  first, lowest last.
+- Points are whole numbers; each question's answers should total roughly 100.
+- Keep each answer short (a word or a few) and classroom-appropriate.
+- Answers should be drawn from the topic or source material.
+
+OUTPUT FORMAT — this must be valid JSON:
+- Use double quotes around every key and every text value.
+- No trailing commas. No comments. No markdown code fences.
+- Output ONLY the JSON — nothing before or after it.
+
+Copy this structure exactly:
 [
   {
     "question": "Name something ...",
     "answers": [
       { "text": "Most popular answer", "points": 30 },
-      { "text": "Next answer", "points": 22 }
+      { "text": "Next most popular", "points": 22 },
+      { "text": "Less common answer", "points": 15 }
+    ]
+  },
+  {
+    "question": "Name a ...",
+    "answers": [
+      { "text": "...", "points": 28 },
+      { "text": "...", "points": 20 }
     ]
   }
 ]
 
-Rules:
-- List answers from highest points (most popular) to lowest.
-- Points are whole numbers; a question's answers should total roughly 100.
-- Keep answers short (a word or two) and classroom-appropriate.`;
+If the tool says the file is invalid, paste the error back to me and I will fix it.
+
+Now generate the game.`;
 
 function validateFeudQuestions(d) {
   const { ok, err } = CustomQuestions;
@@ -311,7 +345,7 @@ function validateFeudQuestions(d) {
 CustomQuestions.mount({
   mount: $("#custom-questions"),
   promptText: CUSTOM_PROMPT,
-  readyHint: "These questions are loaded — click START GAME.",
+  readyHint: "These questions are loaded — click Start Game.",
   validate: validateFeudQuestions,
   onLoad: (arr) => {
     questionPool = arr;

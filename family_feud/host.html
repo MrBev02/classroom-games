@@ -3,39 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Family Feud — Host Controls</title>
+  <title>Family Feud — Host</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/host-kit.css">
   <link rel="stylesheet" href="host.css">
 </head>
-<body>
+<body data-game="feud">
+
+  <header class="console">
+    <span class="console__id">
+      <span class="console__badge">Host</span>
+      <span class="console__game">Family Feud</span>
+    </span>
+    <span class="console__meta">
+      <span class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
+    </span>
+  </header>
 
   <!-- ===== SETUP ===== -->
-  <div id="host-setup">
-    <h1>FAMILY FEUD</h1>
-    <p class="subtitle">Host Control Panel</p>
-    <p class="hint">Open <strong>index.html</strong> on the projector as the student display.</p>
+  <div id="host-setup" class="setup-col">
+    <section class="panel">
+      <h2>New Game</h2>
 
-    <div class="setup-form">
-      <label for="team1-input">Team 1 Name</label>
-      <input type="text" id="team1-input" value="Team 1" maxlength="20">
+      <div class="guide">
+        <ol class="guide__steps">
+          <li><span>1</span> This is the <b>Host</b> screen — yours. Open the <b>Board</b> on the projector for students.</li>
+          <li><span>2</span> Name your two teams and pick the number of rounds, then <b>Start Game</b>.</li>
+          <li><span>3</span> Reveal answers and call strikes here — the Board updates as you go.</li>
+        </ol>
+        <ul class="legend">
+          <li class="is-accent">Reveal on the Board</li>
+          <li class="is-good">Award the round</li>
+          <li class="is-bad">Strike</li>
+        </ul>
+      </div>
 
-      <label for="team2-input">Team 2 Name</label>
-      <input type="text" id="team2-input" value="Team 2" maxlength="20">
+      <details class="makeown">
+        <summary>
+          <span class="makeown__icon">✨</span>
+          <span class="makeown__text">
+            <span class="makeown__title">Make your own quiz</span>
+            <span class="makeown__sub">Turn any topic into a survey-style game — paste your notes or use the AI prompt. No files to edit.</span>
+          </span>
+          <span class="makeown__cue">Create a quiz →</span>
+        </summary>
+        <div class="makeown__body">
+          <div id="custom-questions"></div>
+        </div>
+      </details>
 
-      <label for="rounds-select">Number of Rounds</label>
-      <select id="rounds-select">
-        <option value="5">5 rounds</option>
-        <option value="10" selected>10 rounds</option>
-        <option value="15">15 rounds</option>
-        <option value="20">20 rounds</option>
-      </select>
+      <div class="or-divider">or use the built-in questions</div>
 
-      <button id="start-btn">START GAME</button>
-    </div>
+      <label class="field">
+        <span>Team 1 name</span>
+        <input type="text" id="team1-input" value="Team 1" maxlength="20">
+      </label>
 
-    <details class="custom-questions-block">
-      <summary>Load your own questions (AI-friendly — no files to edit)</summary>
-      <div id="custom-questions"></div>
-    </details>
+      <label class="field">
+        <span>Team 2 name</span>
+        <input type="text" id="team2-input" value="Team 2" maxlength="20">
+      </label>
+
+      <label class="field">
+        <span>Number of rounds</span>
+        <select id="rounds-select">
+          <option value="5">5 rounds</option>
+          <option value="10" selected>10 rounds</option>
+          <option value="15">15 rounds</option>
+          <option value="20">20 rounds</option>
+        </select>
+      </label>
+
+      <button id="start-btn" class="btn primary big block">Start Game ▶</button>
+
+      <details class="help">
+        <summary>Two-screen setup</summary>
+        <ol>
+          <li>You're on the <strong>Host</strong> page — keep it on your laptop.</li>
+          <li>Open <strong>index.html</strong> on the <strong>projector</strong> — that's the students' Board.</li>
+          <li>Start the game here — both screens stay in sync automatically.</li>
+        </ol>
+        <p>Keep both windows in the <strong>same browser on the same computer</strong>. Running your own copy offline? Serve the folder first (e.g. <code>python -m http.server 8080</code>) and use the <code>http://localhost:8080/…</code> addresses — opening the files directly won't sync.</p>
+      </details>
+    </section>
   </div>
 
   <!-- ===== HOST GAME VIEW ===== -->
@@ -45,14 +97,14 @@
     <div class="host-header">
       <div class="host-team team1">
         <span class="host-team-name">Team 1</span>
-        <span class="host-team-score">0</span>
+        <span class="host-team-score num">0</span>
       </div>
       <div class="host-title">
         <span class="host-round-info">Round 1 of 10</span>
       </div>
       <div class="host-team team2">
         <span class="host-team-name">Team 2</span>
-        <span class="host-team-score">0</span>
+        <span class="host-team-score num">0</span>
       </div>
     </div>
 
@@ -62,7 +114,7 @@
     </div>
 
     <!-- Answer Key -->
-    <div class="answer-key">
+    <div class="answer-key panel">
       <table id="answer-table">
         <thead>
           <tr>
@@ -79,51 +131,53 @@
     <!-- Round Points + Strikes -->
     <div class="host-status">
       <div class="status-item">
-        Round Points: <strong id="host-round-points">0</strong>
+        Round points <strong id="host-round-points" class="num">0</strong>
       </div>
       <div class="status-item">
-        Strikes: <strong id="host-strikes">0</strong> / 3
+        Strikes <strong id="host-strikes" class="num">0</strong> / 3
       </div>
     </div>
 
     <!-- Controls -->
     <div class="host-controls">
       <div class="control-group">
-        <button class="btn btn-strike" id="btn-strike">STRIKE X</button>
-        <button class="btn btn-clear" id="btn-clear-strikes">Clear Strikes</button>
+        <button class="btn btn-strike" id="btn-strike">Strike ✗</button>
+        <button class="btn btn-clear" id="btn-clear-strikes">Clear strikes</button>
       </div>
       <div class="control-group">
         <button class="btn btn-team1" id="btn-award-team1">Award to Team 1</button>
         <button class="btn btn-team2" id="btn-award-team2">Award to Team 2</button>
       </div>
       <div class="control-group">
-        <button class="btn btn-reveal-all" id="btn-reveal-all">Reveal All</button>
+        <button class="btn btn-reveal-all" id="btn-reveal-all">Reveal all</button>
       </div>
       <div class="control-group">
-        <button class="btn btn-nav" id="btn-prev">← Prev</button>
-        <button class="btn btn-nav" id="btn-next">Next →</button>
+        <button class="btn ghost btn-nav" id="btn-prev">← Prev</button>
+        <button class="btn ghost btn-nav" id="btn-next">Next →</button>
       </div>
       <div class="control-group">
-        <button class="btn btn-new-game" id="btn-new-game">New Game</button>
+        <button class="btn ghost btn-new-game" id="btn-new-game">New game</button>
       </div>
     </div>
   </div>
 
   <!-- ===== GAME OVER ===== -->
-  <div id="host-gameover" style="display:none">
-    <h1>GAME OVER</h1>
-    <p id="host-winner-text" class="winner-text"></p>
-    <div class="final-scores">
-      <div class="final-card team1">
-        <div class="final-name" id="final-team1-name">Team 1</div>
-        <div class="final-score" id="final-team1-score">0</div>
+  <div id="host-gameover" class="setup-col" style="display:none">
+    <section class="panel" style="text-align:center">
+      <h2 style="justify-content:center">Game Over</h2>
+      <p id="host-winner-text" class="winner-text"></p>
+      <div class="final-scores">
+        <div class="final-card team1">
+          <div class="final-name" id="final-team1-name">Team 1</div>
+          <div class="final-score num" id="final-team1-score">0</div>
+        </div>
+        <div class="final-card team2">
+          <div class="final-name" id="final-team2-name">Team 2</div>
+          <div class="final-score num" id="final-team2-score">0</div>
+        </div>
       </div>
-      <div class="final-card team2">
-        <div class="final-name" id="final-team2-name">Team 2</div>
-        <div class="final-score" id="final-team2-score">0</div>
-      </div>
-    </div>
-    <button class="btn btn-new-game" id="btn-gameover-new">PLAY AGAIN</button>
+      <button class="btn primary big" id="btn-gameover-new">Play again</button>
+    </section>
   </div>
 
   <script src="questions.js"></script>

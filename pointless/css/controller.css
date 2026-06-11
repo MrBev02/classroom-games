@@ -1,37 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
-
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* =====================================================
+   Pointless — Host screen
+   Chrome (top bar, cards, fields, onboarding) comes from
+   ../shared/host-kit.css. This file maps Pointless's older token
+   names onto the shared kit and styles only what's unique to
+   Pointless: the grid + sidebar layout, the answer flow, the
+   scoreboard and the final round.
+   ===================================================== */
 
 :root {
-    --bg: #0f1420;
-    --bg-card: #171e2e;
-    --bg-input: #1c2536;
-    --border: #2a3548;
-    --border-focus: #4f8cff;
-    --text: #e2e8f0;
-    --text-secondary: #8694a8;
-    --text-dim: #4a5568;
-    --accent: #4f8cff;
-    --accent-hover: #6b9fff;
-    --success: #4fdc7b;
-    --danger: #ff4f5e;
-    --warning: #ffaa4f;
+    --bg-card:        var(--panel);
+    --bg-input:       var(--bg-sunken);
+    --border:         var(--line);
+    --border-focus:   var(--accent);
+    --text:           var(--ink);
+    --text-secondary: var(--dim);
+    --text-dim:       var(--faint);
+    --success:        var(--good);
+    --danger:         var(--bad);
+    --warning:        var(--warn);
     --team-0: #4f8cff;
-    --team-1: #ff4f5e;
-    --team-2: #4fdc7b;
-    --team-3: #ffaa4f;
-    --radius: 8px;
-    --font: 'Exo 2', 'Segoe UI', sans-serif;
-    --font-score: 'Rajdhani', sans-serif;
-}
-
-html, body {
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 15px;
-    line-height: 1.5;
+    --team-1: #ff5d6c;
+    --team-2: #46d98a;
+    --team-3: #ffb547;
+    --font:       var(--font-body);
+    --font-score: var(--font-ui);
 }
 
 /* ── Layout ─────────────────────────────────────────────────── */
@@ -44,22 +36,7 @@ html, body {
     gap: 0;
 }
 
-#app > header {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 24px;
-    background: #0b1018;
-    border-bottom: 1px solid var(--border);
-}
-
-#app > header h1 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-}
+#app > header { grid-column: 1 / -1; }
 
 .panels {
     padding: 20px;
@@ -69,30 +46,34 @@ html, body {
     gap: 16px;
 }
 
-/* ── Connection Status ──────────────────────────────────────── */
+/* ── Connection status (lives in the console top bar) ───────── */
 
 .connection-status {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.85rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
     color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .status-dot {
     width: 10px; height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
+    background: var(--text-dim);
 }
 
 .status-dot.connected {
     background: var(--success);
-    box-shadow: 0 0 8px rgba(79, 220, 123, 0.5);
+    box-shadow: 0 0 8px rgba(70, 217, 138, 0.55);
 }
 
 .status-dot.disconnected {
     background: var(--danger);
-    box-shadow: 0 0 8px rgba(255, 79, 94, 0.3);
+    box-shadow: 0 0 8px rgba(255, 93, 108, 0.35);
     animation: blink 2s ease-in-out infinite;
 }
 
@@ -101,76 +82,53 @@ html, body {
     50% { opacity: 0.4; }
 }
 
-/* ── Panels / Cards ─────────────────────────────────────────── */
-
-.panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-}
+/* ── Panel headings (surface comes from the kit's .panel) ───── */
 
 .panel h2 {
+    font-family: var(--font-ui);
     font-size: 1.1rem;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     margin-bottom: 16px;
     color: var(--accent);
     text-transform: uppercase;
 }
 
 .panel h3 {
+    font-family: var(--font-ui);
     font-size: 0.95rem;
     font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     margin-bottom: 10px;
     color: var(--text);
 }
 
-/* ── Form Elements ──────────────────────────────────────────── */
-
-input[type="text"],
-input[type="number"],
-input[type="file"] {
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-input:focus {
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.15);
-}
-
-input::placeholder { color: var(--text-dim); }
+/* ── Buttons (id-based system, aligned to kit tokens) ───────── */
 
 button {
     padding: 10px 20px;
     border: none;
     border-radius: var(--radius);
-    font-family: var(--font);
+    font-family: var(--font-ui);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.15s ease;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    background: var(--panel-raised);
 }
 
 button.primary, #startGameBtn, #showQuestionBtn, #submitAnswerBtn, #submitFinalBtn {
     background: var(--accent);
-    color: #fff;
+    color: var(--accent-ink);
 }
 button.primary:hover, #startGameBtn:hover, #showQuestionBtn:hover,
 #submitAnswerBtn:hover, #submitFinalBtn:hover {
-    background: var(--accent-hover);
+    filter: brightness(1.08);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(79, 140, 255, 0.25);
+    box-shadow: 0 4px 12px var(--accent-soft);
 }
 
 button:disabled {
@@ -178,33 +136,34 @@ button:disabled {
     cursor: not-allowed;
     transform: none !important;
     box-shadow: none !important;
+    filter: none !important;
 }
 
 button.secondary, #nextTeamBtn, #nextQuestionBtn, #showScoreboardBtn,
 #nextRoundBtn, #startHeadToHeadBtn, #startFinalBtn {
-    background: rgba(79, 140, 255, 0.12);
+    background: var(--accent-soft);
     color: var(--accent);
-    border: 1px solid rgba(79, 140, 255, 0.25);
+    border: 1px solid var(--accent-line);
 }
 button.secondary:hover, #nextTeamBtn:hover, #nextQuestionBtn:hover,
 #showScoreboardBtn:hover, #nextRoundBtn:hover, #startHeadToHeadBtn:hover,
 #startFinalBtn:hover {
-    background: rgba(79, 140, 255, 0.2);
+    filter: brightness(1.15);
 }
 
 button.danger, #markWrongBtn, #finalMarkWrongBtn {
-    background: rgba(255, 79, 94, 0.12);
+    background: rgba(255, 93, 108, 0.12);
     color: var(--danger);
-    border: 1px solid rgba(255, 79, 94, 0.25);
+    border: 1px solid rgba(255, 93, 108, 0.3);
 }
 button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
-    background: rgba(255, 79, 94, 0.2);
+    background: rgba(255, 93, 108, 0.22);
 }
 
 #resetBtn {
-    background: rgba(255, 79, 94, 0.1);
+    background: rgba(255, 93, 108, 0.1);
     color: var(--danger);
-    border: 1px solid rgba(255, 79, 94, 0.2);
+    border: 1px solid rgba(255, 93, 108, 0.25);
     width: 100%;
 }
 
@@ -229,9 +188,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     gap: 10px;
     margin-bottom: 20px;
 }
-.team-names h3 {
-    grid-column: 1 / -1;
-}
+.team-names h3 { grid-column: 1 / -1; }
 .team-names input {
     border-left: 3px solid var(--team-color, var(--accent));
     padding-left: 12px;
@@ -241,7 +198,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 .team-names input:nth-child(4) { --team-color: var(--team-2); }
 .team-names input:nth-child(5) { --team-color: var(--team-3); }
 
-#startGameBtn { width: 100%; padding: 12px; font-size: 1rem; }
+#startGameBtn { width: 100%; padding: 12px; font-size: 1rem; margin-top: 4px; }
 
 /* ── Game Panel ─────────────────────────────────────────────── */
 
@@ -264,12 +221,13 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     padding: 12px;
     background: var(--bg-input);
     border-radius: var(--radius);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     display: none;
 }
 
 .current-question .cq-category {
     color: var(--accent);
+    font-family: var(--font-ui);
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -285,9 +243,9 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 }
 
 .team-turn-0 { background: rgba(79, 140, 255, 0.12); border-left: 3px solid var(--team-0); }
-.team-turn-1 { background: rgba(255, 79, 94, 0.12); border-left: 3px solid var(--team-1); }
-.team-turn-2 { background: rgba(79, 220, 123, 0.12); border-left: 3px solid var(--team-2); }
-.team-turn-3 { background: rgba(255, 170, 79, 0.12); border-left: 3px solid var(--team-3); }
+.team-turn-1 { background: rgba(255, 93, 108, 0.12); border-left: 3px solid var(--team-1); }
+.team-turn-2 { background: rgba(70, 217, 138, 0.12); border-left: 3px solid var(--team-2); }
+.team-turn-3 { background: rgba(255, 181, 71, 0.12); border-left: 3px solid var(--team-3); }
 
 .answer-input-group {
     display: flex;
@@ -307,22 +265,22 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 
 .answer-result.matched {
     display: block;
-    background: rgba(79, 220, 123, 0.1);
-    border: 1px solid rgba(79, 220, 123, 0.25);
+    background: rgba(70, 217, 138, 0.1);
+    border: 1px solid rgba(70, 217, 138, 0.25);
     color: var(--success);
 }
 
 .answer-result.no-match {
     display: block;
-    background: rgba(255, 170, 79, 0.1);
-    border: 1px solid rgba(255, 170, 79, 0.25);
+    background: rgba(255, 181, 71, 0.1);
+    border: 1px solid rgba(255, 181, 71, 0.25);
     color: var(--warning);
 }
 
 .answer-result.claimed {
     display: block;
-    background: rgba(255, 79, 94, 0.1);
-    border: 1px solid rgba(255, 79, 94, 0.25);
+    background: rgba(255, 93, 108, 0.1);
+    border: 1px solid rgba(255, 93, 108, 0.25);
     color: var(--danger);
 }
 
@@ -330,6 +288,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     font-family: var(--font-score);
     font-weight: 700;
     font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .wrong-controls {
@@ -345,9 +304,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     align-items: center;
 }
 
-.override-input input {
-    width: 80px;
-}
+.override-input input { width: 80px; }
 
 /* ── Progression Controls ───────────────────────────────────── */
 
@@ -371,8 +328,11 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     padding: 10px 14px;
     background: var(--bg-input);
     cursor: pointer;
+    font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--text-secondary);
     user-select: none;
 }
@@ -393,23 +353,20 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     transition: background 0.15s;
 }
 
-.answer-list-item:nth-child(odd) {
-    background: rgba(255, 255, 255, 0.02);
-}
+.answer-list-item:nth-child(odd) { background: rgba(255, 255, 255, 0.02); }
 
 .answer-list-item.claimed {
     opacity: 0.4;
     text-decoration: line-through;
 }
 
-.answer-list-item .ali-answer {
-    font-weight: 500;
-}
+.answer-list-item .ali-answer { font-weight: 500; }
 
 .answer-list-item .ali-score {
     font-family: var(--font-score);
     font-weight: 700;
     font-size: 1rem;
+    font-variant-numeric: tabular-nums;
     min-width: 36px;
     text-align: right;
 }
@@ -419,7 +376,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 #sidebar {
     grid-row: 2;
     grid-column: 2;
-    background: #0e1525;
+    background: var(--bg-sunken);
     border-left: 1px solid var(--border);
     padding: 20px;
     overflow-y: auto;
@@ -429,6 +386,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 }
 
 #sidebar h3 {
+    font-family: var(--font-ui);
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--accent);
@@ -451,21 +409,16 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     margin-bottom: 6px;
 }
 
-.override-team-name {
-    font-weight: 600;
-    font-size: 0.85rem;
-}
+.override-team-name { font-weight: 600; font-size: 0.85rem; }
 
 .override-team-score {
     font-family: var(--font-score);
     font-weight: 700;
     font-size: 1.2rem;
+    font-variant-numeric: tabular-nums;
 }
 
-.override-team-controls {
-    display: flex;
-    gap: 4px;
-}
+.override-team-controls { display: flex; gap: 4px; }
 
 .override-team-controls button {
     padding: 4px 10px;
@@ -476,7 +429,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 }
 
 .override-team-controls button:hover {
-    background: rgba(79, 140, 255, 0.15);
+    background: var(--accent-soft);
     color: var(--text);
 }
 
@@ -520,27 +473,24 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     font-family: var(--font-score);
     font-weight: 700;
     font-size: 1.2rem;
+    font-variant-numeric: tabular-nums;
     width: 30px;
     color: var(--text-dim);
 }
 
-.sb-name {
-    flex: 1;
-    font-weight: 500;
-}
+.sb-name { flex: 1; font-weight: 500; }
 
 .sb-score {
     font-family: var(--font-score);
     font-weight: 700;
     font-size: 1.2rem;
+    font-variant-numeric: tabular-nums;
     color: var(--row-color, var(--accent));
 }
 
 /* ── Final Panel ────────────────────────────────────────────── */
 
-#finalPanel h2 {
-    color: var(--warning);
-}
+#finalPanel h2 { color: var(--warning); }
 
 #finalInfo {
     font-size: 0.9rem;
@@ -551,20 +501,8 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     border-radius: var(--radius);
 }
 
-.final-answer-input {
-    margin-bottom: 12px;
-}
-
-.final-answer-input .answer-input-group {
-    margin-top: 8px;
-}
-
-/* ── Scrollbar ──────────────────────────────────────────────── */
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+.final-answer-input { margin-bottom: 12px; }
+.final-answer-input .answer-input-group { margin-top: 8px; }
 
 /* ── Confirm Dialog ─────────────────────────────────────────── */
 
@@ -582,10 +520,8 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     padding: 24px;
     max-width: 400px;
     text-align: center;
+    box-shadow: var(--shadow);
 }
 
 .confirm-dialog p { margin-bottom: 16px; }
-
-.confirm-dialog .confirm-btns {
-    display: flex; gap: 10px; justify-content: center;
-}
+.confirm-dialog .confirm-btns { display: flex; gap: 10px; justify-content: center; }
