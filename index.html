@@ -90,6 +90,28 @@
       transition: background 0.15s ease;
     }
     .pill-row a:hover { background: var(--accent); color: #1a1a1a; }
+    .section { width: 100%; max-width: 980px; margin-top: 3.5rem; }
+    .section-title {
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .pill-row .go {
+      flex: 1 1 auto;
+      text-align: center;
+      font-weight: 600;
+      padding: 0.6rem 0.9rem;
+      border-radius: 10px;
+      background: rgba(255, 204, 51, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(255, 204, 51, 0.3);
+    }
+    .card:hover .pill-row .go, .card:focus-visible .pill-row .go {
+      background: var(--accent); color: #1a1a1a;
+    }
     footer {
       margin-top: auto;
       padding-top: 3rem;
@@ -135,6 +157,19 @@
       </div>
     </div>
   </main>
+
+  <section class="section">
+    <h2 class="section-title">Classroom Tools</h2>
+    <div class="grid">
+      <a class="card" href="family_feud/timer.html">
+        <h2>Classroom Timer</h2>
+        <p>A full-screen countdown for activities, tests, and group work &mdash; with three themes (Breach Timer, Boss Fight, and Mecha Lab), quick presets, sound, and voice call-outs.</p>
+        <div class="pill-row">
+          <span class="go">Open timer</span>
+        </div>
+      </a>
+    </div>
+  </section>
 
   <footer>
     These are unofficial classroom games inspired by the TV formats of the same names.
