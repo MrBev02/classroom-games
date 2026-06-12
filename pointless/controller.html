@@ -43,7 +43,7 @@
                     </ul>
                 </div>
 
-                <details class="makeown" open>
+                <details class="makeown">
                     <summary>
                         <span class="makeown__icon">✨</span>
                         <span class="makeown__text">
@@ -53,10 +53,16 @@
                         <span class="makeown__cue">Create a quiz →</span>
                     </summary>
                     <div class="makeown__body">
-                        <p class="makeown__note">Pointless needs a question set to play — generate one below, or load a sample from the <code>data</code> folder. <strong>Start Game</strong> unlocks once a quiz is loaded.</p>
                         <div id="customQuestions"></div>
                     </div>
                 </details>
+
+                <div class="or-divider">or pick a ready-made set</div>
+
+                <label class="field">
+                    <span>Ready-made set <small>(pick one and press Start — no files to edit)</small></span>
+                    <select id="sampleSelect"></select>
+                </label>
 
                 <div class="team-names">
                     <h3>Team names</h3>
@@ -172,6 +178,7 @@
 
     <script src="js/channel.js"></script>
     <script src="js/scorer.js"></script>
+    <script src="data/samples.js"></script>
     <script src="../shared/custom-questions.js"></script>
     <script src="js/controller.js"></script>
 </body>

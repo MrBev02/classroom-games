@@ -328,7 +328,7 @@ pointless/
 │   ├── pointless.mp3
 │   └── wrong.mp3
 ├── data/
-│   └── sample-game.json  # Example question set
+│   └── samples.js        # Built-in sample games (POINTLESS_SAMPLES)
 └── README.md             # Setup and usage instructions
 ```
 

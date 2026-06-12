@@ -235,14 +235,65 @@ Now generate the game.`;
         return ok(d, `${d.title} — ${d.rounds.length} rounds, ${qCount} questions + final`);
     }
 
+    // ── Ready-made sample games ─────────────────────────────
+    // Built-in sets from data/samples.js, shown in the #sampleSelect
+    // dropdown so a host can pick one and press Start with nothing to
+    // edit — the same flow as the Jeopardy and Family Feud host screens.
+    // Custom sets loaded below are appended here and auto-selected.
+    // POINTLESS_SAMPLES is a global `const` from data/samples.js (loaded first).
+    // A top-level `const` is a global lexical binding, not a window property, so
+    // reference it directly — guarded with typeof in case the script didn't load.
+    const games = typeof POINTLESS_SAMPLES !== 'undefined' && Array.isArray(POINTLESS_SAMPLES)
+        ? POINTLESS_SAMPLES.slice()
+        : [];
+    const builtinCount = games.length;
+
+    function gameLabel(g) {
+        const qCount = g.rounds.reduce((n, r) => n + r.questions.length, 0);
+        return `${g.title} (${g.rounds.length} rounds, ${qCount} questions + final)`;
+    }
+
+    function selectGame(i) {
+        const g = games[i];
+        if (!g) return;
+        state.gameData = g;
+        $('startGameBtn').disabled = false;
+    }
+
+    // (Re)build the dropdown and select one set. Custom sets (index past the
+    // built-ins) are marked with a ★. Falls back to disabling Start if there
+    // are somehow no sets at all (e.g. samples.js failed to load).
+    function refreshSampleSelect(selectedIndex = 0) {
+        const select = $('sampleSelect');
+        select.replaceChildren();
+        games.forEach((g, i) => {
+            const opt = document.createElement('option');
+            opt.value = String(i);
+            opt.textContent = (i >= builtinCount ? '★ ' : '') + gameLabel(g);
+            select.appendChild(opt);
+        });
+        if (games.length === 0) {
+            state.gameData = null;
+            $('startGameBtn').disabled = true;
+            return;
+        }
+        const idx = Math.min(Math.max(selectedIndex, 0), games.length - 1);
+        select.value = String(idx);
+        selectGame(idx);
+    }
+
+    $('sampleSelect').addEventListener('change', (e) =>
+        selectGame(parseInt(e.target.value, 10))
+    );
+
     const customUI = CustomQuestions.mount({
         mount: $('customQuestions'),
         promptText: CUSTOM_PROMPT,
-        readyHint: 'Questions loaded — set team names and click Start Game.',
+        readyHint: 'Added as the selected set — set team names and click Start Game.',
         validate: validatePointlessGame,
         onLoad: (data) => {
-            state.gameData = data;
-            $('startGameBtn').disabled = false;
+            games.push(data);
+            refreshSampleSelect(games.length - 1);
         },
     });
 
@@ -807,7 +858,7 @@ Now generate the game.`;
         state.teams.forEach(t => { t.score = 0; t.eliminated = false; });
 
         customUI.reset();
-        $('startGameBtn').disabled = true;
+        refreshSampleSelect(parseInt($('sampleSelect').value, 10) || 0);
 
         channel.send('RESET_GAME', {});
         showPanel('setup');
@@ -816,5 +867,6 @@ Now generate the game.`;
 
     // ── Init ────────────────────────────────────────────────
     showPanel('setup');
+    refreshSampleSelect(0);
 
 })();
