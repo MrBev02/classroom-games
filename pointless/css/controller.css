@@ -525,3 +525,37 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 
 .confirm-dialog p { margin-bottom: 16px; }
 .confirm-dialog .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+
+/* ── Responsive ─────────────────────────────────────────────── */
+
+/* On narrow screens the fixed 280px sidebar column has no room, so
+   drop the two-column app grid and let the panels and sidebar stack
+   in document order (header → panels → sidebar). */
+@media (max-width: 860px) {
+    #app {
+        display: block;
+    }
+    .panels {
+        padding: 16px;
+        overflow: visible;
+    }
+    #sidebar {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 16px;
+    }
+}
+
+/* Phone widths: one team-name column and full-width input rows so
+   nothing overflows or gets squashed. */
+@media (max-width: 480px) {
+    .panels { padding: 12px; gap: 12px; }
+    .team-names { grid-template-columns: 1fr; }
+    .answer-input-group { flex-wrap: wrap; }
+    .answer-input-group input { flex: 1 1 100%; }
+    .answer-input-group button { width: 100%; }
+    .override-input { flex-wrap: wrap; width: 100%; }
+    .override-input input { width: 100%; }
+    .override-input button { width: 100%; }
+    button { padding: 10px 16px; }
+}
