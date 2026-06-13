@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../shared/host-kit.css">
   <link rel="stylesheet" href="host.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">
 </head>
 <body data-game="feud">
 
@@ -180,6 +181,10 @@
     </section>
   </div>
 
+  <!-- KaTeX (math rendering) — must load before the game scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"></script>
+  <script src="../shared/math.js"></script>
   <script src="questions.js"></script>
   <script src="../shared/custom-questions.js"></script>
   <script src="host.js"></script>

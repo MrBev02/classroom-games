@@ -137,7 +137,7 @@ function loadRound() {
   if (ct2) ct2.textContent = state.teamNames[1];
 
   // Update question
-  $(".question-bar h2").textContent = q.question;
+  MathText.render($(".question-bar h2"), q.question);
 
   // Clear strikes
   $(".strikes-overlay").innerHTML = "";
@@ -198,6 +198,8 @@ function buildBoard(answers) {
     });
     board.appendChild(card);
   });
+
+  MathText.typeset(board);
 }
 
 // ---------------------
@@ -344,7 +346,9 @@ function printAnswerKey() {
   .round th { font-size: 0.75rem; text-transform: uppercase; color: #888; }
   .pts { text-align: right; font-weight: bold; }
   @media print { body { margin: 0.5cm; } }
-</style></head><body>
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">
+</head><body>
 <h1>Family Feud — Answer Key</h1>
 <div class="note">${note}</div>`;
 
@@ -372,7 +376,11 @@ function printAnswerKey() {
     html += `</table></div>`;
   });
 
-  html += `</body></html>`;
+  html += `
+<script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"></script>
+<script>renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\\\[',right:'\\\\]',display:true},{left:'\\\\(',right:'\\\\)',display:false}],throwOnError:false});</script>
+</body></html>`;
 
   const w = window.open("", "_blank");
   w.document.write(html);

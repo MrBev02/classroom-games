@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Family Feud</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">
 </head>
 <body>
 
@@ -109,6 +110,10 @@
     <button onclick="newGame()">PLAY AGAIN</button>
   </div>
 
+  <!-- KaTeX (math rendering) — must load before the game scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"></script>
+  <script src="../shared/math.js"></script>
   <script src="questions.js"></script>
   <script src="game.js"></script>
 </body>

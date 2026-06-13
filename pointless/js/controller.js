@@ -109,7 +109,7 @@
     }, 10000);
 
     // ── Load your own questions ─────────────────────────────
-    const CUSTOM_PROMPT = `You are creating a "Pointless"-style game for my class. Output a single valid
+    const CUSTOM_PROMPT = String.raw`You are creating a "Pointless"-style game for my class. Output a single valid
 JSON object that I will load into a game tool. Follow the format exactly.
 
 MY CONTENT
@@ -142,6 +142,15 @@ RULES
 - "aliases" is OPTIONAL — alternative spellings or abbreviations that should also
   be accepted as the same answer.
 - Answers should be drawn from the topic or source material.
+
+MATH & FORMULAS (only if your subject needs them)
+- A category or question may contain mathematical notation written in LaTeX. Put
+  inline maths inside \\( ... \\) and a large, centred formula inside $$ ... $$.
+- Because this is JSON, every backslash must be DOUBLED, e.g.
+    "question": "Name a solution of \\(x^2 = 4\\)"
+- Keep the answer keys themselves as plain words or numbers where you can —
+  students type their guesses, so plain text is easiest to match.
+- Do NOT use a single $ as a maths delimiter — a lone $ stays a dollar sign.
 
 OUTPUT FORMAT — this must be valid JSON:
 - Use double quotes around every key and every text value.
@@ -378,8 +387,8 @@ Now generate the game.`;
         show($('answerSection'));
         show($('answerReference'));
         $('currentQuestion').style.display = 'block';
-        $('cqCategory').textContent = question.category;
-        $('cqText').textContent = question.question;
+        MathText.render($('cqCategory'), question.category);
+        MathText.render($('cqText'), question.question);
 
         renderAnswerReference();
         setActiveTeamUI();
@@ -416,6 +425,7 @@ Now generate the game.`;
         el.className = `answer-result ${type}`;
         el.style.display = 'block';
         el.innerHTML = html;
+        MathText.typeset(el);
     }
 
     // ── Submit answer ───────────────────────────────────────
@@ -646,6 +656,7 @@ Now generate the game.`;
             <em>${esc(finalData.category)}</em>: ${esc(finalData.question)}<br>
             Give 3 answers. A pointless answer wins the trophy round!
         `;
+        MathText.typeset($('finalInfo'));
         $('finalAnswerLabel').textContent = 'Answer 1 of 3';
         $('finalAnswerInput').value = '';
         $('finalAnswerInput').disabled = false;
@@ -768,6 +779,7 @@ Now generate the game.`;
         el.className = `answer-result ${type}`;
         el.style.display = 'block';
         el.innerHTML = html;
+        MathText.typeset(el);
     }
 
     // ── Show Winner ─────────────────────────────────────────
@@ -786,6 +798,7 @@ Now generate the game.`;
                 <span class="ali-score">${a.score}</span>
             </div>
         `).join('');
+        MathText.typeset($('answerList'));
     }
 
     function renderFinalAnswerReference() {
@@ -796,6 +809,7 @@ Now generate the game.`;
                 <span class="ali-score">${a.score}</span>
             </div>
         `).join('');
+        MathText.typeset($('finalAnswerList'));
     }
 
     // ── Sidebar: Score overrides ────────────────────────────

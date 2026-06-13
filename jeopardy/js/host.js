@@ -132,7 +132,7 @@ function populateSetup() {
 // Load your own questions (custom game set)
 // ---------------------
 
-const CUSTOM_PROMPT = `You are creating a Jeopardy-style recall game for my class. Output a single
+const CUSTOM_PROMPT = String.raw`You are creating a Jeopardy-style recall game for my class. Output a single
 valid JSON object that I will load into a game tool. Follow the format exactly.
 
 MY CONTENT
@@ -158,6 +158,19 @@ RULES
 - Each clue is one sentence, answerable from the topic or source material.
 - Give every category a short, clear name.
 - Do NOT include dollar values; they are added automatically by row.
+
+MATH & FORMULAS (only if your subject needs them)
+- A clue or answer may contain mathematical notation written in LaTeX. Put
+  inline maths inside \\( ... \\). Use $$ ... $$ for a formula that should appear
+  large and centred on its OWN LINE — ideal for the main equation of a clue.
+- $$ ... $$ forces a line break before and after the formula, so do not put text
+  straight after it. Keep "What is ...?" wording with inline \\( ... \\), and put
+  any standalone $$ ... $$ formula at the end of the clue or answer.
+- Because this is JSON, every backslash must be DOUBLED. Examples:
+    { "clue": "Give the formula that solves $$ax^2 + bx + c = 0$$", "answer": "What is the quadratic formula? $$x = \\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$" }
+    { "clue": "Balance \\(H_2 + O_2 \\rightarrow H_2O\\)", "answer": "What is \\(2H_2 + O_2 \\rightarrow 2H_2O\\)?" }
+- Do NOT use a single $ as a maths delimiter — a lone $ stays a dollar sign, so
+  prices like "$5" still display correctly.
 
 OUTPUT FORMAT — this must be valid JSON:
 - Use double quotes around every key and every text value.
@@ -481,7 +494,7 @@ function renderBoard() {
   state.categories.forEach((cat) => {
     const h = document.createElement("div");
     h.className = "hb-category";
-    h.textContent = cat.name;
+    MathText.render(h, cat.name);
     board.appendChild(h);
   });
 
@@ -545,10 +558,10 @@ function renderClueModal() {
   const { cat } = state.active;
   const clue = activeClue();
 
-  $("#cm-category").textContent = state.categories[cat].name;
+  MathText.render($("#cm-category"), state.categories[cat].name);
   $("#cm-value").textContent = `$${clue.value}`;
-  $("#cm-clue").textContent = clue.clue;
-  $("#cm-answer").textContent = clue.answer;
+  MathText.render($("#cm-clue"), clue.clue);
+  MathText.render($("#cm-answer"), clue.answer);
 
   $("#cm-reveal-btn").disabled = state.answerRevealed;
   $("#cm-reveal-btn").textContent = state.answerRevealed

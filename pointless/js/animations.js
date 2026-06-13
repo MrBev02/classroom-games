@@ -259,7 +259,7 @@ class ScoreBarAnimation {
     _complete(targetScore, answer, onComplete) {
         this.animating = false;
         this.counter.textContent = targetScore;
-        this.answerEl.textContent = answer;
+        MathText.render(this.answerEl, answer);
         this.answerEl.classList.add('visible');
         this.container.classList.add('revealed');
 

@@ -74,7 +74,7 @@ function renderBoard(state) {
     h.className = "category";
     h.style.setProperty("--i", i);
     const span = document.createElement("span");
-    span.textContent = cat.name;
+    MathText.render(span, cat.name);
     h.appendChild(span);
     board.appendChild(h);
   });
@@ -151,10 +151,10 @@ function renderClueOverlay(state) {
     prev?.active && prev.active.cat === cat && prev.active.row === row;
 
   if (!sameClue) {
-    $("#clue-category").textContent = state.categories[cat].name;
+    MathText.render($("#clue-category"), state.categories[cat].name);
     $("#clue-value").textContent = `$${clue.value}`;
-    $("#clue-text").textContent = clue.clue;
-    $("#clue-answer").textContent = clue.answer;
+    MathText.render($("#clue-text"), clue.clue);
+    MathText.render($("#clue-answer"), clue.answer);
     overlay.classList.remove("revealed");
     // Force a reflow so the open transition replays for each clue
     void overlay.offsetWidth;

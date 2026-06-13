@@ -1,0 +1,130 @@
+{
+  "title": "Stage 5 STEM Showcase",
+  "categories": [
+    {
+      "name": "Mathematics",
+      "clues": [
+        {
+          "clue": "Write \\(3^4\\) as a whole number.",
+          "answer": "What is \\(81\\)?"
+        },
+        {
+          "clue": "Expand \\(3(2x + 5)\\).",
+          "answer": "What is \\(6x + 15\\)?"
+        },
+        {
+          "clue": "Simplify the surd \\(\\sqrt{50}\\).",
+          "answer": "What is \\(5\\sqrt{2}\\)?"
+        },
+        {
+          "clue": "Factorise \\(x^2 + 7x + 12\\).",
+          "answer": "What is \\((x + 3)(x + 4)\\)?"
+        },
+        {
+          "clue": "Give the formula that solves $$ax^2 + bx + c = 0$$",
+          "answer": "What is the quadratic formula? $$x = \\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$"
+        }
+      ]
+    },
+    {
+      "name": "Chemistry",
+      "clues": [
+        {
+          "clue": "State the pH of a neutral solution.",
+          "answer": "What is \\(7\\)?"
+        },
+        {
+          "clue": "Write the ion formed when sodium loses one electron.",
+          "answer": "What is \\(Na^{+}\\)?"
+        },
+        {
+          "clue": "Give the electron shell arrangement of chlorine, \\(Z = 17\\).",
+          "answer": "What is \\(2, 8, 7\\)?"
+        },
+        {
+          "clue": "Balance: \\(H_2 + O_2 \\rightarrow H_2O\\).",
+          "answer": "What is \\(2H_2 + O_2 \\rightarrow 2H_2O\\)?"
+        },
+        {
+          "clue": "Balance this combustion: $$CH_4 + O_2 \\rightarrow CO_2 + H_2O$$",
+          "answer": "What is $$CH_4 + 2O_2 \\rightarrow CO_2 + 2H_2O$$"
+        }
+      ]
+    },
+    {
+      "name": "Physics",
+      "clues": [
+        {
+          "clue": "State the formula for average speed from distance \\(d\\) and time \\(t\\).",
+          "answer": "What is \\(v = \\dfrac{d}{t}\\)?"
+        },
+        {
+          "clue": "State Newton's second law as an equation.",
+          "answer": "What is \\(F = ma\\)?"
+        },
+        {
+          "clue": "Find the force on a \\(10\\,\\text{kg}\\) mass accelerating at \\(3\\,\\text{m/s}^2\\).",
+          "answer": "What is \\(30\\,\\text{N}\\)?"
+        },
+        {
+          "clue": "State the formula for kinetic energy.",
+          "answer": "What is $$E_k = \\dfrac{1}{2}mv^2$$"
+        },
+        {
+          "clue": "Find the kinetic energy of a \\(2\\,\\text{kg}\\) ball moving at \\(3\\,\\text{m/s}\\).",
+          "answer": "What is \\(9\\,\\text{J}\\)?"
+        }
+      ]
+    },
+    {
+      "name": "Biology",
+      "clues": [
+        {
+          "clue": "Name the cell structure that contains DNA and controls the cell.",
+          "answer": "What is the nucleus?"
+        },
+        {
+          "clue": "In DNA, base \\(A\\) always pairs with which base?",
+          "answer": "What is \\(T\\) (thymine)?"
+        },
+        {
+          "clue": "A cross \\(Bb \\times Bb\\) gives what ratio of dominant to recessive?",
+          "answer": "What is \\(3:1\\)?"
+        },
+        {
+          "clue": "State the magnification formula using image and actual size.",
+          "answer": "What is \\(M = \\dfrac{\\text{image size}}{\\text{actual size}}\\)?"
+        },
+        {
+          "clue": "Complete this respiration equation: $$C_6H_{12}O_6 + 6O_2 \\rightarrow\\ ?$$",
+          "answer": "What is $$6CO_2 + 6H_2O + \\text{energy}$$"
+        }
+      ]
+    },
+    {
+      "name": "Computing",
+      "clues": [
+        {
+          "clue": "State the base of the binary number system.",
+          "answer": "What is \\(2\\)?"
+        },
+        {
+          "clue": "State the number of bits in one byte.",
+          "answer": "What is \\(8\\)?"
+        },
+        {
+          "clue": "Convert \\(1101_2\\) to decimal.",
+          "answer": "What is \\(13_{10}\\)?"
+        },
+        {
+          "clue": "Convert the hexadecimal \\(2A_{16}\\) to decimal.",
+          "answer": "What is \\(42_{10}\\)?"
+        },
+        {
+          "clue": "Evaluate \\(\\overline{1 \\land 1}\\) (NAND).",
+          "answer": "What is \\(0\\)?"
+        }
+      ]
+    }
+  ]
+}

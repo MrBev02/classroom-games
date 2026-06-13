@@ -118,8 +118,8 @@
     let finalSlots = [];
 
     function initFinalView(category, question) {
-        dom.finalCategory.textContent = category;
-        dom.finalQuestion.textContent = question;
+        MathText.render(dom.finalCategory, category);
+        MathText.render(dom.finalQuestion, question);
         dom.finalAnswers.innerHTML = '';
         dom.finalTotal.textContent = '';
         finalSlots = [];
@@ -148,7 +148,7 @@
             fill.style.background = `rgb(${c.r},${c.g},${c.b})`;
             fill.style.transition = 'height 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         }
-        if (text) text.textContent = answer;
+        if (text) MathText.render(text, answer);
         if (scoreEl) scoreEl.textContent = score;
     }
 
@@ -190,8 +190,8 @@
 
     channel.on('SHOW_QUESTION', (payload) => {
         const { category, question } = payload;
-        dom.categoryText.textContent = category;
-        dom.questionText.textContent = question;
+        MathText.render(dom.categoryText, category);
+        MathText.render(dom.questionText, question);
         scoreBar.reset();
         dom.pointlessLabel.classList.remove('show');
         showView('question');

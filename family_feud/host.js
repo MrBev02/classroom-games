@@ -82,7 +82,7 @@ function loadHostRound() {
   $("#btn-award-team2").textContent = `Award to ${host.teamNames[1]}`;
 
   // Update question
-  $("#host-question-text").textContent = q.question;
+  MathText.render($("#host-question-text"), q.question);
 
   // Build answer table
   buildAnswerTable(q.answers);
@@ -108,6 +108,8 @@ function buildAnswerTable(answers) {
 
     tbody.appendChild(tr);
   });
+
+  MathText.typeset(tbody);
 
   // Attach reveal handlers
   tbody.querySelectorAll(".btn-reveal").forEach((btn) => {
@@ -251,7 +253,7 @@ $("#btn-gameover-new").addEventListener("click", sendNewGame);
 // Load your own questions
 // ---------------------
 
-const CUSTOM_PROMPT = `You are creating a Family Feud-style survey game for my class. Output valid JSON
+const CUSTOM_PROMPT = String.raw`You are creating a Family Feud-style survey game for my class. Output valid JSON
 that I will load into a game tool. Follow the format exactly.
 
 MY CONTENT
@@ -278,6 +280,14 @@ RULES
 - Points are whole numbers; each question's answers should total roughly 100.
 - Keep each answer short (a word or a few) and classroom-appropriate.
 - Answers should be drawn from the topic or source material.
+
+MATH & FORMULAS (only if your subject needs them)
+- A question or answer may contain mathematical notation written in LaTeX. Put
+  inline maths inside \\( ... \\) and a large, centred formula inside $$ ... $$.
+- Because this is JSON, every backslash must be DOUBLED. Example:
+    { "text": "\\(\\frac{1}{2}\\)", "points": 25 }
+- Do NOT use a single $ as a maths delimiter — a lone $ stays a dollar sign, so
+  prices like "$5" still display correctly.
 
 OUTPUT FORMAT — this must be valid JSON:
 - Use double quotes around every key and every text value.
