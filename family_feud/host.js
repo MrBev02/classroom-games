@@ -25,6 +25,54 @@ let questionPool = QUESTIONS;
 
 const $ = (sel) => document.querySelector(sel);
 
+// Open (or re-focus) the students' Board in its own tab. Keeping a reference
+// plus a fixed window name means we reuse the tab instead of spawning copies.
+let boardWin = null;
+function openBoard() {
+  if (boardWin && !boardWin.closed) {
+    boardWin.focus();
+    return true;
+  }
+  boardWin = window.open("index.html", "feud-board");
+  if (boardWin) {
+    boardWin.focus();
+    return true;
+  }
+  const hint = $("#console-hint");
+  if (hint) hint.textContent = "Pop-up blocked — click Open Board (top right)";
+  return false;
+}
+
+$("#open-board-btn").addEventListener("click", openBoard);
+
+// Broadcast the current game to the board. Sent on Start, and again whenever a
+// freshly-opened board announces itself — so the board can be opened at any time
+// (e.g. via Open Board) and still receive the game in progress.
+function sendStart() {
+  channel.postMessage({
+    type: "start",
+    data: {
+      teamNames: host.teamNames,
+      totalRounds: host.totalRounds,
+      questions: host.questions,
+      scores: host.scores,
+      currentRound: host.currentRound,
+    },
+  });
+}
+
+// A board tab says "hello" when it loads; resend the game if one is running.
+channel.onmessage = (event) => {
+  if (
+    event.data &&
+    event.data.type === "hello" &&
+    host.questions.length &&
+    $("#host-game").style.display !== "none"
+  ) {
+    sendStart();
+  }
+};
+
 // ---------------------
 // Setup
 // ---------------------
@@ -43,21 +91,15 @@ document.getElementById("start-btn").addEventListener("click", () => {
   host.scores = [0, 0];
   host.currentRound = 0;
 
-  // Send start to display
-  channel.postMessage({
-    type: "start",
-    data: {
-      teamNames: host.teamNames,
-      totalRounds: host.totalRounds,
-      questions: host.questions,
-    },
-  });
+  // Send start to display (re-sent automatically if the board opens later)
+  sendStart();
 
   $("#host-setup").style.display = "none";
   $("#host-game").style.display = "block";
   $("#host-gameover").style.display = "none";
 
   loadHostRound();
+  openBoard();
 });
 
 // ---------------------

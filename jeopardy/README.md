@@ -8,9 +8,9 @@ your laptop.
 
 1. On **your laptop**, open the host console:
    <https://mrbev02.github.io/classroom-games/jeopardy/host.html>
-2. Click **"Open display window"** and drag it to the **projector** — that's the
-   students' board.
-3. Pick a game set, number of teams (2–10) and team names, then **Start Game**.
+2. Pick a game set, number of teams (2–10) and team names, then **Start Game**.
+3. The students' **Board** opens in a new tab — drag it to the **projector** and
+   fullscreen it (F11). Lost the tab? Re-open it with **Open Board** (top right).
    Both screens sync automatically.
 
 No installs, no terminal. The two windows talk via `BroadcastChannel`, so keep
@@ -26,8 +26,8 @@ To run your own copy without internet, serve the folder from a local server
 python -m http.server 8080
 ```
 
-Then open <http://localhost:8080/host.html> on your laptop and
-<http://localhost:8080/index.html> on the projector.
+Then open <http://localhost:8080/host.html> on your laptop and start a game —
+the board opens in its own tab, ready to drag to the projector.
 </details>
 
 ## Running the game

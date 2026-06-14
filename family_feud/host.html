@@ -19,7 +19,8 @@
       <span class="console__game">Family Feud</span>
     </span>
     <span class="console__meta">
-      <span class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
+      <button id="open-board-btn" class="btn ghost" type="button">Open Board &#8599;</button>
+      <span id="console-hint" class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
     </span>
   </header>
 
@@ -30,8 +31,8 @@
 
       <div class="guide">
         <ol class="guide__steps">
-          <li><span>1</span> This is the <b>Host</b> screen — yours. Open the <b>Board</b> on the projector for students.</li>
-          <li><span>2</span> Name your two teams and pick the number of rounds, then <b>Start Game</b>.</li>
+          <li><span>1</span> Name your two teams and pick the number of rounds.</li>
+          <li><span>2</span> Click <b>Start Game</b> — the students' <b>Board</b> opens in a new tab; drag it to the projector.</li>
           <li><span>3</span> Reveal answers and call strikes here — the Board updates as you go.</li>
         </ol>
         <ul class="legend">
@@ -45,7 +46,7 @@
         <summary>
           <span class="makeown__icon">✨</span>
           <span class="makeown__text">
-            <span class="makeown__title">Make your own quiz</span>
+            <span class="makeown__title">Make/Load your own quiz</span>
             <span class="makeown__sub">Turn any topic into a survey-style game — paste your notes or use the AI prompt. No files to edit.</span>
           </span>
           <span class="makeown__cue">Create a quiz →</span>
@@ -83,8 +84,8 @@
         <summary>Two-screen setup</summary>
         <ol>
           <li>You're on the <strong>Host</strong> page — keep it on your laptop.</li>
-          <li>Open <strong>index.html</strong> on the <strong>projector</strong> — that's the students' Board.</li>
-          <li>Start the game here — both screens stay in sync automatically.</li>
+          <li>Click <strong>Start Game</strong> — the <strong>Board</strong> opens in a new tab. Drag it to the <strong>projector</strong> and fullscreen it (F11).</li>
+          <li>Lost the Board tab? Re-open it any time with <strong>Open Board</strong> (top right). Both screens stay in sync automatically.</li>
         </ol>
         <p>Keep both windows in the <strong>same browser on the same computer</strong>. Running your own copy offline? Serve the folder first (e.g. <code>python -m http.server 8080</code>) and use the <code>http://localhost:8080/…</code> addresses — opening the files directly won't sync.</p>
       </details>

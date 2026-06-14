@@ -33,8 +33,12 @@ function publicState() {
 
 /** Broadcast + persist + re-render. Call after every state change. */
 function update() {
-  if (state) {
+  // Persist mid-game so an accidental refresh can resume — but never persist a
+  // finished (or cleared) game, so a fresh launch doesn't look "in progress".
+  if (state && state.phase !== "gameover") {
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } else {
+    localStorage.removeItem(SAVE_KEY);
   }
   channel.send("STATE", publicState());
   render();
@@ -320,6 +324,25 @@ function loadSave() {
   }
 }
 
+// Open (or re-focus) the students' Board in its own tab. Keeping a reference
+// plus a fixed window name means we reuse the tab instead of spawning copies.
+let boardWin = null;
+function openBoard() {
+  if (boardWin && !boardWin.closed) {
+    boardWin.focus();
+    return true;
+  }
+  boardWin = window.open("index.html", "jeopardy-board");
+  if (boardWin) {
+    boardWin.focus();
+    return true;
+  }
+  // Pop-up blocked — point the teacher at the always-present header button.
+  const hint = $("#console-hint");
+  if (hint) hint.textContent = "Pop-up blocked — click Open Board (top right)";
+  return false;
+}
+
 function startGame() {
   const setIndex = parseInt($("#game-select").value, 10);
   const names = [...$("#team-names").querySelectorAll("input")].map(
@@ -327,11 +350,15 @@ function startGame() {
   );
   state = newState(setIndex, names);
   update();
+  openBoard();
 }
 
 function resumeGame() {
   state = loadSave();
-  if (state) update();
+  if (state) {
+    update();
+    openBoard();
+  }
 }
 
 function discardSave() {
@@ -711,9 +738,7 @@ $("#test-sound-btn").addEventListener("click", () => {
     status.textContent = `Audio is blocked by the browser (state: ${ctxState}) — check the site's sound permission in the address bar.`;
   }
 });
-$("#open-display-btn").addEventListener("click", () =>
-  window.open("index.html", "_blank")
-);
+$("#open-board-btn").addEventListener("click", openBoard);
 $("#think-upload").addEventListener("change", (e) =>
   handleThinkUpload(e.target.files && e.target.files[0])
 );

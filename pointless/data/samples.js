@@ -6,7 +6,7 @@
 // dropdown on the host setup screen — pick one and press
 // Start, no files to edit. To add your own, append another
 // object to POINTLESS_SAMPLES using the same shape, or use
-// the "Make your own quiz" loader on the host screen.
+// the "Make/Load your own quiz" loader on the host screen.
 //
 // Each game has the same structure the custom loader expects:
 //   { title, rounds: [{ roundNumber, questions: [...] }], final }

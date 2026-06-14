@@ -13,6 +13,19 @@
     const $ = (id) => document.getElementById(id);
     const show = (el) => { if (el) el.style.display = ''; };
     const hide = (el) => { if (el) el.style.display = 'none'; };
+
+    // Open (or re-focus) the students' Board in its own tab. Keeping a
+    // reference plus a fixed window name reuses the tab instead of duplicating.
+    let boardWin = null;
+    function openBoard() {
+        if (boardWin && !boardWin.closed) { boardWin.focus(); return true; }
+        boardWin = window.open('display.html', 'pointless-board');
+        if (boardWin) { boardWin.focus(); return true; }
+        const hint = $('consoleHint');
+        if (hint) hint.textContent = 'Pop-up blocked — click Open Board (top right)';
+        return false;
+    }
+    $('openBoardBtn').addEventListener('click', openBoard);
     const esc = (s) => {
         const d = document.createElement('div');
         d.textContent = s;
@@ -322,6 +335,7 @@ Now generate the game.`;
 
         channel.send('LOAD_GAME', { teams: state.teams });
         startRound();
+        openBoard();
     });
 
     // ── Round management ────────────────────────────────────

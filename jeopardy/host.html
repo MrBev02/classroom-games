@@ -19,7 +19,8 @@
       <span class="console__game">Jeopardy</span>
     </span>
     <span class="console__meta">
-      <span class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
+      <button id="open-board-btn" class="btn ghost" type="button">Open Board &#8599;</button>
+      <span id="console-hint" class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
     </span>
   </header>
 
@@ -27,7 +28,7 @@
   <section id="setup-screen" class="panel">
     <div id="resume-banner" class="resume-banner" hidden>
       <div>
-        <strong>Game in progress found</strong>
+        <strong>Resume your last game?</strong>
         <span id="resume-title"></span>
       </div>
       <div class="resume-actions">
@@ -40,9 +41,9 @@
 
     <div class="guide">
       <ol class="guide__steps">
-        <li><span>1</span> This is the <b>Host</b> screen — yours. Open the <b>Board</b> on the projector for students.</li>
-        <li><span>2</span> Pick a game set and your teams, then <b>Start Game</b>.</li>
-        <li><span>3</span> Click a clue here to put it on the Board — the two screens stay in sync.</li>
+        <li><span>1</span> Pick a game set and your teams.</li>
+        <li><span>2</span> Click <b>Start Game</b> — the students' <b>Board</b> opens in a new tab; drag it to the projector.</li>
+        <li><span>3</span> Back here, click a clue to put it on the Board — the two screens stay in sync.</li>
       </ol>
       <ul class="legend">
         <li class="is-accent">Tap to play a clue</li>
@@ -55,7 +56,7 @@
       <summary>
         <span class="makeown__icon">✨</span>
         <span class="makeown__text">
-          <span class="makeown__title">Make your own quiz</span>
+          <span class="makeown__title">Make/Load your own quiz</span>
           <span class="makeown__sub">Turn any topic into a game — paste your notes or use the AI prompt. No files to edit.</span>
         </span>
         <span class="makeown__cue">Create a quiz →</span>
@@ -98,7 +99,6 @@
 
     <div class="setup-actions">
       <button id="start-btn" class="btn primary big">Start Game ▶</button>
-      <button id="open-display-btn" class="btn">Open display window</button>
       <button id="print-key-btn" class="btn ghost">Print answer key</button>
       <button id="test-sound-btn" class="btn ghost">🔔 Test sound</button>
       <span id="test-sound-status" class="test-sound-status"></span>
@@ -108,8 +108,8 @@
       <summary>Two-screen setup</summary>
       <ol>
         <li>You're on the <strong>host</strong> page — keep it on your laptop.</li>
-        <li>Click <strong>Open display window</strong> above and drag that window to the <strong>projector</strong> — it's the students' board.</li>
-        <li>Start the game here — both screens stay in sync automatically.</li>
+        <li>Click <strong>Start Game</strong> — the <strong>Board</strong> opens in a new tab. Drag it to the <strong>projector</strong> and fullscreen it (F11).</li>
+        <li>Lost the Board tab? Re-open it any time with <strong>Open Board</strong> (top right). Both screens stay in sync automatically.</li>
       </ol>
       <p style="opacity:.7;font-size:.9em;margin:.5em 0 0;">Keep both windows in the <strong>same browser on the same computer</strong>. Running your own copy offline instead of the web link? Serve the folder first (e.g. <code>python -m http.server 8080</code>) and use the <code>http://localhost:8080/…</code> addresses — opening the files directly won't sync.</p>
     </details>

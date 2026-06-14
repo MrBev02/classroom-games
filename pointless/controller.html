@@ -19,7 +19,8 @@
                 <span class="console__game">Pointless</span>
             </span>
             <span class="console__meta">
-                <span class="console__hint">Students watch the <strong>Board</strong></span>
+                <button id="openBoardBtn" class="btn ghost" type="button">Open Board &#8599;</button>
+                <span id="consoleHint" class="console__hint">Students watch the <strong>Board</strong></span>
                 <span class="connection-status" id="connectionStatus">
                     <span class="status-dot disconnected" id="statusDot"></span>
                     <span id="statusText">Board: disconnected</span>
@@ -34,8 +35,8 @@
 
                 <div class="guide">
                     <ol class="guide__steps">
-                        <li><span>1</span> This is the <b>Host</b> screen — yours. Open the <b>Board</b> on the projector for students.</li>
-                        <li><span>2</span> Name your teams and load questions, then <b>Start Game</b>.</li>
+                        <li><span>1</span> Name your teams and load (or pick) a question set.</li>
+                        <li><span>2</span> Click <b>Start Game</b> — the students' <b>Board</b> opens in a new tab; drag it to the projector.</li>
                         <li><span>3</span> Type each team's answer here — the <b>lower</b> the score, the better.</li>
                     </ol>
                     <ul class="legend">
@@ -48,7 +49,7 @@
                     <summary>
                         <span class="makeown__icon">✨</span>
                         <span class="makeown__text">
-                            <span class="makeown__title">Make your own quiz</span>
+                            <span class="makeown__title">Make/Load your own quiz</span>
                             <span class="makeown__sub">Turn any topic into a game — paste your notes or use the AI prompt. No files to edit.</span>
                         </span>
                         <span class="makeown__cue">Create a quiz →</span>
@@ -79,8 +80,8 @@
                     <summary>Two-screen setup</summary>
                     <ol>
                         <li>You're on the <strong>Host</strong> page — keep it on your laptop.</li>
-                        <li>Open <strong>display.html</strong> on the <strong>projector</strong> — that's the students' Board.</li>
-                        <li>Start the game here — the dot above turns green when the Board is linked.</li>
+                        <li>Click <strong>Start Game</strong> — the <strong>Board</strong> opens in a new tab. Drag it to the <strong>projector</strong> and fullscreen it (F11).</li>
+                        <li>The dot above turns green when the Board is linked. Lost the tab? Re-open it with <strong>Open Board</strong> (top right).</li>
                     </ol>
                     <p>Keep both windows in the <strong>same browser on the same computer</strong>. Running your own copy offline? Serve the folder first (e.g. <code>python -m http.server 8080</code>) and use the <code>http://localhost:8080/…</code> addresses — opening the files directly won't sync.</p>
                 </details>

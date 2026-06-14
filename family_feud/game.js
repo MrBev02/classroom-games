@@ -36,8 +36,8 @@ channel.onmessage = (event) => {
       state.teamNames = data.teamNames;
       state.totalRounds = data.totalRounds;
       state.questions = data.questions;
-      state.scores = [0, 0];
-      state.currentRound = 0;
+      state.scores = data.scores ?? [0, 0];
+      state.currentRound = data.currentRound ?? 0;
       state.hostedMode = true;
 
       $("#setup-screen").style.display = "none";
@@ -89,6 +89,10 @@ channel.onmessage = (event) => {
       break;
   }
 };
+
+// The board is a fresh tab that may open AFTER the host already sent the game,
+// so announce ourselves on load — the host replies by (re)sending "start".
+channel.postMessage({ type: "hello" });
 
 // ---------------------
 // Setup (standalone mode)
