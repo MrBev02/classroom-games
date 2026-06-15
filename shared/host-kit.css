@@ -162,7 +162,7 @@ body {
 
 /* centred setup column shared by Jeopardy & Feud */
 .setup-col {
-  max-width: 640px;
+  max-width: 960px;
   margin: 1.6rem auto;
   padding: 0 1rem;
 }

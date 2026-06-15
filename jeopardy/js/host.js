@@ -263,6 +263,16 @@ function setupCustomQuestions() {
   });
 }
 
+function setupQuestionEditor() {
+  if (!window.QuestionEditor) return;
+  QuestionEditor.mount({
+    mount: $("#question-editor"),
+    storageKey: "jeopardy-bank-v1",
+    validate: validateCustomGame,
+    onUse: addCustomGameSet,
+  });
+}
+
 // ---------------------
 // Think music upload
 // ---------------------
@@ -790,6 +800,7 @@ document.addEventListener("keydown", (e) => {
 
 populateSetup();
 setupCustomQuestions();
+setupQuestionEditor();
 render();
 // Tell any already-open display we're here (it shows the waiting screen)
 channel.send("STATE", publicState());

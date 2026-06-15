@@ -18,7 +18,7 @@
 
 /* ---------- setup / panel layout (surface from kit) ---------- */
 
-.panel { max-width: 640px; margin: 1.5rem auto; }
+.panel { max-width: 960px; margin: 1.5rem auto; }
 .panel.wide { max-width: 1150px; }
 
 .resume-banner {
@@ -123,7 +123,7 @@
 
 .game-layout {
   display: grid;
-  grid-template-columns: 1fr 290px;
+  grid-template-columns: auto 1fr 290px;
   gap: 1.2rem;
   align-items: start;
 }
@@ -131,6 +131,74 @@
 @media (max-width: 900px) {
   .game-layout { grid-template-columns: 1fr; }
 }
+
+/* in-game "how to run this" rail (collapsible, left-hand side) */
+
+.howto {
+  width: 232px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.howto:not([open]) { width: auto; }
+
+.howto > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--accent);
+}
+
+.howto > summary::-webkit-details-marker { display: none; }
+.howto > summary::before { content: "▸ "; }
+.howto[open] > summary::before { content: "▾ "; }
+
+.howto__cue { color: var(--text-dim); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.howto:not([open]) .howto__cue { display: none; }
+
+.howto__list {
+  margin: 0;
+  padding: 0 0.85rem 0.75rem 1.7rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.howto__list b { color: var(--text); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .howto, .howto:not([open]) { width: auto; }
+}
+
+/* secondary "import a file / AI" disclosure under the question editor */
+
+.makeown__import {
+  margin-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 4px;
+}
+
+.makeown__import > summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  padding: 6px 0;
+}
+
+.makeown__import > summary::-webkit-details-marker { display: none; }
+.makeown__import > summary::before { content: "▸ "; }
+.makeown__import[open] > summary::before { content: "▾ "; }
+.makeown__import > summary:hover { color: var(--text); }
 
 /* host board — keeps the iconic Jeopardy blue so the host
    preview reads as "the board the students see" */

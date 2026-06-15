@@ -28,22 +28,40 @@
 
 /* ── Layout ─────────────────────────────────────────────────── */
 
+/* Full-width console bar on top (like Jeopardy & Feud), with the game
+   content centred below in a capped column. */
 #app {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    grid-template-rows: auto 1fr;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    gap: 0;
 }
 
-#app > header { grid-column: 1 / -1; }
+.app-body {
+    flex: 1;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    display: grid;
+    /* The sidebar column is `auto`, so it collapses to zero while the sidebar
+       is hidden (setup) — keeping the panels centred — and takes the sidebar's
+       width once the game starts. */
+    grid-template-columns: 1fr auto;
+    gap: 0;
+}
 
 .panels {
     padding: 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 16px;
+}
+
+/* keep each panel card a sensible, centred width (matches Jeopardy & Feud) */
+.panels > .panel {
+    width: 100%;
+    max-width: 960px;
 }
 
 /* ── Connection status (lives in the console top bar) ───────── */
@@ -374,8 +392,8 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
 /* ── Sidebar ────────────────────────────────────────────────── */
 
 #sidebar {
-    grid-row: 2;
     grid-column: 2;
+    width: 280px;
     background: var(--bg-sunken);
     border-left: 1px solid var(--border);
     padding: 20px;
@@ -532,7 +550,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
    drop the two-column app grid and let the panels and sidebar stack
    in document order (header → panels → sidebar). */
 @media (max-width: 860px) {
-    #app {
+    .app-body {
         display: block;
     }
     .panels {
@@ -540,6 +558,7 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
         overflow: visible;
     }
     #sidebar {
+        width: auto;
         border-left: none;
         border-top: 1px solid var(--border);
         padding: 16px;
@@ -559,3 +578,63 @@ button.danger:hover, #markWrongBtn:hover, #finalMarkWrongBtn:hover {
     .override-input button { width: 100%; }
     button { padding: 10px 16px; }
 }
+
+/* in-game "how to run this" panel (collapsible, in the sidebar) */
+
+.howto {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.82rem;
+}
+
+.howto > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.5rem 0.65rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    color: var(--accent);
+}
+
+.howto > summary::-webkit-details-marker { display: none; }
+.howto > summary::before { content: "▸ "; }
+.howto[open] > summary::before { content: "▾ "; }
+.howto__cue { color: var(--dim); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.howto:not([open]) .howto__cue { display: none; }
+
+.howto__list {
+    margin: 0;
+    padding: 0 0.7rem 0.65rem 1.6rem;
+    color: var(--dim);
+    line-height: 1.45;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.howto__list b { color: var(--ink); font-weight: 600; }
+
+/* secondary "import a file / AI" disclosure under the question editor */
+
+.makeown__import {
+    margin-top: 12px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 4px;
+}
+
+.makeown__import > summary {
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--dim);
+    padding: 6px 0;
+}
+
+.makeown__import > summary::-webkit-details-marker { display: none; }
+.makeown__import > summary::before { content: "▸ "; }
+.makeown__import[open] > summary::before { content: "▾ "; }
+.makeown__import > summary:hover { color: var(--ink); }

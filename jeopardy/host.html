@@ -19,6 +19,7 @@
       <span class="console__game">Jeopardy</span>
     </span>
     <span class="console__meta">
+      <a class="btn ghost" href="../index.html" title="Back to the Classroom Games home page">&#8592; All games</a>
       <button id="open-board-btn" class="btn ghost" type="button">Open Board &#8599;</button>
       <span id="console-hint" class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
     </span>
@@ -56,13 +57,17 @@
       <summary>
         <span class="makeown__icon">✨</span>
         <span class="makeown__text">
-          <span class="makeown__title">Make/Load your own quiz</span>
-          <span class="makeown__sub">Turn any topic into a game — paste your notes or use the AI prompt. No files to edit.</span>
+          <span class="makeown__title">Make or load your own quiz</span>
+          <span class="makeown__sub">Type your own questions, paste them from a spreadsheet, import a file, or have AI draft them. No files to edit.</span>
         </span>
         <span class="makeown__cue">Create a quiz →</span>
       </summary>
       <div class="makeown__body">
-        <div id="custom-questions"></div>
+        <div id="question-editor"></div>
+        <details class="makeown__import">
+          <summary>Or import a file / generate questions with AI</summary>
+          <div id="custom-questions"></div>
+        </details>
       </div>
     </details>
 
@@ -133,6 +138,18 @@
     </div>
 
     <div class="game-layout">
+      <details id="howto-panel" class="howto" open>
+        <summary>How to run this<span class="howto__cue"> — hide</span></summary>
+        <ol class="howto__list">
+          <li><b>Click a dollar value</b> to put that clue on the Board.</li>
+          <li><b>✓</b> awards the money to a team; <b>✗</b> deducts it (skip ✗ if you're playing without penalties).</li>
+          <li><b>Reveal answer</b> shows it to the class.</li>
+          <li><b>Done — back to board</b> uses the clue up. <b>Esc</b> or <b>Oops</b> closes it without using it.</li>
+          <li><b>+100 / −100</b> on each team fixes a score by hand.</li>
+          <li><b>🎵</b> plays think music; <b>🔊</b> toggles all sounds.</li>
+          <li>Lost the Board tab? <b>Open Board</b> (top right) re-opens it — both screens stay in sync.</li>
+        </ol>
+      </details>
       <div id="host-board" class="host-board"></div>
       <aside id="teams-panel" class="teams-panel"></aside>
     </div>
@@ -173,6 +190,7 @@
     <div class="setup-actions">
       <button id="final-back-btn" class="btn">← Back to board</button>
       <button id="final-new-btn" class="btn primary">New game</button>
+      <a class="btn ghost" href="../index.html">🏠 All games</a>
     </div>
   </section>
 
@@ -184,6 +202,8 @@
   <script src="js/sounds.js"></script>
   <script src="data/games.js"></script>
   <script src="../shared/custom-questions.js"></script>
+  <script src="../shared/question-editor.js"></script>
+  <script src="js/editor.js"></script>
   <script src="js/host.js"></script>
 </body>
 </html>

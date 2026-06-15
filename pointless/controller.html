@@ -19,6 +19,7 @@
                 <span class="console__game">Pointless</span>
             </span>
             <span class="console__meta">
+                <a class="btn ghost" href="../index.html" title="Back to the Classroom Games home page">&#8592; All games</a>
                 <button id="openBoardBtn" class="btn ghost" type="button">Open Board &#8599;</button>
                 <span id="consoleHint" class="console__hint">Students watch the <strong>Board</strong></span>
                 <span class="connection-status" id="connectionStatus">
@@ -28,6 +29,7 @@
             </span>
         </header>
 
+        <div class="app-body">
         <div class="panels">
             <!-- ── Setup ───────────────────────────────────── -->
             <section id="setupPanel" class="panel">
@@ -49,13 +51,17 @@
                     <summary>
                         <span class="makeown__icon">✨</span>
                         <span class="makeown__text">
-                            <span class="makeown__title">Make/Load your own quiz</span>
-                            <span class="makeown__sub">Turn any topic into a game — paste your notes or use the AI prompt. No files to edit.</span>
+                            <span class="makeown__title">Make or load your own quiz</span>
+                            <span class="makeown__sub">Type your own questions, paste them from a spreadsheet, import a file, or have AI draft them. No files to edit.</span>
                         </span>
                         <span class="makeown__cue">Create a quiz →</span>
                     </summary>
                     <div class="makeown__body">
-                        <div id="customQuestions"></div>
+                        <div id="questionEditor"></div>
+                        <details class="makeown__import">
+                            <summary>Or import a file / generate questions with AI</summary>
+                            <div id="customQuestions"></div>
+                        </details>
                     </div>
                 </details>
 
@@ -169,6 +175,17 @@
 
         <!-- ── Sidebar ─────────────────────────────────────── -->
         <aside id="sidebar" style="display:none">
+            <details class="howto" open>
+                <summary>How to run this<span class="howto__cue"> — hide</span></summary>
+                <ol class="howto__list">
+                    <li><b>Show Question</b> puts the question on the Board.</li>
+                    <li>Type each team's answer and <b>Submit</b> — the <b>lower</b> the score, the better.</li>
+                    <li>A wrong answer scores the full <b>100</b>; use <b>Override</b> to set a score by hand.</li>
+                    <li><b>Next Question</b> / <b>Show Scoreboard</b> move the game along.</li>
+                    <li><b>Undo</b> reverses the last action; <b>Reset Game</b> starts over.</li>
+                    <li>Lost the Board tab? <b>Open Board</b> (top right) re-opens it — both screens stay in sync.</li>
+                </ol>
+            </details>
             <h3>Teams</h3>
             <div id="scoreOverrides"></div>
             <hr>
@@ -176,6 +193,7 @@
             <hr>
             <button id="resetBtn">Reset Game</button>
         </aside>
+        </div>
     </div>
 
     <!-- KaTeX (math rendering) — must load before the game scripts -->
@@ -186,6 +204,8 @@
     <script src="js/scorer.js"></script>
     <script src="data/samples.js"></script>
     <script src="../shared/custom-questions.js"></script>
+    <script src="../shared/question-editor.js"></script>
+    <script src="js/editor.js"></script>
     <script src="js/controller.js"></script>
 </body>
 </html>

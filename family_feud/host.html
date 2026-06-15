@@ -19,6 +19,7 @@
       <span class="console__game">Family Feud</span>
     </span>
     <span class="console__meta">
+      <a class="btn ghost" href="../index.html" title="Back to the Classroom Games home page">&#8592; All games</a>
       <button id="open-board-btn" class="btn ghost" type="button">Open Board &#8599;</button>
       <span id="console-hint" class="console__hint">Students watch the <strong>Board</strong> — keep this screen to yourself</span>
     </span>
@@ -46,13 +47,17 @@
         <summary>
           <span class="makeown__icon">✨</span>
           <span class="makeown__text">
-            <span class="makeown__title">Make/Load your own quiz</span>
-            <span class="makeown__sub">Turn any topic into a survey-style game — paste your notes or use the AI prompt. No files to edit.</span>
+            <span class="makeown__title">Make or load your own quiz</span>
+            <span class="makeown__sub">Type your own survey questions, paste them from a spreadsheet, import a file, or have AI draft them. No files to edit.</span>
           </span>
           <span class="makeown__cue">Create a quiz →</span>
         </summary>
         <div class="makeown__body">
-          <div id="custom-questions"></div>
+          <div id="question-editor"></div>
+          <details class="makeown__import">
+            <summary>Or import a file / generate questions with AI</summary>
+            <div id="custom-questions"></div>
+          </details>
         </div>
       </details>
 
@@ -140,6 +145,19 @@
       </div>
     </div>
 
+    <!-- How to run this (collapsible) -->
+    <details class="howto" open>
+      <summary>How to run this<span class="howto__cue"> — hide</span></summary>
+      <ol class="howto__list">
+        <li>Click an <b>answer row</b> to reveal it on the Board and add its points to the round.</li>
+        <li><b>Strike ✗</b> records a wrong guess (3 strikes can pass play to the other team).</li>
+        <li><b>Reveal all</b> shows every remaining answer once the round is done.</li>
+        <li><b>Award to Team 1 / 2</b> gives that team the round points.</li>
+        <li><b>← Prev / Next →</b> move between questions; <b>New game</b> starts over.</li>
+        <li>Lost the Board tab? <b>Open Board</b> (top right) re-opens it — both screens stay in sync.</li>
+      </ol>
+    </details>
+
     <!-- Controls -->
     <div class="host-controls">
       <div class="control-group">
@@ -178,7 +196,10 @@
           <div class="final-score num" id="final-team2-score">0</div>
         </div>
       </div>
-      <button class="btn primary big" id="btn-gameover-new">Play again</button>
+      <div class="gameover-actions">
+        <button class="btn primary big" id="btn-gameover-new">Play again</button>
+        <a class="btn ghost" href="../index.html">🏠 All games</a>
+      </div>
     </section>
   </div>
 
@@ -188,6 +209,8 @@
   <script src="../shared/math.js"></script>
   <script src="questions.js"></script>
   <script src="../shared/custom-questions.js"></script>
+  <script src="../shared/question-editor.js"></script>
+  <script src="editor.js"></script>
   <script src="host.js"></script>
 </body>
 </html>

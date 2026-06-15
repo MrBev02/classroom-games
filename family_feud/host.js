@@ -403,3 +403,14 @@ CustomQuestions.mount({
     questionPool = arr;
   },
 });
+
+if (window.FeudEditor) {
+  FeudEditor.mount({
+    mount: $("#question-editor"),
+    storageKey: "feud-bank-v1",
+    validate: validateFeudQuestions,
+    onUse: (arr) => {
+      questionPool = arr;
+    },
+  });
+}

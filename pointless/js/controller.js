@@ -319,6 +319,18 @@ Now generate the game.`;
         },
     });
 
+    if (window.PointlessEditor) {
+        PointlessEditor.mount({
+            mount: $('questionEditor'),
+            storageKey: 'pointless-bank-v1',
+            validate: validatePointlessGame,
+            onUse: (data) => {
+                games.push(data);
+                refreshSampleSelect(games.length - 1);
+            },
+        });
+    }
+
     // ── Start Game ──────────────────────────────────────────
     $('startGameBtn').addEventListener('click', () => {
         // Read team names

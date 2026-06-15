@@ -229,3 +229,71 @@
   outline-offset: 2px;
   box-shadow: 0 0 22px var(--accent-soft);
 }
+
+.gameover-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* in-game "how to run this" panel (collapsible) */
+
+.howto {
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin: 0 0 0.9rem;
+}
+
+.howto > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--accent);
+}
+
+.howto > summary::-webkit-details-marker { display: none; }
+.howto > summary::before { content: "▸ "; }
+.howto[open] > summary::before { content: "▾ "; }
+.howto__cue { color: var(--dim); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.howto:not([open]) .howto__cue { display: none; }
+
+.howto__list {
+  margin: 0;
+  padding: 0 0.9rem 0.75rem 1.8rem;
+  color: var(--dim);
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.howto__list b { color: var(--ink); font-weight: 600; }
+
+/* secondary "import a file / AI" disclosure under the question editor */
+
+.makeown__import {
+  margin-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 4px;
+}
+
+.makeown__import > summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--dim);
+  padding: 6px 0;
+}
+
+.makeown__import > summary::-webkit-details-marker { display: none; }
+.makeown__import > summary::before { content: "▸ "; }
+.makeown__import[open] > summary::before { content: "▾ "; }
+.makeown__import > summary:hover { color: var(--ink); }

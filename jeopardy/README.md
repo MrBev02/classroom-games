@@ -32,6 +32,10 @@ the board opens in its own tab, ready to drag to the projector.
 
 ## Running the game
 
+A collapsible **How to run this** panel on the left of the board recaps these
+controls during the game, and **← All games** (top bar) / **🏠 All games** (final
+screen) return you to the Classroom Games home page.
+
 - **Click a dollar value** on the host board to put that clue up on the display.
   You always see the answer; students don't until you reveal it.
 - For each team: **✓** awards the money, **✗** deducts it. Whether wrong answers
@@ -72,9 +76,33 @@ with the **🔊** button next to the board.
 
 You can also **print an answer key** from the setup screen.
 
-## Writing your own questions
+## Making your own quiz
 
-Edit `data/games.js`. Each game set looks like:
+Click **✨ Make or load your own quiz** on the setup screen — no files to edit.
+You have four ways to get your own questions in, all running in your browser
+(nothing is uploaded):
+
+- **Type them in** — fill the grid: a column per category, a row per clue, with
+  the clue and the answer side by side. Set the board size (categories ×
+  clues each) and add/remove rows as needed.
+- **Paste from a spreadsheet** — keep your questions in Excel or Google Sheets
+  with columns **Category, Clue, Answer, Value** (Value optional), then copy the
+  cells and paste them in. A header row is fine. They drop straight into the grid
+  so you can tweak before playing.
+- **Import a file / use AI** — under *Or import a file / generate questions with
+  AI*: load a `.json` file you saved earlier, or copy the AI prompt, paste it
+  into ChatGPT/Claude, and load the JSON it returns.
+
+Boards you build are kept in this browser under **Your saved boards** (load,
+re-edit, or delete them anytime), and **⬇ Export JSON** downloads a board as a
+file to back up or share with another teacher.
+
+When a board is ready, click **Use this board ▶** — it becomes the selected game
+set, so just press **Start Game ▶**.
+
+## Writing questions in code
+
+You can also edit `data/games.js` directly. Each game set looks like:
 
 ```js
 {
