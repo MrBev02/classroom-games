@@ -282,10 +282,25 @@
     });
     bankNew.addEventListener('click', () => { loadModel(cfg.blankModel(), ''); setStatus('', null); });
 
+    // Load already-built game data (e.g. pasted from an AI or a file) into the
+    // grid, by inverting the game's toData() via cfg.fromData(). Lets the AI and
+    // import paths reuse this editor — review, tweak, save, export — instead of
+    // loading straight into the game. Returns {ok} / {ok:false,error}.
+    function loadData(data) {
+      if (!cfg.fromData) return { ok: false, error: 'Editing imported questions isn’t supported here.' };
+      let res;
+      try { res = cfg.fromData(data); } catch (e) { return { ok: false, error: e.message }; }
+      if (!res || res.error) return { ok: false, error: res ? res.error : 'Couldn’t read that.' };
+      loadModel(res.model, res.title != null ? res.title : '');
+      setStatus('✓ Loaded into the editor below — review it, then “💾 Save to my sets” to keep it, ' +
+        'or “' + (cfg.useLabel || 'Use this set ▶') + '” to play.', 'ok');
+      return { ok: true };
+    }
+
     refreshBank();
     rerender();
 
-    return { reset() { setStatus('', null); }, loadModel, setStatus };
+    return { reset() { setStatus('', null); }, loadModel, setStatus, loadData };
   }
 
   global.QuestionEditorKit = { mount, parseTable, slug, el };

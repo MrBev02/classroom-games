@@ -16,9 +16,14 @@
  *
  * Self-initialising: wires every `.maketabs` group on the page. Left/Right (and
  * Up/Down) arrow keys move between tabs, matching the WAI-ARIA tabs pattern.
+ *
+ * Exposes window.MakeTabs.show(panelId) so other code can switch tabs — e.g. the
+ * AI/import paths jump to the editor tab after loading questions into it.
  */
 (function () {
   'use strict';
+
+  const groups = [];
 
   function initGroup(tablist) {
     const tabs = Array.from(tablist.querySelectorAll('[data-panel]'));
@@ -37,6 +42,8 @@
         }
       });
     }
+
+    groups.push({ tabs, select });
 
     tabs.forEach((tab, i) => {
       tab.addEventListener('click', () => select(tab));
@@ -57,6 +64,17 @@
   function init() {
     document.querySelectorAll('.maketabs').forEach(initGroup);
   }
+
+  // Programmatically activate the tab whose panel has this id.
+  function show(panelId) {
+    for (const g of groups) {
+      const tab = g.tabs.find((t) => t.dataset.panel === panelId);
+      if (tab) { g.select(tab); tab.focus(); return true; }
+    }
+    return false;
+  }
+
+  window.MakeTabs = { show };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

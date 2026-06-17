@@ -253,28 +253,41 @@ function addCustomGameSet(set) {
   $("#game-select").value = String(i);
 }
 
+let questionEditorApi = null;
+
+// AI-pasted and imported boards both flow into the editor — so teachers can
+// review, tweak, save to their browser, or export them, exactly like a
+// hand-built board. Falls back to loading straight into the game if the editor
+// isn't available.
+function loadCustomIntoEditor(data) {
+  if (questionEditorApi && questionEditorApi.loadData(data).ok) {
+    if (window.MakeTabs) MakeTabs.show("mk-write");
+    return;
+  }
+  addCustomGameSet(data);
+}
+
 function setupCustomQuestions() {
-  const readyHint = "Added as the selected game set — click Start Game ▶.";
   CustomQuestions.mount({
     mount: $("#custom-questions-ai"),
     mode: "ai",
     promptText: CUSTOM_PROMPT,
-    readyHint,
+    readyHint: "Added as the selected game set — click Start Game ▶.",
     validate: validateCustomGame,
-    onLoad: addCustomGameSet,
+    onLoad: loadCustomIntoEditor,
   });
   CustomQuestions.mount({
     mount: $("#custom-questions-import"),
     mode: "import",
-    readyHint,
+    readyHint: "Added as the selected game set — click Start Game ▶.",
     validate: validateCustomGame,
-    onLoad: addCustomGameSet,
+    onLoad: loadCustomIntoEditor,
   });
 }
 
 function setupQuestionEditor() {
   if (!window.QuestionEditor) return;
-  QuestionEditor.mount({
+  questionEditorApi = QuestionEditor.mount({
     mount: $("#question-editor"),
     storageKey: "jeopardy-bank-v1",
     validate: validateCustomGame,
@@ -808,8 +821,8 @@ document.addEventListener("keydown", (e) => {
 // ---------------------
 
 populateSetup();
-setupCustomQuestions();
 setupQuestionEditor();
+setupCustomQuestions();
 render();
 // Tell any already-open display we're here (it shows the waiting screen)
 channel.send("STATE", publicState());

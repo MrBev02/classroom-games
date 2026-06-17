@@ -313,33 +313,43 @@ Now generate the game.`;
         games.push(data);
         refreshSampleSelect(games.length - 1);
     };
+
+    let pointlessEditorApi = null;
+    if (window.PointlessEditor) {
+        pointlessEditorApi = PointlessEditor.mount({
+            mount: $('questionEditor'),
+            storageKey: 'pointless-bank-v1',
+            validate: validatePointlessGame,
+            onUse: onCustomLoad,
+        });
+    }
+
+    // AI-pasted and imported games both flow into the editor — so teachers can
+    // review, tweak, save to their browser, or export them, like a hand-built
+    // game. Falls back to loading straight into the game if the editor isn't there.
+    const loadCustomIntoEditor = (data) => {
+        if (pointlessEditorApi && pointlessEditorApi.loadData(data).ok) {
+            if (window.MakeTabs) MakeTabs.show('mk-write');
+            return;
+        }
+        onCustomLoad(data);
+    };
+
     const customAI = CustomQuestions.mount({
         mount: $('customQuestionsAI'),
         mode: 'ai',
         promptText: CUSTOM_PROMPT,
         readyHint: customReadyHint,
         validate: validatePointlessGame,
-        onLoad: onCustomLoad,
+        onLoad: loadCustomIntoEditor,
     });
     const customImport = CustomQuestions.mount({
         mount: $('customQuestionsImport'),
         mode: 'import',
         readyHint: customReadyHint,
         validate: validatePointlessGame,
-        onLoad: onCustomLoad,
+        onLoad: loadCustomIntoEditor,
     });
-
-    if (window.PointlessEditor) {
-        PointlessEditor.mount({
-            mount: $('questionEditor'),
-            storageKey: 'pointless-bank-v1',
-            validate: validatePointlessGame,
-            onUse: (data) => {
-                games.push(data);
-                refreshSampleSelect(games.length - 1);
-            },
-        });
-    }
 
     // ── Start Game ──────────────────────────────────────────
     $('startGameBtn').addEventListener('click', () => {

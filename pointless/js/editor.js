@@ -47,6 +47,33 @@
     return `${n} round${n === 1 ? '' : 's'} + final`;
   }
 
+  // ---- game data -> model (inverse of toData) ----
+  // Turns a built game (AI-pasted / imported) back into the editable model:
+  // each answer's score map becomes a { text, score, aliases } row again.
+  function mapToAnswers(map) {
+    const arr = [];
+    for (const [text, v] of Object.entries(map || {})) {
+      if (v && typeof v === 'object') arr.push({ text, score: v.score, aliases: (v.aliases || []).join(', ') });
+      else arr.push({ text, score: v, aliases: '' });
+    }
+    return arr.length ? arr : [blankA()];
+  }
+  function qFromData(q) {
+    q = q || {};
+    return { category: q.category || '', question: q.question || '', answers: mapToAnswers(q.answers) };
+  }
+  function fromData(data) {
+    if (!data || typeof data !== 'object' || !Array.isArray(data.rounds)) return { error: 'That isn’t a Pointless game.' };
+    const rounds = data.rounds.length
+      ? data.rounds.map((r) => {
+          const qs = (r && Array.isArray(r.questions) ? r.questions : []).map(qFromData);
+          return { questions: qs.length ? qs : [blankQ()] };
+        })
+      : [{ questions: [blankQ()] }];
+    const final = data.final ? qFromData(data.final) : blankQ();
+    return { model: { rounds, final }, title: data.title || '' };
+  }
+
   // ---- spreadsheet -> model. Columns: Round, Category, Question, Answer, Score, Aliases ----
   function looksLikeHeader(cells) {
     const j = (cells || []).map((c) => c.trim().toLowerCase());
@@ -169,7 +196,7 @@
       lead: 'Type your rounds, questions and answers — or paste them from a spreadsheet. Saved in this browser; nothing is uploaded.',
       titleLabel: 'Game title',
       titlePlaceholder: 'My game title (e.g. Year 8 — World Geography)',
-      blankModel, renderBody, summary, toData,
+      blankModel, renderBody, summary, toData, fromData,
       fromTable, validate, onUse,
       useLabel: 'Use this game ▶',
       useDoneHint: 'added as the selected set. Set teams and click Start Game ▶.',
@@ -182,5 +209,5 @@
     });
   }
 
-  global.PointlessEditor = { mount, fromTable, toData };
+  global.PointlessEditor = { mount, fromTable, toData, fromData };
 })(window);

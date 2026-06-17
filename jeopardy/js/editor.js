@@ -54,6 +54,13 @@
     return { title, categories: clone(model.categories) };
   }
 
+  // Inverse of toData: turn a built board (AI-pasted / imported) back into an
+  // editable model so it can be reviewed, saved and tweaked in the grid.
+  function fromData(data) {
+    if (!data || !Array.isArray(data.categories)) return { error: 'That isn’t a Jeopardy board.' };
+    return { model: { categories: clone(data.categories) }, title: data.title || '' };
+  }
+
   function summary(model) {
     const rows = Math.max(1, ...model.categories.map((c) => c.clues.length));
     return `${model.categories.length}×${rows}`;
@@ -135,7 +142,7 @@
       lead: 'Type your questions below — or paste them from a spreadsheet. Saved in this browser; nothing is uploaded.',
       titleLabel: 'Board title',
       titlePlaceholder: 'My game title (e.g. Year 9 — The Water Cycle)',
-      blankModel, renderBody, summary, toData,
+      blankModel, renderBody, summary, toData, fromData,
       fromTable, validate, onUse,
       useLabel: 'Use this board ▶',
       useDoneHint: 'added as the selected game set. Click Start Game ▶.',
@@ -148,5 +155,5 @@
     });
   }
 
-  global.QuestionEditor = { mount, fromTable, toData };
+  global.QuestionEditor = { mount, fromTable, toData, fromData };
 })(window);

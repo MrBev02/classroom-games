@@ -394,29 +394,9 @@ function validateFeudQuestions(d) {
   return ok(arr, `${arr.length} question${arr.length === 1 ? "" : "s"} loaded`);
 }
 
-CustomQuestions.mount({
-  mount: $("#custom-questions-ai"),
-  mode: "ai",
-  promptText: CUSTOM_PROMPT,
-  readyHint: "These questions are loaded — click Start Game.",
-  validate: validateFeudQuestions,
-  onLoad: (arr) => {
-    questionPool = arr;
-  },
-});
-
-CustomQuestions.mount({
-  mount: $("#custom-questions-import"),
-  mode: "import",
-  readyHint: "These questions are loaded — click Start Game.",
-  validate: validateFeudQuestions,
-  onLoad: (arr) => {
-    questionPool = arr;
-  },
-});
-
+let feudEditorApi = null;
 if (window.FeudEditor) {
-  FeudEditor.mount({
+  feudEditorApi = FeudEditor.mount({
     mount: $("#question-editor"),
     storageKey: "feud-bank-v1",
     validate: validateFeudQuestions,
@@ -425,3 +405,32 @@ if (window.FeudEditor) {
     },
   });
 }
+
+// AI-pasted and imported question sets both flow into the editor — so teachers
+// can review, tweak, save to their browser, or export them, just like a
+// hand-built set. Falls back to loading straight into the game if the editor
+// isn't available.
+function loadFeudIntoEditor(arr) {
+  if (feudEditorApi && feudEditorApi.loadData(arr).ok) {
+    if (window.MakeTabs) MakeTabs.show("mk-write");
+    return;
+  }
+  questionPool = arr;
+}
+
+CustomQuestions.mount({
+  mount: $("#custom-questions-ai"),
+  mode: "ai",
+  promptText: CUSTOM_PROMPT,
+  readyHint: "These questions are loaded — click Start Game.",
+  validate: validateFeudQuestions,
+  onLoad: loadFeudIntoEditor,
+});
+
+CustomQuestions.mount({
+  mount: $("#custom-questions-import"),
+  mode: "import",
+  readyHint: "These questions are loaded — click Start Game.",
+  validate: validateFeudQuestions,
+  onLoad: loadFeudIntoEditor,
+});

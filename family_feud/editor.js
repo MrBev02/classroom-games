@@ -45,6 +45,15 @@
   function toData(model) { return clone(model.questions); }
   function summary(model) { const n = model.questions.length; return `${n} question${n === 1 ? '' : 's'}`; }
 
+  // Inverse of toData: turn a built question set (AI-pasted / imported) back
+  // into an editable model. Feud data is the bare questions array.
+  function fromData(data) {
+    const arr = Array.isArray(data) ? data
+      : (data && Array.isArray(data.questions) ? data.questions : null);
+    if (!arr) return { error: 'That isn’t a Family Feud question set.' };
+    return { model: { questions: clone(arr) }, title: '' };
+  }
+
   function renderBody(model, host, h) {
     const { el, bindText, xBtn, miniBtn, rerender } = h;
 
@@ -90,7 +99,7 @@
       lead: 'Type your survey questions and answers — or paste them from a spreadsheet. Saved in this browser; nothing is uploaded.',
       titleLabel: 'Set name (for saving / export)',
       titlePlaceholder: 'My questions (e.g. End-of-term review)',
-      blankModel, renderBody, summary, toData,
+      blankModel, renderBody, summary, toData, fromData,
       fromTable, validate, onUse,
       useLabel: 'Use these questions ▶',
       useDoneHint: 'loaded. Set your teams and click Start Game ▶.',
@@ -103,5 +112,5 @@
     });
   }
 
-  global.FeudEditor = { mount, fromTable, toData };
+  global.FeudEditor = { mount, fromTable, toData, fromData };
 })(window);
