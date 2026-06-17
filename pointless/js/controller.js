@@ -308,15 +308,25 @@ Now generate the game.`;
         selectGame(parseInt(e.target.value, 10))
     );
 
-    const customUI = CustomQuestions.mount({
-        mount: $('customQuestions'),
+    const customReadyHint = 'Added as the selected set — set team names and click Start Game.';
+    const onCustomLoad = (data) => {
+        games.push(data);
+        refreshSampleSelect(games.length - 1);
+    };
+    const customAI = CustomQuestions.mount({
+        mount: $('customQuestionsAI'),
+        mode: 'ai',
         promptText: CUSTOM_PROMPT,
-        readyHint: 'Added as the selected set — set team names and click Start Game.',
+        readyHint: customReadyHint,
         validate: validatePointlessGame,
-        onLoad: (data) => {
-            games.push(data);
-            refreshSampleSelect(games.length - 1);
-        },
+        onLoad: onCustomLoad,
+    });
+    const customImport = CustomQuestions.mount({
+        mount: $('customQuestionsImport'),
+        mode: 'import',
+        readyHint: customReadyHint,
+        validate: validatePointlessGame,
+        onLoad: onCustomLoad,
     });
 
     if (window.PointlessEditor) {
@@ -897,7 +907,8 @@ Now generate the game.`;
         state.history = [];
         state.teams.forEach(t => { t.score = 0; t.eliminated = false; });
 
-        customUI.reset();
+        customAI.reset();
+        customImport.reset();
         refreshSampleSelect(parseInt($('sampleSelect').value, 10) || 0);
 
         channel.send('RESET_GAME', {});

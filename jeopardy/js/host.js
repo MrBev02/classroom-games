@@ -254,10 +254,19 @@ function addCustomGameSet(set) {
 }
 
 function setupCustomQuestions() {
+  const readyHint = "Added as the selected game set — click Start Game ▶.";
   CustomQuestions.mount({
-    mount: $("#custom-questions"),
+    mount: $("#custom-questions-ai"),
+    mode: "ai",
     promptText: CUSTOM_PROMPT,
-    readyHint: "Added as the selected game set — click Start Game ▶.",
+    readyHint,
+    validate: validateCustomGame,
+    onLoad: addCustomGameSet,
+  });
+  CustomQuestions.mount({
+    mount: $("#custom-questions-import"),
+    mode: "import",
+    readyHint,
     validate: validateCustomGame,
     onLoad: addCustomGameSet,
   });

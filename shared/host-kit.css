@@ -247,7 +247,10 @@ body {
    "MAKE YOUR OWN QUIZ" — the headline call-to-action.
    A loud accent panel (collapsible) that hosts the shared
    question loader, so teachers can't miss that they can
-   build a quiz on any topic.
+   build a quiz on any topic. Inside it, three equal-weight
+   tabs (.maketabs) offer the three ways in — write it by
+   hand, generate it with AI, or import a file — so no one
+   path is buried under another.
    ===================================================== */
 
 .makeown {
@@ -316,6 +319,47 @@ body {
 .makeown[open] > summary .makeown__cue { display: none; }
 
 .makeown__body { padding: 0 1.15rem 1.15rem; }
+
+/* Equal-weight tabs: Write your own · Generate with AI · Import a file.
+   A segmented control so every authoring route reads as a peer. */
+.maketabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.3rem;
+  margin-bottom: 0.95rem;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.maketabs__tab {
+  flex: 1 1 9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.maketabs__tab:hover { color: var(--ink); background: var(--panel-raised); }
+.maketabs__tab.is-active {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent-line);
+}
+.maketabs__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.maketabs__panel[hidden] { display: none; }
 .makeown__note {
   font-size: 0.82rem;
   color: var(--dim);

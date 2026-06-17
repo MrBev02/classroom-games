@@ -53,11 +53,20 @@
           <span class="makeown__cue">Create a quiz →</span>
         </summary>
         <div class="makeown__body">
-          <div id="question-editor"></div>
-          <details class="makeown__import">
-            <summary>Or import a file / generate questions with AI</summary>
-            <div id="custom-questions"></div>
-          </details>
+          <div class="maketabs" role="tablist" aria-label="How to make your quiz">
+            <button type="button" class="maketabs__tab is-active" role="tab" data-panel="mk-write" aria-selected="true">✍️ Write your own</button>
+            <button type="button" class="maketabs__tab" role="tab" data-panel="mk-ai" aria-selected="false" tabindex="-1">✨ Generate with AI</button>
+            <button type="button" class="maketabs__tab" role="tab" data-panel="mk-import" aria-selected="false" tabindex="-1">📁 Import a file</button>
+          </div>
+          <div id="mk-write" class="maketabs__panel is-active" role="tabpanel">
+            <div id="question-editor"></div>
+          </div>
+          <div id="mk-ai" class="maketabs__panel" role="tabpanel" hidden>
+            <div id="custom-questions-ai"></div>
+          </div>
+          <div id="mk-import" class="maketabs__panel" role="tabpanel" hidden>
+            <div id="custom-questions-import"></div>
+          </div>
         </div>
       </details>
 
@@ -210,6 +219,7 @@
   <script src="questions.js"></script>
   <script src="../shared/custom-questions.js"></script>
   <script src="../shared/question-editor.js"></script>
+  <script src="../shared/maketabs.js"></script>
   <script src="editor.js"></script>
   <script src="host.js"></script>
 </body>

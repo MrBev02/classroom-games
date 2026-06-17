@@ -13,6 +13,7 @@
  * Usage:
  *   const ui = CustomQuestions.mount({
  *     mount: document.getElementById('custom-questions'),
+ *     mode: 'all',           // 'ai' (prompt + paste-back) · 'import' (file) · 'all'
  *     promptText: '...the AI prompt...',
  *     readyHint: 'Click Start to play.',
  *     validate(parsed) {
@@ -95,33 +96,58 @@
     const root = opts.mount;
     if (!root) throw new Error('CustomQuestions.mount: missing mount element');
 
-    const promptEl = el('textarea.cq-prompt-text', { readonly: '' });
-    promptEl.value = opts.promptText || '';
-    const copyBtn = el('button.cq-copy', { type: 'button' }, 'Copy prompt');
-    const copyStatus = el('span.cq-copy-status');
+    // Which halves to show. 'ai' = copy-a-prompt + paste it back, 'import' =
+    // load a .json file, 'all' (default) = both, the original combined card.
+    const mode = opts.mode || 'all';
+    const showAI = mode === 'ai' || mode === 'all';
+    const showImport = mode === 'import' || mode === 'all';
 
-    const fileEl = el('input.cq-file', { type: 'file', accept: '.json,application/json' });
-    const pasteEl = el('textarea.cq-paste', { placeholder: 'Paste the JSON here…' });
-    const loadBtn = el('button.cq-load-btn', { type: 'button' }, 'Load pasted JSON');
     const statusEl = el('div.cq-status', { role: 'status' });
 
-    const details = el('details', null,
-      el('summary', null, 'Step 1 — copy an AI prompt'),
-      el('p', null, 'Paste this into ChatGPT, Claude, or any AI. Replace the bracketed parts, then copy the JSON it returns.'),
-      promptEl, copyBtn, copyStatus
-    );
+    // AI half — copy a prompt, paste back the JSON the AI returns.
+    let promptEl = null, copyBtn = null, copyStatus = null, pasteEl = null, loadBtn = null;
+    if (showAI) {
+      promptEl = el('textarea.cq-prompt-text', { readonly: '' });
+      promptEl.value = opts.promptText || '';
+      copyBtn = el('button.cq-copy', { type: 'button' }, 'Copy prompt');
+      copyStatus = el('span.cq-copy-status');
+      pasteEl = el('textarea.cq-paste', { placeholder: 'Paste the JSON here…' });
+      loadBtn = el('button.cq-load-btn', { type: 'button' }, 'Load pasted JSON');
+    }
 
-    const card = el('div.cq', null,
-      el('p', null, 'Generate a question set with an AI, then load it here. Nothing is uploaded — it stays in this browser.'),
-      details,
-      el('label', null, 'Step 2 — load the JSON'),
-      fileEl,
-      el('span.cq-or', null, '— or paste it —'),
-      pasteEl,
-      loadBtn,
-      statusEl
-    );
+    // Import half — load a .json file you already have.
+    let fileEl = null;
+    if (showImport) {
+      fileEl = el('input.cq-file', { type: 'file', accept: '.json,application/json' });
+    }
 
+    const kids = [];
+    if (showAI) {
+      kids.push(
+        el('p', null, showImport
+          ? 'Generate a question set with an AI, then load it here. Nothing is uploaded — it stays in this browser.'
+          : 'Copy the prompt, paste it into ChatGPT, Claude, or any AI, then paste the JSON it returns. Nothing is uploaded — it stays in this browser.'),
+        el('details', mode === 'ai' ? { open: '' } : null,
+          el('summary', null, 'Step 1 — copy an AI prompt'),
+          el('p', null, 'Paste this into ChatGPT, Claude, or any AI. Replace the bracketed parts, then copy the JSON it returns.'),
+          promptEl, copyBtn, copyStatus
+        ),
+        el('label', null, showImport ? 'Step 2 — load the JSON' : 'Step 2 — paste the JSON it gives you')
+      );
+    } else {
+      kids.push(
+        el('p', null, 'Already have a question file (.json)? Choose it here. Nothing is uploaded — it stays in this browser.'),
+        el('label', null, 'Choose a file')
+      );
+    }
+    if (showImport) kids.push(fileEl);
+    if (showAI) {
+      if (showImport) kids.push(el('span.cq-or', null, '— or paste it —'));
+      kids.push(pasteEl, loadBtn);
+    }
+    kids.push(statusEl);
+
+    const card = el('div.cq', null, ...kids);
     root.replaceChildren(card);
 
     function setStatus(message, kind) {
@@ -169,26 +195,29 @@
       setStatus(`✓ ${result.summary}${from}.${hint}`, 'ok');
     }
 
-    copyBtn.addEventListener('click', async () => {
-      const okCopy = await copyText(promptEl.value, promptEl);
-      copyStatus.textContent = okCopy ? 'Copied!' : 'Press Ctrl/Cmd+C to copy';
-      setTimeout(() => { copyStatus.textContent = ''; }, 2500);
-    });
+    if (showAI) {
+      copyBtn.addEventListener('click', async () => {
+        const okCopy = await copyText(promptEl.value, promptEl);
+        copyStatus.textContent = okCopy ? 'Copied!' : 'Press Ctrl/Cmd+C to copy';
+        setTimeout(() => { copyStatus.textContent = ''; }, 2500);
+      });
+      loadBtn.addEventListener('click', () => handleText(pasteEl.value, null));
+    }
 
-    fileEl.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => handleText(ev.target.result, file.name);
-      reader.onerror = () => setStatus(`Couldn't read the file: ${reader.error}`, 'bad');
-      reader.readAsText(file);
-    });
-
-    loadBtn.addEventListener('click', () => handleText(pasteEl.value, null));
+    if (showImport) {
+      fileEl.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => handleText(ev.target.result, file.name);
+        reader.onerror = () => setStatus(`Couldn't read the file: ${reader.error}`, 'bad');
+        reader.readAsText(file);
+      });
+    }
 
     function reset() {
-      fileEl.value = '';
-      pasteEl.value = '';
+      if (fileEl) fileEl.value = '';
+      if (pasteEl) pasteEl.value = '';
       setStatus('', null);
     }
 

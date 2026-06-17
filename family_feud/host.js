@@ -395,8 +395,19 @@ function validateFeudQuestions(d) {
 }
 
 CustomQuestions.mount({
-  mount: $("#custom-questions"),
+  mount: $("#custom-questions-ai"),
+  mode: "ai",
   promptText: CUSTOM_PROMPT,
+  readyHint: "These questions are loaded — click Start Game.",
+  validate: validateFeudQuestions,
+  onLoad: (arr) => {
+    questionPool = arr;
+  },
+});
+
+CustomQuestions.mount({
+  mount: $("#custom-questions-import"),
+  mode: "import",
   readyHint: "These questions are loaded — click Start Game.",
   validate: validateFeudQuestions,
   onLoad: (arr) => {
