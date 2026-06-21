@@ -168,6 +168,10 @@ MATH & FORMULAS (only if your subject needs them)
 OUTPUT FORMAT — this must be valid JSON:
 - Use double quotes around every key and every text value.
 - No trailing commas. No comments. No markdown code fences.
+- Write square brackets as plain [ and ] — NEVER put a backslash before a bracket
+  (no \[ and no \]). A backslash before [ or ] is invalid JSON and will not load.
+  (Copilot 365 and Word auto-insert these; if yours did, delete every \ sitting in
+  front of a [ or ].) The only backslashes allowed are the doubled ones inside LaTeX.
 - Output ONLY the JSON object — nothing before or after it.
 
 Copy this structure exactly:
