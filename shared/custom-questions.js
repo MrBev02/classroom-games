@@ -125,8 +125,8 @@
     if (showAI) {
       kids.push(
         el('p', null, showImport
-          ? 'Generate a question set with an AI, then load it here. Nothing is uploaded — it stays in this browser.'
-          : 'Copy the prompt, paste it into ChatGPT, Claude, or any AI, then paste the JSON it returns. Nothing is uploaded — it stays in this browser.'),
+          ? 'Generate a question set with an AI, then load it here.'
+          : 'Copy the prompt, paste it into ChatGPT, Claude, or any AI, then paste the JSON it returns.'),
         el('details', mode === 'ai' ? { open: '' } : null,
           el('summary', null, 'Step 1 — copy an AI prompt'),
           el('p', null, 'Paste this into ChatGPT, Claude, or any AI. Replace the bracketed parts, then copy the JSON it returns.'),
@@ -136,7 +136,7 @@
       );
     } else {
       kids.push(
-        el('p', null, 'Already have a question file (.json)? Choose it here. Nothing is uploaded — it stays in this browser.'),
+        el('p', null, 'Already have a question file (.json)? Choose it here.'),
         el('label', null, 'Choose a file')
       );
     }
