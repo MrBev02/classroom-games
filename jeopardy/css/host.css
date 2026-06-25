@@ -21,6 +21,9 @@
 .panel { max-width: 960px; margin: 1.5rem auto; }
 .panel.wide { max-width: 1150px; }
 
+/* `display: flex` would otherwise beat the [hidden] attribute's display:none,
+   leaving the banner on screen after Resume/Discard. */
+.resume-banner[hidden] { display: none; }
 .resume-banner {
   display: flex;
   justify-content: space-between;
