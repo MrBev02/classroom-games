@@ -63,12 +63,15 @@ from `file://`. Generation lives in `make-swap/puzzles.js`. Pasted puzzles are
 rendered with safe DOM methods (never `innerHTML`), so a swapped link can't
 inject markup.
 
-### Bonus game (and why it can't be farmed)
+### Bonus game — *The Huntsman* (and why it can't be farmed)
 
-After a puzzle is **solved**, the student can play a short one-button game: a
-**ceiling spider** runs along the top of the screen, and you tap (or Space) to
-drop under obstacles that hang down — with a **double-jump** for the tall ones.
-Obstacles grow taller and longer the longer you survive. The play time is
+After a puzzle is **solved**, the student can play a short one-button game,
+**The Huntsman**: a ceiling spider runs along the top of a retro title-screen
+intro, and you tap (or Space) to drop under obstacles that hang down — with a
+**double-jump** for the tall ones. Catching a **fly** (a Space-Invaders-style
+UFO that drifts in) turns the spider **big**, letting it smash straight through
+the next **2** obstacles before it shrinks back; while small, **one hit ends the
+run**. Obstacles grow taller and longer the longer you survive. The play time is
 *earned*, and the formula is deliberately hard to game (the failure mode being
 students who make a 2-word puzzle and then play for 20 minutes):
 
@@ -77,8 +80,11 @@ students who make a 2-word puzzle and then play for 20 minutes):
 - **Speed is a bounded ×0.5–×1.5 multiplier** measured against an expected "par"
   time for the puzzle's size — so solving a *hard* puzzle fast pays off, but
   solving a *trivial* one fast does not (its base is ~0).
-- **Hard cap of 1:00**, and **one game per puzzle code** (claim recorded in
-  `sessionStorage`). The creator's *preview* earns nothing — only real solves do.
+- **Crosswords earn a flat 0:30 bonus** over word searches — they're harder to
+  build *and* to solve, so they pay more.
+- **Hard cap of 1:00** (1:30 for a crossword, with the bonus), and **one game per
+  puzzle code** (claim recorded in `sessionStorage`). The creator's *preview*
+  earns nothing — only real solves do.
 
 Net effect: the only way to rack up game time is to author and solve genuine,
 sizeable, themed puzzles — i.e. to do the work. The reward UI states the rule

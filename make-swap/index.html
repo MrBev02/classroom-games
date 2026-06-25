@@ -127,7 +127,7 @@
     .reward__line { font-family: var(--font-ui); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.7rem; }
     .reward__hint { color: var(--dim); font-size: 0.82rem; margin-top: 0.6rem; }
 
-    /* ---- DASH mini-game overlay ---- */
+    /* ---- The Huntsman mini-game overlay ---- */
     .mg-overlay { position: fixed; inset: 0; z-index: 1000; background: #06211d; overflow: hidden; }
     .mg-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     .mg-hud {
@@ -247,7 +247,7 @@
   <main class="wrap hidden" id="solve">
     <h1 id="solve-title" style="font-family:var(--font-ui);letter-spacing:.03em;"></h1>
     <p class="lead" id="solve-by"></p>
-    <p class="note">Solve it to unlock a quick bonus game — bigger puzzles solved faster earn more game time (up to 1:00).</p>
+    <p class="note">Solve it to unlock <b>The Huntsman</b> — a quick bonus game. Bigger puzzles solved faster earn more game time (up to 1:00), and crosswords earn a 0:30 bonus.</p>
     <div class="tabs" id="solve-tabs"></div>
     <div class="banner" id="solve-banner"></div>
     <div id="reward-mount"></div>
@@ -557,7 +557,7 @@
        preview gives no reward, so the only way to earn time is
        to genuinely solve a real, sizeable puzzle.
        ======================================================= */
-    const FLOOR_WORDS = 4, REWARD_CAP = 60;
+    const FLOOR_WORDS = 4, REWARD_CAP = 60, XW_BONUS = 30;
     function fmtTime(s) {
       s = Math.max(0, Math.round(s));
       return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
@@ -568,7 +568,11 @@
       const base = 15 + (span - FLOOR_WORDS) / (12 - FLOOR_WORDS) * (45 - 15); // 4→15s … 12→45s
       const par = n * (type === 'xw' ? 9 : 7);                                  // expected seconds
       const speed = Math.max(0.5, Math.min(1.5, par / Math.max(seconds, 1)));   // faster = more, bounded
-      return { secs: Math.max(0, Math.min(REWARD_CAP, Math.round(base * speed))), floor: false };
+      // Crosswords are harder to build and solve, so they earn a flat bonus on
+      // top of the size×speed budget (caps at 1:00 + 0:30 = 1:30).
+      const bonus = type === 'xw' ? XW_BONUS : 0;
+      const earned = Math.min(REWARD_CAP, Math.round(base * speed)) + bonus;
+      return { secs: Math.max(0, earned), bonus, floor: false };
     }
     function claimedSet() { try { return new Set(JSON.parse(sessionStorage.getItem('ms_claimed') || '[]')); } catch { return new Set(); } }
     function isClaimed(code) { return !!code && claimedSet().has(code); }
@@ -579,7 +583,7 @@
       const n = data.words.length;
       const r = computeReward(n, metrics.type, metrics.seconds);
       if (r.floor) {
-        mountEl.append(msg('Bonus game unlocks at 4+ words — this puzzle had ' + n + '. Bigger puzzles, solved faster, earn more game time (up to 1:00).'));
+        mountEl.append(msg('Bonus game unlocks at 4+ words — this puzzle had ' + n + '. Bigger puzzles, solved faster, earn more game time (up to 1:00 — crosswords add a 0:30 bonus).'));
         return;
       }
       if (isClaimed(code)) {
@@ -587,23 +591,28 @@
         return;
       }
       const wrap = el('div', 'reward');
-      wrap.append(el('div', 'reward__line', '🎉 Solved in ' + fmtTime(metrics.seconds) + ' — you earned ' + fmtTime(r.secs) + ' of game time!'));
-      const btn = el('button', 'btn primary big', '🎮 Play your reward (' + fmtTime(r.secs) + ')'); btn.type = 'button';
+      const earned = '🎉 Solved in ' + fmtTime(metrics.seconds) + ' — you earned ' + fmtTime(r.secs) + ' on The Huntsman'
+        + (r.bonus ? ' (incl. a +0:30 crossword bonus)' : '') + '!';
+      wrap.append(el('div', 'reward__line', earned));
+      const btn = el('button', 'btn primary big', '🕷 Play The Huntsman (' + fmtTime(r.secs) + ')'); btn.type = 'button';
       btn.addEventListener('click', () => { claim(code); startMiniGame(r.secs); });
       wrap.append(btn);
-      wrap.append(el('div', 'reward__hint', 'One game per puzzle. Bigger puzzles solved faster earn more, up to 1:00.'));
+      wrap.append(el('div', 'reward__hint', 'One game per puzzle. Bigger puzzles solved faster earn more, up to 1:00 — and crosswords add a 0:30 bonus.'));
       mountEl.append(wrap);
     }
 
-    /* ---------- DASH — a one-button auto-runner reward game ---------- */
+    /* ---------- THE HUNTSMAN — a one-button auto-runner reward game ---------- */
+    const FONT = 'ui-monospace, "Courier New", monospace';
     function startMiniGame(totalSeconds) {
       const ov = el('div', 'mg-overlay');
       const canvas = document.createElement('canvas'); canvas.className = 'mg-canvas';
       const hud = el('div', 'mg-hud');
       const tEl = el('span'), sEl = el('span'), dEl = el('span');
       hud.append(tEl, sEl, dEl);
+      hud.style.display = 'none'; // hidden on the title screen
       const closeBtn = el('button', 'mg-close', '✕'); closeBtn.type = 'button'; closeBtn.title = 'Exit';
-      const tip = el('div', 'mg-tip', 'You’re a spider on the ceiling — tap / Space to drop under the obstacles. Tap again in the air to double-jump.');
+      const tip = el('div', 'mg-tip', 'Tap / Space to drop · tap again to double-jump · catch a 🪰 to go big');
+      tip.style.display = 'none';
       ov.append(canvas, hud, closeBtn, tip);
       document.body.append(ov);
 
@@ -633,45 +642,76 @@
       // CEILING SPIDER — gravity pulls UP. The spider clings to the ceiling and
       // "drops" to dodge obstacles that hang DOWN from it. A double-jump gives a
       // second mid-air push to clear the tall ones. Obstacles grow taller and
-      // longer over time.
-      const CEIL = 70, GRAV = 2600, JUMP = 780;
-      const spider = { x: 90, y: CEIL, vy: 0, size: 30, jumps: 2 };
-      let speed, dist, deaths, obs, spawnT, invuln, shake;
-      function hardReset() { speed = 300; dist = 0; deaths = 0; obs = []; spawnT = 0.9; invuln = 0; shake = 0; spider.y = CEIL; spider.vy = 0; spider.jumps = 2; }
-      function softReset() { obs = []; spawnT = 0.7; invuln = 0.9; shake = 9; spider.x = 90; spider.y = CEIL; spider.vy = 0; spider.jumps = 2; }
+      // longer over time. Catching a fly turns the spider BIG: it smashes through
+      // obstacles, but each smash counts — after 2 it shrinks back. While small,
+      // a single hit ends the run.
+      const CEIL = 70, GRAV = 2600, JUMP = 780, BASE = 30, BIG = 48, BIG_HITS = 2;
+      const spider = { x: 90, y: CEIL, vy: 0, size: BASE, jumps: 2 };
+      let speed, dist, obs, flies, spawnT, flyT, invuln, shake, big, bigHits, fliesCaught, wingT;
+      function hardReset() {
+        speed = 300; dist = 0; obs = []; flies = []; spawnT = 0.9; flyT = 4.5;
+        invuln = 0; shake = 0; big = false; bigHits = 0; fliesCaught = 0; wingT = 0;
+        spider.y = CEIL; spider.vy = 0; spider.jumps = 2; spider.size = BASE;
+      }
       hardReset();
+
+      function grow() { big = true; bigHits = 0; spider.size = BIG; fliesCaught++; blip(880, 0.12, 'square'); blip(1180, 0.12, 'square'); }
+      function shrink() { big = false; bigHits = 0; spider.size = BASE; invuln = 0.6; }
 
       // jump pushes the spider DOWN (positive vy); up to two before re-touching ceiling
       function jump() { if (spider.jumps > 0) { spider.vy = JUMP; spider.jumps--; blip(spider.jumps === 1 ? 540 : 680, 0.09, 'square'); } }
-      function onKey(e) { if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); jump(); } else if (e.code === 'Escape') { exit(); } }
-      const onPointer = (e) => { e.preventDefault(); jump(); };
+
+      // ----- phases: 'title' → 'play'; the end screen is a DOM overlay -----
+      let phase = 'title', running = true, raf = 0;
+      let startPerf = 0, endAt = 0, last = 0;
+      function begin() {
+        if (phase !== 'title') return;
+        phase = 'play';
+        hud.style.display = ''; tip.style.display = '';
+        const now = performance.now();
+        startPerf = now; endAt = now + totalSeconds * 1000; last = now;
+      }
+      function act() { if (phase === 'title') begin(); else if (phase === 'play') jump(); }
+
+      function onKey(e) {
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); act(); }
+        else if (e.code === 'Enter' && phase === 'title') { e.preventDefault(); begin(); }
+        else if (e.code === 'Escape') { exit(); }
+      }
+      const onPointer = (e) => { e.preventDefault(); act(); };
       window.addEventListener('keydown', onKey);
       window.addEventListener('resize', resize);
       canvas.addEventListener('pointerdown', onPointer);
 
-      const startPerf = performance.now(), endAt = startPerf + totalSeconds * 1000;
-      let last = startPerf, running = true, raf = 0;
-
       function spawn() {
         const elapsed = (last - startPerf) / 1000;
-        const grow = Math.min(1, elapsed / 40);   // difficulty ramps over ~40s
-        const hMax = 44 + grow * 106;             // taller over time (→ ~150)
-        const wMax = 30 + grow * 95;              // longer over time (→ ~125)
+        const grw = Math.min(1, elapsed / 40);    // difficulty ramps over ~40s
+        const hMax = 44 + grw * 106;              // taller over time (→ ~150)
+        const wMax = 30 + grw * 95;               // longer over time (→ ~125)
         const ht = hMax * 0.5 + Math.random() * hMax * 0.5;
         const type = Math.random() < 0.5 ? 'spike' : 'block';
         const wd = type === 'spike' ? 26 + Math.random() * 16 : 30 + Math.random() * (wMax - 30);
-        obs.push({ x: w() + 20, w: wd, h: ht, type });
+        obs.push({ x: w() + 20, w: wd, h: ht, type, counted: false });
+      }
+      // A fly drifts in from the right like the Space-Invaders UFO, bobbing in a
+      // band the spider can reach with a drop / double-jump.
+      function spawnFly() {
+        const y = CEIL + 70 + Math.random() * 80;
+        flies.push({ x: w() + 30, y, baseY: y, w: 34, h: 22, t: Math.random() * 6 });
       }
       function loop(now) {
         if (!running) return;
+        if (phase === 'title') { drawTitle(now); raf = requestAnimationFrame(loop); return; }
+
         let dt = (now - last) / 1000; last = now; if (dt > 0.05) dt = 0.05;
         const timeLeft = (endAt - now) / 1000;
-        if (timeLeft <= 0) { end(); return; }
+        if (timeLeft <= 0) { over('time'); return; }
 
         speed = Math.min(600, speed + dt * 7);
         spider.vy -= GRAV * dt; spider.y += spider.vy * dt;   // gravity pulls back up to the ceiling
         if (spider.y <= CEIL) { spider.y = CEIL; spider.vy = 0; spider.jumps = 2; }
         dist += speed * dt / 12;
+        wingT += dt;
         if (invuln > 0) invuln -= dt;
         if (shake > 0) shake = Math.max(0, shake - dt * 30);
 
@@ -680,60 +720,129 @@
         for (const o of obs) o.x -= speed * dt;
         while (obs.length && obs[0].x + obs[0].w < -10) obs.shift();
 
+        flyT -= dt;
+        if (flyT <= 0) { spawnFly(); flyT = 7 + Math.random() * 6; }
+        for (const f of flies) { f.t += dt; f.x -= (speed * 0.7 + 70) * dt; f.y = f.baseY + Math.sin(f.t * 3) * 26; }
+        while (flies.length && flies[0].x + flies[0].w < -20) flies.shift();
+
+        const pad = 6, px = spider.x + pad, py = spider.y + pad, ps = spider.size - pad * 2;
+
+        // catch a fly → grow big
+        for (let i = flies.length - 1; i >= 0; i--) {
+          const f = flies[i];
+          if (px < f.x + f.w && px + ps > f.x && py < f.y + f.h && py + ps > f.y) { flies.splice(i, 1); grow(); }
+        }
+
+        // obstacle contact: big plows through (2 smashes then shrinks); small dies
         if (invuln <= 0) {
-          const pad = 6, px = spider.x + pad, py = spider.y + pad, ps = spider.size - pad * 2;
           for (const o of obs) {
             const ox = o.type === 'spike' ? o.x + o.w * 0.2 : o.x;
             const ow = o.type === 'spike' ? o.w * 0.6 : o.w;
             // hit if horizontally overlapping AND not dropped below the obstacle's tip
-            if (px < ox + ow && px + ps > ox && py < CEIL + o.h) { deaths++; blip(120, 0.18, 'sawtooth'); softReset(); break; }
+            if (px < ox + ow && px + ps > ox && py < CEIL + o.h) {
+              if (big) {
+                if (!o.counted) { o.counted = true; bigHits++; shake = 7; blip(220, 0.12, 'square'); if (bigHits >= BIG_HITS) shrink(); }
+              } else { over('death'); return; }
+            }
           }
         }
         draw(Math.max(0, timeLeft));
         raf = requestAnimationFrame(loop);
       }
+      function bg(W, H) {
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, '#06211d'); grad.addColorStop(1, '#0b1620');
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#0b2e29'; ctx.fillRect(0, 0, W, CEIL);
+        ctx.strokeStyle = '#2bd4c0'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, CEIL); ctx.lineTo(W, CEIL); ctx.stroke();
+      }
+      function drawSpider(cx, cy, size, lit) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        const body = lit ? '#ffd23f' : '#f4f6ff';
+        if (lit) { ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 16; }
+        ctx.fillStyle = body;
+        ctx.fillRect(-size / 2, -size / 2, size, size);
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = body; ctx.lineWidth = 2;
+        for (let i = -1; i <= 1; i += 2) {
+          ctx.beginPath();
+          ctx.moveTo(i * size / 2, -size / 4); ctx.lineTo(i * (size / 2 + 6), -size / 2);
+          ctx.moveTo(i * size / 2, size / 4); ctx.lineTo(i * (size / 2 + 6), size / 2);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#06211d';
+        ctx.fillRect(-size / 4, -size / 6, 5, 5);
+        ctx.fillRect(size / 4 - 5, -size / 6, 5, 5);
+        ctx.restore();
+      }
+      function drawFly(f) {
+        ctx.save();
+        ctx.translate(f.x + f.w / 2, f.y + f.h / 2);
+        const flap = Math.sin(wingT * 40) * 3;
+        ctx.fillStyle = 'rgba(244, 246, 255, 0.75)';
+        ctx.beginPath(); ctx.ellipse(-7, -4 - flap, 8, 5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(7, -4 - flap, 8, 5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffd23f'; ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.ellipse(0, 0, 9, 6, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0; ctx.fillStyle = '#06211d';
+        ctx.fillRect(-4, -3, 2, 2); ctx.fillRect(2, -3, 2, 2);
+        ctx.restore();
+      }
       function draw(timeLeft) {
         const W = w(), H = h();
         ctx.save();
         if (shake > 0) ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
-        const grad = ctx.createLinearGradient(0, 0, 0, H);
-        grad.addColorStop(0, '#06211d'); grad.addColorStop(1, '#0b1620');
-        ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
-        // ceiling band + edge
-        ctx.fillStyle = '#0b2e29'; ctx.fillRect(0, 0, W, CEIL);
-        ctx.strokeStyle = '#2bd4c0'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(0, CEIL); ctx.lineTo(W, CEIL); ctx.stroke();
+        bg(W, H);
         // obstacles hang DOWN from the ceiling
         ctx.fillStyle = '#2bd4c0';
         for (const o of obs) {
           if (o.type === 'spike') { ctx.beginPath(); ctx.moveTo(o.x, CEIL); ctx.lineTo(o.x + o.w, CEIL); ctx.lineTo(o.x + o.w / 2, CEIL + o.h); ctx.closePath(); ctx.fill(); }
           else ctx.fillRect(o.x, CEIL, o.w, o.h);
         }
+        for (const f of flies) drawFly(f);
         // spider on a thread
         const cx = spider.x + spider.size / 2;
         ctx.strokeStyle = 'rgba(43, 212, 192, 0.5)'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, spider.y); ctx.stroke();
-        ctx.save();
-        ctx.translate(cx, spider.y + spider.size / 2);
-        ctx.fillStyle = invuln > 0 ? '#ffd23f' : '#f4f6ff';
-        ctx.fillRect(-spider.size / 2, -spider.size / 2, spider.size, spider.size);
-        // legs
-        ctx.strokeStyle = invuln > 0 ? '#ffd23f' : '#f4f6ff'; ctx.lineWidth = 2;
-        for (let i = -1; i <= 1; i += 2) {
-          ctx.beginPath();
-          ctx.moveTo(i * spider.size / 2, -spider.size / 4); ctx.lineTo(i * (spider.size / 2 + 6), -spider.size / 2);
-          ctx.moveTo(i * spider.size / 2, spider.size / 4); ctx.lineTo(i * (spider.size / 2 + 6), spider.size / 2);
-          ctx.stroke();
-        }
-        // eyes
-        ctx.fillStyle = '#06211d';
-        ctx.fillRect(-spider.size / 4, -spider.size / 6, 5, 5);
-        ctx.fillRect(spider.size / 4 - 5, -spider.size / 6, 5, 5);
-        ctx.restore();
+        drawSpider(cx, spider.y + spider.size / 2, spider.size, big || invuln > 0);
         ctx.restore();
         tEl.textContent = '⏱ ' + fmtTime(timeLeft);
         sEl.textContent = 'Score ' + Math.floor(dist);
-        dEl.textContent = 'Deaths ' + deaths;
+        dEl.textContent = big ? '🪰 BIG ×' + (BIG_HITS - bigHits) : '🪰 ' + fliesCaught;
+      }
+      function drawTitle(now) {
+        const W = w(), H = h();
+        bg(W, H);
+        // a big spider dangling from the ceiling, gently bobbing
+        const bob = Math.sin(now / 600) * 8;
+        ctx.strokeStyle = 'rgba(43, 212, 192, 0.5)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(W / 2, CEIL); ctx.lineTo(W / 2, H * 0.2 + bob); ctx.stroke();
+        drawSpider(W / 2, H * 0.2 + bob + 24, 44, true);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#2bd4c0';
+        const titleSize = Math.min(64, W * 0.12);
+        ctx.font = '700 ' + titleSize + 'px ' + FONT;
+        ctx.fillText('THE HUNTSMAN', W / 2, H * 0.4);
+        ctx.fillStyle = '#f4f6ff';
+        ctx.font = '600 16px ' + FONT;
+        ctx.fillText('· a ceiling-running arcade dash ·', W / 2, H * 0.4 + 30);
+        const lines = [
+          'TAP / SPACE  →  drop to dodge the spikes',
+          'TAP AGAIN in the air  →  double-jump',
+          'CATCH A 🪰  →  grow huge & smash through 2 obstacles',
+          'ONE HIT while small  →  game over',
+        ];
+        ctx.font = '500 15px ' + FONT;
+        ctx.fillStyle = '#9fc4bd';
+        lines.forEach((ln, i) => ctx.fillText(ln, W / 2, H * 0.56 + i * 26));
+        if (Math.floor(now / 450) % 2 === 0) {
+          ctx.fillStyle = '#ffd23f';
+          ctx.font = '700 22px ' + FONT;
+          ctx.fillText('▶ TAP / SPACE TO START', W / 2, H * 0.84);
+        }
+        ctx.textAlign = 'left';
       }
       function cleanup() {
         running = false; cancelAnimationFrame(raf);
@@ -741,11 +850,12 @@
         window.removeEventListener('resize', resize);
       }
       function exit() { cleanup(); ov.remove(); try { actx && actx.close(); } catch {} }
-      function end() {
-        if (!running) return; cleanup(); blip(700, 0.25, 'triangle');
+      function over(reason) {
+        if (!running) return; cleanup();
+        blip(reason === 'time' ? 700 : 130, 0.25, reason === 'time' ? 'triangle' : 'sawtooth');
         const card = el('div', 'mg-end');
-        card.append(el('h2', null, '⏱ Time’s up!'));
-        card.append(el('p', null, 'Distance ' + Math.floor(dist) + ' · Deaths ' + deaths));
+        card.append(el('h2', null, reason === 'time' ? '⏱ Time’s up!' : '💀 Squashed!'));
+        card.append(el('p', null, 'Distance ' + Math.floor(dist) + ' · 🪰 ' + fliesCaught));
         const back = el('button', 'btn primary big', 'Back to puzzles'); back.type = 'button';
         back.addEventListener('click', exit); card.append(back);
         ov.append(card);
