@@ -16,10 +16,23 @@ const SAVE_KEY = "jeopardy-save-v1";
 const MIN_TEAMS = 2;
 const MAX_TEAMS = 10;
 
+// Storage can be disabled, full, or private — never let it crash the host.
+// (A throw here once left the Board stuck on "waiting for host".)
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); return true; } catch (e) { console.warn("localStorage write failed:", e); return false; } };
+const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
+
+// Show/hide the "progress isn't being saved" header warning. We only know
+// storage is broken once a save actually fails, so this is driven from update().
+function setSaveWarning(broken) {
+  const el = $("#save-warning");
+  if (el) el.hidden = !broken;
+}
+
 let state = null; // null until a game starts
 
 // Auto-play think music whenever a clue opens (setup checkbox)
-let autoPlayMusic = localStorage.getItem("jeopardy-autoplay") !== "off";
+let autoPlayMusic = lsGet("jeopardy-autoplay") !== "off";
 
 // ---------------------
 // Helpers
@@ -35,10 +48,17 @@ function publicState() {
 function update() {
   // Persist mid-game so an accidental refresh can resume — but never persist a
   // finished (or cleared) game, so a fresh launch doesn't look "in progress".
+  //
+  // CRITICAL: persistence must NOT be able to stop the board from syncing.
+  // lsSet swallows storage failures (full / disabled / private mode); if a raw
+  // setItem threw here, channel.send below would never run and the Board would
+  // sit forever on "waiting for host". Saving is best-effort; the broadcast +
+  // render always happen.
   if (state && state.phase !== "gameover") {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    setSaveWarning(!lsSet(SAVE_KEY, JSON.stringify(state)));
   } else {
-    localStorage.removeItem(SAVE_KEY);
+    lsDel(SAVE_KEY);
+    setSaveWarning(false);
   }
   channel.send("STATE", publicState());
   render();
@@ -114,7 +134,7 @@ function populateSetup() {
   autoplayBox.checked = autoPlayMusic;
   autoplayBox.addEventListener("change", () => {
     autoPlayMusic = autoplayBox.checked;
-    localStorage.setItem("jeopardy-autoplay", autoPlayMusic ? "on" : "off");
+    lsSet("jeopardy-autoplay", autoPlayMusic ? "on" : "off");
   });
 
   // Bring back an uploaded think track from a previous session, then
@@ -351,7 +371,7 @@ function buildTeamInputs() {
 
 function loadSave() {
   try {
-    const raw = localStorage.getItem(SAVE_KEY);
+    const raw = lsGet(SAVE_KEY);
     if (!raw) return null;
     const s = JSON.parse(raw);
     return s && s.phase && s.teams ? s : null;
@@ -398,7 +418,7 @@ function resumeGame() {
 }
 
 function discardSave() {
-  localStorage.removeItem(SAVE_KEY);
+  lsDel(SAVE_KEY);
   $("#resume-banner").hidden = true;
 }
 
@@ -516,9 +536,10 @@ function newGame() {
     return;
   }
   state = null;
-  localStorage.removeItem(SAVE_KEY);
+  lsDel(SAVE_KEY);
   channel.send("STATE", { phase: "waiting" });
   $("#resume-banner").hidden = true;
+  setSaveWarning(false);
   render();
 }
 

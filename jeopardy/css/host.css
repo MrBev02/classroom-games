@@ -37,6 +37,16 @@
 .resume-banner span { font-size: 0.85rem; color: var(--text-dim); }
 .resume-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
 
+/* Shown only when a save actually fails (storage full / disabled / private). */
+.save-warning {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--warn);
+  cursor: help;
+}
+.save-warning strong { color: var(--warn); }
+.save-warning[hidden] { display: none; }
+
 .team-names {
   display: grid;
   grid-template-columns: 1fr 1fr;

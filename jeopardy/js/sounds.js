@@ -61,7 +61,9 @@ const ThinkStore = {
 
 class SoundManager {
   constructor() {
-    this.enabled = localStorage.getItem("jeopardy-sound") !== "off";
+    // Storage may be disabled/private — default to on rather than crash.
+    try { this.enabled = localStorage.getItem("jeopardy-sound") !== "off"; }
+    catch { this.enabled = true; }
     this.ctx = null;
     this.thinkPlaying = false;
     this.onThinkEnd = null; // UI hook so the music button can reset
@@ -85,7 +87,7 @@ class SoundManager {
 
   setEnabled(on) {
     this.enabled = on;
-    localStorage.setItem("jeopardy-sound", on ? "on" : "off");
+    try { localStorage.setItem("jeopardy-sound", on ? "on" : "off"); } catch {}
     if (!on) this.stopThink();
   }
 

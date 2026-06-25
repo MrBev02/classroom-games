@@ -10,6 +10,11 @@ const $ = (sel) => document.querySelector(sel);
 
 let prev = null; // previous state, for detecting transitions
 
+// Think-music countdown state — declared up here (not beside updateThinkTimer)
+// so the very first STATE message can never hit them in the temporal dead zone.
+let curTimer = null; // currently-running timer data
+let timerLoop = null;
+
 const fmtMoney = (n) => (n < 0 ? `−$${Math.abs(n)}` : `$${n}`);
 
 channel.on("STATE", (state) => {
@@ -169,9 +174,6 @@ function renderClueOverlay(state) {
 // Both tabs run on the same machine, so the host's
 // startedAt timestamp is directly comparable to Date.now().
 // ---------------------
-
-let curTimer = null; // currently-running timer data
-let timerLoop = null;
 
 function updateThinkTimer(state) {
   curTimer = state && state.active ? state.thinkTimer : null;
