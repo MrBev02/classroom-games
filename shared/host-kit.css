@@ -65,6 +65,11 @@ body[data-game="pointless"] {
   --accent-soft: rgba(79, 140, 255, 0.16);
   --accent-line: rgba(79, 140, 255, 0.5);
 }
+body[data-game="makeswap"] {
+  --accent: #2bd4c0; --accent-ink: #06211d;
+  --accent-soft: rgba(43, 212, 192, 0.14);
+  --accent-line: rgba(43, 212, 192, 0.45);
+}
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
