@@ -430,8 +430,15 @@
         if (dir) curDir = dir;
         if (curDir === 'A' && !hasA) curDir = 'D';
         if (curDir === 'D' && !hasD) curDir = 'A';
-        inputs[r][c].focus();
+        focusCell(r, c);
         highlight();
+      }
+      // Focus a cell and select its contents, so typing replaces a letter the
+      // crossing word already filled in (rather than being blocked by maxLength).
+      function focusCell(r, c) {
+        const inp = inputs[r][c]; if (!inp) return;
+        inp.focus();
+        try { inp.select(); } catch {}
       }
       function step(r, c, dir, back) {
         const dr = dir === 'D' ? 1 : 0, dc = dir === 'A' ? 1 : 0;
@@ -453,7 +460,7 @@
         if (ni < 0 || ni >= slot.cells.length) return; // at the word's edge: stay put
         const [r, c] = slot.cells[ni];
         curCell = [r, c];
-        inputs[r][c].focus();
+        focusCell(r, c);
         highlight();
       }
 
@@ -471,6 +478,19 @@
           if (inp.value) { inp.value = ''; }
           else { advance(true); if (curCell) { const ci = inputs[curCell[0]][curCell[1]]; if (ci) ci.value = ''; } }
           checkWin(false); return;
+        }
+        // Letter typed: write it and step on. Handling this here (not just on the
+        // `input` event) means a cell already filled by the crossing word doesn't
+        // get stuck — maxLength=1 would otherwise block the keypress and the
+        // cursor would never advance.
+        if (/^[a-zA-Z]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.preventDefault();
+          if (firstTs == null) firstTs = performance.now();
+          inp.value = e.key.toUpperCase();
+          inp.parentElement.classList.remove('right', 'wrong');
+          advance(false);
+          checkWin(false);
+          return;
         }
         if (e.key === 'ArrowRight') { e.preventDefault(); const p = step(r, c, 'A', false) || [r, c]; select(p[0], p[1], 'A'); return; }
         if (e.key === 'ArrowLeft')  { e.preventDefault(); const p = step(r, c, 'A', true)  || [r, c]; select(p[0], p[1], 'A'); return; }
