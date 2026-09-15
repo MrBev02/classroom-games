@@ -1,0 +1,262 @@
+/* ============================================================
+   ROULETTE: WHEEL AND CHART COMPONENTS
+
+   This file is the one stylesheet that the three screens share. It
+   contains only the wheel graphic, the chart marks and the fraction
+   elements. Those parts are the largest block of CSS in the project. If
+   each screen had its own copy, the copies become different.
+
+   This file does not contain a :root block and it does not contain a
+   reset. It reads the custom properties that each screen defines:
+
+     --wheel-red      --wheel-black     --wheel-green
+     --wheel-line     --wheel-ink       --wheel-size
+     --series-1       --series-2        --grid
+     --ink            --ink-dim         --surface
+
+   Each screen sets its own values for the light theme and for the dark
+   theme.
+   ============================================================ */
+
+/* ---------- the wheel ---------- */
+.wheel {
+  width: var(--wheel-size, 320px);
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.wheel__pocket {
+  stroke: var(--wheel-line, rgba(0, 0, 0, 0.35));
+  stroke-width: 0.5;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+.wheel__pocket--red { fill: var(--wheel-red, #c62828); }
+.wheel__pocket--black { fill: var(--wheel-black, #212121); }
+.wheel__pocket--green { fill: var(--wheel-green, #1b7a3e); }
+
+/* A pocket that wins the current bet. The ring does the work, so the
+   pocket keeps its own colour. */
+.wheel__pocket.is-highlight {
+  stroke: var(--wheel-ink, #fff);
+  stroke-width: 2.6;
+  paint-order: stroke;
+}
+/* A pocket that is not part of the current event. */
+/* A muted pocket must stay legible. It fades toward the backing disc, so
+   it keeps its own colour instead of taking the colour of the page. */
+.wheel__pocket.is-muted, .wheel__pocket.is-dim { opacity: 0.34; }
+.wheel__backing { fill: var(--wheel-backing, #8a8f8c); }
+/* A pocket that the student selected. */
+.wheel__pocket.is-selected { stroke: var(--accent, #f5b83d); stroke-width: 2.4; }
+
+.wheel--pickable .wheel__pocket { cursor: pointer; }
+.wheel--pickable .wheel__pocket:hover { filter: brightness(1.35); }
+.wheel--pickable .wheel__pocket:focus-visible {
+  outline: none;
+  stroke: var(--accent, #f5b83d);
+  stroke-width: 3;
+}
+
+.wheel__label {
+  font: 600 9px/1 var(--font-ui, system-ui, sans-serif);
+  fill: #fff;
+  pointer-events: none;
+  user-select: none;
+}
+.wheel__hub { fill: var(--surface, #f7f7f5); stroke: var(--wheel-line, rgba(0, 0, 0, 0.25)); }
+.wheel__ball {
+  fill: #fff;
+  stroke: #1a1a1a;
+  stroke-width: 1.2;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+/* ---------- the betting board ----------
+   This is the felt layout of a roulette table. The zero pockets sit at
+   the left and cover the three number rows. The column bets sit at the
+   right end of each row. The dozens and the even money bets sit below.
+   ---------------------------------------- */
+.board {
+  display: grid;
+  grid-template-columns: 2.1rem repeat(12, minmax(0, 1fr)) 3rem;
+  grid-template-rows: repeat(3, minmax(1.5rem, auto)) auto auto;
+  gap: 2px;
+  margin: 0.75rem 0;
+  min-width: 26rem;
+}
+.board__zeros { grid-column: 1; grid-row: 1 / 4; display: grid; gap: 2px; }
+.board__grid {
+  grid-column: 2 / 14; grid-row: 1 / 4;
+  display: grid; gap: 2px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+.board__cols { grid-column: 14; grid-row: 1 / 4; display: grid; gap: 2px; }
+.board__dozens {
+  grid-column: 2 / 14; grid-row: 4;
+  display: grid; gap: 2px; grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.board__outside-row {
+  grid-column: 2 / 14; grid-row: 5;
+  display: grid; gap: 2px; grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.board__cell {
+  display: grid;
+  place-items: center;
+  min-height: 1.7rem;
+  padding: 0.15rem;
+  font: 600 0.74rem/1 var(--font-ui, system-ui, sans-serif);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: var(--wheel-black, #212121);
+  text-align: center;
+}
+.board__num.is-red { background: var(--wheel-red, #c62828); }
+.board__num.is-black { background: var(--wheel-black, #212121); }
+.board__num.is-green { background: var(--wheel-green, #1b7a3e); }
+.board__outside {
+  background: var(--surface-3, rgba(255, 255, 255, 0.08));
+  color: var(--ink, #111);
+  font-size: 0.7rem;
+}
+.board__outside.is-red { background: var(--wheel-red, #c62828); color: #fff; }
+.board__outside.is-black { background: var(--wheel-black, #212121); color: #fff; }
+
+/* A cell whose pockets are all in the current event. */
+.board__cell.is-lit { outline: 2px solid var(--accent, #f5b83d); outline-offset: -2px; }
+.board__cell.is-selected { border-color: var(--accent, #f5b83d); border-width: 2px; }
+/* The pocket the ball landed in. */
+.board__cell.is-ball { box-shadow: 0 0 0 3px var(--ink, #111), 0 0 0 5px var(--surface, #fff); }
+
+.board--pickable .board__cell { cursor: pointer; font-family: inherit; }
+.board--pickable .board__cell:hover { filter: brightness(1.25); }
+.board--pickable .board__cell:focus-visible { outline: 2px solid var(--accent, #f5b83d); outline-offset: 1px; }
+
+/* The board is wide. It scrolls inside its own container. */
+.board-scroll { overflow-x: auto; padding-bottom: 0.25rem; }
+
+/* ---------- fractions ---------- */
+.frac {
+  display: inline-grid;
+  grid-template-rows: auto auto auto;
+  justify-items: center;
+  vertical-align: middle;
+  line-height: 1.1;
+  margin: 0 0.15em;
+}
+.frac__n, .frac__d { padding: 0 0.2em; }
+.frac__bar {
+  width: 100%;
+  min-width: 2.2em;
+  height: 2px;
+  background: currentColor;
+  margin: 0.12em 0;
+}
+.frac--big { font-size: 1.5rem; font-weight: 600; }
+.frac--input .frac__in {
+  width: 3.6em;
+  padding: 0.3rem;
+  text-align: center;
+  font: inherit;
+  font-size: 1rem;
+  border: 1px solid var(--line, #ccc);
+  border-radius: 4px;
+  background: var(--surface, #fff);
+  color: var(--ink, #111);
+}
+.frac--input .frac__in.is-fixed { background: transparent; border-style: dashed; }
+.frac--input .frac__in:focus-visible { outline: 2px solid var(--accent, #f5b83d); outline-offset: 1px; }
+
+/* ---------- charts ---------- */
+.chart { margin: 0; position: relative; }
+.chart__svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart--empty { color: var(--ink-dim, #777); font-style: normal; padding: 1rem 0; }
+
+.chart__grid { stroke: var(--grid, rgba(0, 0, 0, 0.09)); stroke-width: 1; }
+.chart__tick { font: 400 10px/1 var(--font-ui, system-ui, sans-serif); fill: var(--ink-dim, #6b6b6b); }
+.chart__axis-label { font: 500 11px/1 var(--font-ui, system-ui, sans-serif); fill: var(--ink-dim, #6b6b6b); }
+
+.chart__line { stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart__line.is-observed { stroke: var(--series-1, #2a78d6); }
+.chart__line.is-theory { stroke: var(--series-2, #eb6834); stroke-dasharray: 5 4; }
+
+.chart__reference { stroke: var(--series-2, #eb6834); stroke-width: 2; stroke-dasharray: 5 4; }
+.chart__series-label { font: 600 11px/1 var(--font-ui, system-ui, sans-serif); }
+.chart__series-label.is-observed { fill: var(--series-1, #2a78d6); }
+.chart__series-label.is-theory { fill: var(--series-2, #eb6834); }
+
+.chart__bar { fill: var(--series-1, #2a78d6); }
+.chart__bar.is-red { fill: var(--wheel-red, #c62828); }
+.chart__bar.is-black { fill: var(--wheel-black, #212121); }
+.chart__bar.is-green { fill: var(--wheel-green, #1b7a3e); }
+
+.chart__crosshair { stroke: var(--ink-dim, #6b6b6b); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart__dot { fill: var(--series-1, #2a78d6); stroke: var(--surface, #fff); stroke-width: 2; }
+.chart__tip {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  background: var(--ink, #111);
+  color: var(--surface, #fff);
+  font-size: 0.78rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.chart__caption { font-size: 0.82rem; color: var(--ink-dim, #6b6b6b); margin-top: 0.35rem; }
+
+.legend { list-style: none; display: flex; flex-wrap: wrap; gap: 0.9rem; padding: 0; margin: 0.5rem 0 0; }
+.legend__item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: var(--ink-dim, #6b6b6b); }
+.legend__swatch { width: 14px; height: 3px; border-radius: 2px; background: var(--series-1, #2a78d6); }
+.legend__swatch.is-theory { background: var(--series-2, #eb6834); }
+
+/* ---------- the divided bar for the sum-to-one module ---------- */
+.stack-wrap { margin: 0.75rem 0; }
+.stack {
+  display: flex;
+  gap: 2px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--grid, rgba(0, 0, 0, 0.06));
+}
+.stack__part {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  background: var(--series-1, #2a78d6);
+  color: #fff;
+  font-size: 0.72rem;
+}
+.stack__part.is-red { background: var(--wheel-red, #c62828); }
+.stack__part.is-black { background: var(--wheel-black, #212121); }
+.stack__part.is-green { background: var(--wheel-green, #1b7a3e); }
+.stack__part.is-gap { background: repeating-linear-gradient(45deg, var(--grid) 0 6px, transparent 6px 12px); color: var(--ink-dim, #6b6b6b); }
+.stack__label { padding: 0 0.3rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stack.is-over { outline: 2px solid var(--series-2, #eb6834); outline-offset: 2px; }
+.stack__caption { font-size: 0.82rem; color: var(--ink-dim, #6b6b6b); margin-top: 0.35rem; }
+
+/* ---------- tables ---------- */
+.table-scroll { overflow-x: auto; margin: 0.75rem 0; }
+.data-table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+.data-table th, .data-table td {
+  text-align: left;
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--line, #e3e3e0);
+  white-space: nowrap;
+}
+.data-table th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim, #6b6b6b);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheel__pocket { transition: none; }
+}

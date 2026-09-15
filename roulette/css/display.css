@@ -1,0 +1,82 @@
+/* =====================================================
+   ROULETTE: PROJECTOR
+
+   The screen that the class sees. Large type, high contrast, and no
+   detail that a student at the back cannot read.
+
+   This screen has no casino appearance. There is no animation for a win
+   and there is no sound. Refer to SAFEGUARDING.md.
+   ===================================================== */
+
+:root {
+  --surface: #10231b;
+  --surface-2: #163024;
+  --ink: #f2f6f3;
+  --ink-dim: #9fb6a9;
+  --line: #24483a;
+  --accent: #4fc48a;
+
+  --series-1: #7ab6f0;
+  --series-2: #f08a5a;
+  --grid: rgba(255, 255, 255, 0.12);
+
+  --wheel-red: #c0392b;
+  --wheel-black: #12161a;
+  --wheel-green: #1d8a5c;
+  --wheel-line: rgba(255, 255, 255, 0.3);
+  --wheel-backing: #6d7671;
+  --wheel-ink: #ffffff;
+  --wheel-size: min(38vw, 460px);
+
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+#screen { flex: 1; display: flex; flex-direction: column; justify-content: center;
+  padding: 3vh 4vw; gap: 1.5rem; }
+
+h1 { font-size: clamp(1.8rem, 4vw, 3.2rem); line-height: 1.1; }
+h2 { font-size: clamp(1.3rem, 2.6vw, 2.1rem); }
+p { font-size: clamp(1rem, 1.6vw, 1.4rem); max-width: 44ch; color: var(--ink-dim); }
+
+/* ---------- the session code ---------- */
+.codewrap { text-align: center; }
+.codewrap__label { font-size: clamp(1rem, 2vw, 1.6rem); color: var(--ink-dim); margin-bottom: 1rem; }
+.codewrap__code {
+  font-size: clamp(3rem, 11vw, 9rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.05;
+  word-break: break-all;
+}
+.codewrap__url { font-size: clamp(1.1rem, 3vw, 2.4rem); color: var(--accent); margin-top: 1.5rem; word-break: break-all; }
+
+/* ---------- readouts ---------- */
+.big-stats { display: flex; flex-wrap: wrap; gap: clamp(1.5rem, 4vw, 4rem); }
+.big-stat__label { font-size: clamp(0.75rem, 1.1vw, 1rem); text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--ink-dim); }
+.big-stat__value { font-size: clamp(1.8rem, 5vw, 4rem); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.row { display: grid; gap: 2rem; grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 60rem) { .row.split { grid-template-columns: auto minmax(0, 1fr); } }
+
+.data-table { font-size: clamp(0.85rem, 1.4vw, 1.25rem); }
+.data-table th, .data-table td { border-bottom-color: var(--line); }
+
+.support { border-top: 1px solid var(--line); padding: 1rem 4vw; color: var(--ink-dim);
+  font-size: clamp(0.85rem, 1.3vw, 1.1rem); }
+.support a { color: var(--accent); }
+
+.idle { text-align: center; color: var(--ink-dim); }
+.idle__title { font-size: clamp(2rem, 6vw, 4.5rem); color: var(--ink); }

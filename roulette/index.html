@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- This page is a classroom activity. It should not appear in a search. -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Roulette and Probability</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/student.css">
+  <link rel="stylesheet" href="css/wheel.css">
+</head>
+<body>
+  <header class="topbar">
+    <span class="topbar__title">Roulette and Probability</span>
+    <span class="topbar__spacer"></span>
+    <span class="topbar__timer" id="timer" hidden aria-label="Time left in this session"></span>
+  </header>
+
+  <p class="notice" id="storage-notice" hidden>
+    This browser is not saving your work. Try to finish an activity in one sitting.
+  </p>
+
+  <main id="app"></main>
+
+  <footer class="footer">
+    <span id="support"></span>
+  </footer>
+
+  <!--
+    The student page does not load js/channel.js. It never talks to the
+    teacher console, thus it works from a web address, from a local server
+    or from a file on a USB device.
+
+    KaTeX is optional. If the network does not supply it, every question
+    still reads correctly as plain text.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"></script>
+  <script src="../shared/math.js"></script>
+
+  <script src="data/config.js"></script>
+  <script src="data/questions.js"></script>
+  <script src="js/wheel.js"></script>
+  <script src="js/bets.js"></script>
+  <script src="js/probability.js"></script>
+  <script src="js/rng.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/session-key.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/session.js"></script>
+  <script src="js/answers.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/modules.js"></script>
+  <script src="js/live.js"></script>
+  <script src="js/student.js"></script>
+  <script>
+    // The support line and the storage warning. Both are quiet, and
+    // neither blocks the page.
+    (function () {
+      var support = document.getElementById("support");
+      var shown = (typeof SUPPORT_CONTACTS !== "undefined" ? SUPPORT_CONTACTS : [])
+        .filter(function (c) { return !c.debriefOnly; });
+      shown.forEach(function (c, i) {
+        if (i) support.appendChild(document.createTextNode("  ·  "));
+        var a = document.createElement("a");
+        a.href = c.url; a.target = "_blank"; a.rel = "noopener";
+        a.textContent = c.name;
+        support.appendChild(a);
+        support.appendChild(document.createTextNode(" " + c.detail));
+      });
+      if (typeof Store !== "undefined" && !Store.works) {
+        document.getElementById("storage-notice").hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>

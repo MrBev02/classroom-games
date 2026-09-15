@@ -1,0 +1,281 @@
+/* ============================================================
+   ROULETTE: STUDENT PAGE
+
+   The screen that a student uses. It is light, it has a large type size,
+   and it works on a tablet.
+
+   This page has no casino appearance. There is no gold, there is no
+   animation for a win, and there is no sound. A win and a loss have the
+   same appearance. Refer to SAFEGUARDING.md.
+   ============================================================ */
+
+:root {
+  --surface: #fbfbf9;
+  --surface-2: #ffffff;
+  --surface-3: #f2f2ee;
+  --ink: #16171a;
+  --ink-dim: #5f6168;
+  --line: #e0e0da;
+  --accent: #2a5d9f;
+  --accent-ink: #ffffff;
+
+  /* The two chart series. These values passed the colour-vision checks. */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --grid: rgba(0, 0, 0, 0.09);
+
+  --wheel-red: #b3261e;
+  --wheel-black: #1f2125;
+  --wheel-green: #16704a;
+  --wheel-line: rgba(255, 255, 255, 0.28);
+  --wheel-backing: #d5d8d4;
+  --wheel-ink: #ffffff;
+  --wheel-size: 320px;
+
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #16171a;
+    --surface-2: #1d1f23;
+    --surface-3: #24262b;
+    --ink: #eceef2;
+    --ink-dim: #a0a3ab;
+    --line: #32353c;
+    --accent: #7aa9e8;
+    --accent-ink: #10131a;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --grid: rgba(255, 255, 255, 0.10);
+    --wheel-line: rgba(255, 255, 255, 0.22);
+    --wheel-backing: #666f6a;
+  }
+}
+:root[data-theme="dark"] {
+  --wheel-backing: #666f6a;
+  --surface: #16171a;
+  --surface-2: #1d1f23;
+  --surface-3: #24262b;
+  --ink: #eceef2;
+  --ink-dim: #a0a3ab;
+  --line: #32353c;
+  --accent: #7aa9e8;
+  --accent-ink: #10131a;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --grid: rgba(255, 255, 255, 0.10);
+  --wheel-line: rgba(255, 255, 255, 0.22);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- the top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.topbar__title { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; }
+.topbar__spacer { flex: 1; }
+.topbar__timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--surface-3);
+  font-size: 0.88rem;
+}
+.topbar__timer.is-low { background: var(--series-2); color: #fff; }
+
+main { flex: 1; width: 100%; max-width: 60rem; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
+
+h1 { font-size: 1.6rem; line-height: 1.25; margin-bottom: 0.5rem; }
+h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+h3 { font-size: 1rem; margin-bottom: 0.35rem; }
+p { margin-bottom: 0.75rem; max-width: 62ch; }
+.prose { color: var(--ink); }
+
+/* ---------- the code gate ---------- */
+.gate { max-width: 30rem; margin: 3rem auto; text-align: center; }
+.gate__code {
+  font-size: 1.7rem;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  padding: 0.7rem;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+.gate__code:focus-visible { outline: none; border-color: var(--accent); }
+.gate__error { color: var(--series-2); margin-top: 0.75rem; font-weight: 600; }
+
+/* ---------- the module menu ---------- */
+.menu { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.menu__card {
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.menu__card:hover { border-color: var(--accent); }
+.menu__card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.menu__title { font-weight: 700; }
+.menu__blurb { font-size: 0.88rem; color: var(--ink-dim); }
+.menu__meta { font-size: 0.78rem; color: var(--ink-dim); display: flex; gap: 0.6rem; margin-top: auto; padding-top: 0.4rem; }
+.chip {
+  font-size: 0.72rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--ink-dim);
+}
+.chip.is-done { background: var(--accent); color: var(--accent-ink); }
+.chip.is-progress { background: var(--series-2); color: #fff; }
+
+/* ---------- panels and steps ---------- */
+.panel {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  margin-bottom: 1rem;
+}
+.steps { display: flex; gap: 0.3rem; margin-bottom: 1rem; }
+.steps__dot { height: 4px; flex: 1; border-radius: 2px; background: var(--line); }
+.steps__dot.is-done { background: var(--accent); }
+.steps__dot.is-now { background: var(--series-2); }
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-3);
+  color: var(--ink);
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn--quiet { background: transparent; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; align-items: center; }
+.btn-row__spacer { flex: 1; }
+
+/* ---------- questions ---------- */
+.question { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1rem; }
+.question:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+.question__prompt { font-weight: 600; margin-bottom: 0.6rem; }
+.choices { display: grid; gap: 0.4rem; margin-bottom: 0.6rem; }
+.choice {
+  text-align: left;
+  font: inherit;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.choice:hover { border-color: var(--accent); }
+.choice:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.choice.is-picked { border-color: var(--accent); border-width: 2px; }
+.choice.is-right { border-color: var(--accent); background: var(--surface-3); }
+.choice.is-wrong { border-color: var(--series-2); }
+.answer-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.feedback { margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 8px; background: var(--surface-3); font-size: 0.92rem; }
+.feedback.is-right { border-left: 3px solid var(--accent); }
+.feedback.is-wrong { border-left: 3px solid var(--series-2); }
+.hint { margin-top: 0.5rem; font-size: 0.9rem; color: var(--ink-dim); }
+.text-answer {
+  width: 100%; min-height: 4.5rem; font: inherit; padding: 0.6rem;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); resize: vertical;
+}
+
+/* ---------- readouts ----------
+   The counter shows the total staked and the current position. It is on
+   the screen at all times. */
+.stats { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+.stat__label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-dim); }
+.stat__value { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat.is-down .stat__value { color: var(--series-2); }
+
+/* The result of a spin. A win and a loss look the same. The only colour
+   is the colour of the pocket, which is information. */
+.result {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-3);
+  margin: 0.9rem 0;
+  min-height: 4.5rem;
+}
+.result__pocket {
+  width: 3rem; height: 3rem; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.15rem; font-weight: 700; color: #fff;
+  flex: none;
+}
+.result__pocket.is-red { background: var(--wheel-red); }
+.result__pocket.is-black { background: var(--wheel-black); }
+.result__pocket.is-green { background: var(--wheel-green); }
+.result__pocket.is-waiting { background: var(--surface-3); color: var(--ink-dim); border: 1px dashed var(--line); }
+.result__text { font-size: 0.95rem; }
+.result__draw { font-size: 0.8rem; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+
+/* ---------- the lock panel ---------- */
+.lock { max-width: 30rem; margin: 3rem auto; text-align: center; }
+.lock__title { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.lock__body { color: var(--ink-dim); margin-bottom: 1.25rem; }
+
+/* ---------- the footer ---------- */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  text-align: center;
+}
+.footer a { color: inherit; }
+.notice { font-size: 0.85rem; color: var(--ink-dim); padding: 0.5rem 1rem; background: var(--surface-3); text-align: center; }
+
+.two-col { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 46rem) { .two-col { grid-template-columns: auto minmax(0, 1fr); } }
+
+.muted { color: var(--ink-dim); }
+.tight { margin-bottom: 0.35rem; }

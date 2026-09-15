@@ -1,3 +1,6 @@
 # Copyrighted audio (e.g. the Jeopardy "Think!" track) stays local —
 # fine to play in class, not to redistribute via the repo.
 jeopardy/sounds/*.mp3
+
+# Made by roulette/build-standalone.py. Regenerate it, do not commit it.
+roulette/roulette-student-standalone.html

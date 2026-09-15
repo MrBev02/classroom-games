@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Roulette Host</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/host-kit.css">
+  <link rel="stylesheet" href="css/host.css">
+  <link rel="stylesheet" href="css/wheel.css">
+</head>
+<body data-game="roulette">
+
+  <header class="console">
+    <span class="console__id">
+      <span class="console__badge">Host</span>
+      <span class="console__game">Roulette</span>
+    </span>
+    <span class="console__meta">
+      <a class="btn ghost" href="../index.html">&#8592; All games</a>
+      <button id="open-display" class="btn ghost" type="button">Open projector &#8599;</button>
+      <span class="console__hint">Students see the <strong>projector</strong>. Keep this screen to yourself.</span>
+    </span>
+  </header>
+
+  <!-- ===== How to run it ===== -->
+  <section class="panel">
+    <h2 class="panel-title">How to run it</h2>
+    <div class="guide">
+      <ol class="guide__steps">
+        <li><span>1</span> Tick the activities you want, then select <b>Make a code</b>.</li>
+        <li><span>2</span> Select <b>Open projector</b> and drag that window to the projector.</li>
+        <li><span>3</span> Select <b>Show the code on the projector</b>. Students type it on their own devices.</li>
+        <li><span>4</span> Use <b>Run on the projector</b> below for whole-class demonstrations. The preview shows what the class sees.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== Session code ===== -->
+  <section class="panel">
+    <h2 class="panel-title">Session code</h2>
+    <div class="cols">
+      <div>
+        <div class="field">
+          <label class="field-label" for="duration">Minutes of use on a device</label>
+          <select id="duration" class="num">
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="55" selected>55</option>
+            <option value="90">90</option>
+            <option value="0">No limit</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="expiry">The code stops working after</label>
+          <select id="expiry" class="num">
+            <option value="2">2 hours</option>
+            <option value="6" selected>6 hours</option>
+            <option value="24">1 day</option>
+            <option value="168">1 week</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="join-url">Address students type</label>
+          <input id="join-url" class="num" type="text" placeholder="http://10.1.24.87:8080/roulette/">
+          <p class="hint-line">Run <code>node serve.js</code> to print this address.</p>
+        </div>
+        <div class="btn-row">
+          <button id="generate" class="btn primary" type="button">Make a code</button>
+        </div>
+      </div>
+
+      <div>
+        <p class="field-label">Activities this code opens</p>
+        <div class="btn-row">
+          <button class="btn ghost preset" data-preset="all" type="button">All</button>
+          <button class="btn ghost preset" data-preset="none" type="button">None</button>
+          <button class="btn ghost preset" data-preset="basics" type="button">Sample space and P(event)</button>
+          <button class="btn ghost preset" data-preset="complement" type="button">Complements</button>
+          <button class="btn ghost preset" data-preset="edge" type="button">House edge</button>
+        </div>
+        <div id="modlist" class="modlist"></div>
+        <p class="field-label" style="margin-top:.6rem">Syllabus dot points covered</p>
+        <div id="coverage" class="coverage"></div>
+      </div>
+    </div>
+
+    <div id="keycard-holder"></div>
+  </section>
+
+  <!-- ===== Projector ===== -->
+  <section class="panel wide">
+    <h2 class="panel-title">
+      Run on the projector
+      <span id="proj-status" class="proj-status is-off">Projector not open</span>
+    </h2>
+
+    <div class="btn-row">
+      <button id="show-code" class="btn" type="button">Show the code on the projector</button>
+      <button id="show-idle" class="btn ghost" type="button">Clear the projector</button>
+    </div>
+
+    <div class="field" style="margin-top:.9rem">
+      <label class="field-label" for="demo-module">Activity</label>
+      <select id="demo-module" class="num"></select>
+    </div>
+
+    <div id="demo-controls"></div>
+
+    <h3 class="field-label" style="margin-top:1.4rem">What the class sees</h3>
+    <div id="preview" class="preview"></div>
+  </section>
+
+  <!-- ===== Settings ===== -->
+  <section class="panel">
+    <h2 class="panel-title">Settings</h2>
+    <div class="cols">
+      <div class="field">
+        <label class="field-label" for="wheel">Wheel</label>
+        <select id="wheel" class="num">
+          <option value="european">European (37 pockets, one zero)</option>
+          <option value="american">American (38 pockets, two zeros)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label" for="currency">Student screens show</label>
+        <select id="currency" class="num">
+          <option value="chips">Chips</option>
+          <option value="dollars">Dollars</option>
+        </select>
+        <p class="hint-line">Chips is the default. See SAFEGUARDING.md before you change it.</p>
+      </div>
+      <div class="field">
+        <label class="field-label" for="seed">Seed for the spins</label>
+        <input id="seed" class="num" type="text" placeholder="Leave empty for a new sequence">
+        <p class="hint-line">Set a number to get the same spins in every class.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Print ===== -->
+  <section class="panel">
+    <h2 class="panel-title">Print</h2>
+    <div class="btn-row">
+      <button id="print-card" class="btn" type="button">Code card for the board</button>
+      <button id="print-worksheet" class="btn" type="button">Student worksheet</button>
+      <button id="print-key" class="btn" type="button">Answer key</button>
+      <button id="print-tally" class="btn" type="button">Tally sheet</button>
+    </div>
+    <p class="hint-line">Make a code first. The card needs one.</p>
+  </section>
+
+  <!-- ===== Live roster ===== -->
+  <section class="panel" id="live-panel">
+    <h2 class="panel-title">Live roster</h2>
+    <p id="live-status" class="hint-line">Not connected. Run <code>node serve.js</code> to see students here.</p>
+    <div id="live-body"></div>
+  </section>
+
+  <script src="js/channel.js"></script>
+  <script src="data/config.js"></script>
+  <script src="data/questions.js"></script>
+  <script src="js/wheel.js"></script>
+  <script src="js/bets.js"></script>
+  <script src="js/probability.js"></script>
+  <script src="js/rng.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/session-key.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/answers.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/modules.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/print.js"></script>
+  <script src="js/live-host.js"></script>
+  <script src="js/host.js"></script>
+</body>
+</html>

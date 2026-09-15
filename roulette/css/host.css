@@ -1,0 +1,147 @@
+/* =====================================================
+   ROULETTE: TEACHER CONSOLE
+
+   The top bar, the cards, the buttons and the fields come from
+   ../shared/host-kit.css. This file styles only the surfaces that belong
+   to Roulette: the session code card, the module picker and the live
+   roster.
+   ===================================================== */
+
+:root {
+  --surface: var(--panel);
+  --ink-dim: var(--dim);
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --grid: rgba(255, 255, 255, 0.10);
+  --wheel-red: #b3261e;
+  --wheel-black: #16181c;
+  --wheel-green: #16704a;
+  --wheel-line: rgba(255, 255, 255, 0.22);
+  --wheel-backing: #6d7671;
+  --wheel-ink: #ffffff;
+  --wheel-size: 240px;
+}
+
+.panel { max-width: 960px; margin: 1.25rem auto; }
+.cols { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+
+/* ---------- the session code ---------- */
+.keycard {
+  border: 1px solid var(--accent-line);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+.keycard__code {
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+}
+.keycard__meta { color: var(--dim); font-size: 0.85rem; margin-top: 0.35rem; }
+.keycard__stop { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.06em; }
+.keycard__countdown { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ---------- module checkboxes ---------- */
+.modlist { display: grid; gap: 0.3rem; max-height: 20rem; overflow-y: auto; padding-right: 0.3rem; }
+.modrow {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--panel-raised);
+  cursor: pointer;
+}
+.modrow:hover { border-color: var(--accent-line); }
+.modrow input { margin-top: 0.25rem; flex: none; }
+.modrow__title { font-weight: 600; font-size: 0.9rem; }
+.modrow__meta { color: var(--dim); font-size: 0.78rem; }
+.modrow.is-projector .modrow__title::after {
+  content: " (projector only)";
+  color: var(--dim);
+  font-weight: 400;
+}
+
+.coverage { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
+.dot {
+  width: 1.6rem; height: 1.6rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  background: var(--panel-raised);
+  color: var(--faint);
+  border: 1px solid var(--line-soft);
+}
+.dot.is-on { background: var(--good); color: var(--good-ink); border-color: var(--good); }
+
+/* ---------- the live roster ---------- */
+.roster { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.roster th, .roster td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--line-soft); }
+.roster th { font-size: 0.7rem; text-transform: uppercase; color: var(--dim); }
+.roster td.is-down { color: var(--bad); }
+.roster tr.is-gone { opacity: 0.45; }
+.live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--good); margin-right: 0.4rem; }
+.live-dot.is-off { background: var(--faint); }
+
+.hint-line { color: var(--dim); font-size: 0.85rem; margin-top: 0.4rem; }
+.warn { color: var(--warn); }
+
+/* ---------- is the projector open? ---------- */
+.proj-status {
+  float: right;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--good);
+  color: var(--good-ink);
+}
+.proj-status.is-off { background: var(--panel-raised); color: var(--warn); border: 1px solid var(--warn); }
+
+/* ---------- the copy of the projector ----------
+   The class sees this at full size. Here it is reduced, so the teacher
+   can check it without looking up at the wall. */
+.preview {
+  background: #10231b;
+  color: #f2f6f3;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  --surface: #10231b;
+  --ink: #f2f6f3;
+  --ink-dim: #9fb6a9;
+  --line: #24483a;
+  --accent: #4fc48a;
+  --series-1: #7ab6f0;
+  --series-2: #f08a5a;
+  --grid: rgba(255, 255, 255, 0.12);
+  --wheel-red: #c0392b;
+  --wheel-black: #12161a;
+  --wheel-green: #1d8a5c;
+  --wheel-backing: #6d7671;
+  --surface-3: rgba(255, 255, 255, 0.08);
+}
+.preview h1 { font-size: 1.25rem; margin-bottom: 0.6rem; }
+.preview p { font-size: 0.9rem; color: #9fb6a9; margin-bottom: 0.5rem; max-width: 52ch; }
+.preview .big-stat__label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.07em; color: #9fb6a9; }
+.preview .big-stat__value { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.preview .big-stats { display: flex; flex-wrap: wrap; gap: 1.25rem; margin: 0.5rem 0 0.9rem; }
+.preview .row { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 62rem) { .preview .row.split { grid-template-columns: auto minmax(0, 1fr); } }
+.preview .idle { text-align: center; padding: 1.5rem 0; }
+.preview .idle__title { font-size: 1.4rem; }
+.preview .codewrap { text-align: center; padding: 1rem 0; }
+.preview .codewrap__code { font-size: clamp(1.5rem, 5vw, 2.6rem); font-weight: 700; letter-spacing: 0.08em; word-break: break-all; }
+.preview .codewrap__label, .preview .codewrap__url { font-size: 0.9rem; color: #9fb6a9; }
+.preview .data-table { font-size: 0.8rem; }
+.preview .lead { font-size: 0.95rem; color: #f2f6f3; }
+
+/* ---------- the demo controls ---------- */
+.demo-bet { display: grid; gap: 0.6rem; margin: 0.9rem 0; }
+.demo-bet__hint { color: var(--dim); font-size: 0.82rem; }

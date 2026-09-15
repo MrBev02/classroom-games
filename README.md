@@ -16,6 +16,7 @@ The games:
 - **Family Feud** — two teams, survey answers and strikes. (board + host)
 - **Pointless** — low-score-wins quiz. (board + host)
 - **Make & Swap** — students build their own word search / crossword and swap it. (self-serve, no host)
+- **Roulette & Probability** — a maths lesson on the Probability strand, run from a host console with students working on their own devices. (host + projector + student devices)
 
 <details>
 <summary>Running it offline instead (optional, technical)</summary>
@@ -90,6 +91,32 @@ Net effect: the only way to rack up game time is to author and solve genuine,
 sizeable, themed puzzles — i.e. to do the work. The reward UI states the rule
 on screen so the incentive is legible. The game itself uses a `<canvas>` with
 synthesised sound and no image assets.
+
+## Roulette & Probability
+
+`roulette/` is a maths activity rather than a game show. It covers the
+Probability syllabus dot points (sample space, P(event), complements, theoretical
+vs observed probability) and finishes by having students calculate the house edge
+themselves and find it identical for every bet.
+
+It works differently from the other games in two ways:
+
+1. **Students use their own devices.** The teacher issues a short session code
+   with a built-in expiry. Student devices verify it offline, so no network link
+   between teacher and student is needed.
+2. **There is an optional server.** `node serve.js` (repo root, zero
+   dependencies) serves the site *and* adds a live roster so the teacher can see
+   who is working and stop the activity on every device. It is entirely optional
+   — `python -m http.server 8080` still works, and the activity also runs from a
+   single self-contained file with no server at all. Note that student devices
+   here have network isolation turned on and cannot reach the teacher's laptop,
+   so the roster stays empty; GitHub Pages and the single file are the routes
+   that reach students. The student page degrades silently — see
+   `roulette/README.md`.
+
+**Before running it with a class, read `roulette/SAFEGUARDING.md`.** It records
+the design decisions, states what the session code can and cannot do, and covers
+the wellbeing considerations for teaching this topic.
 
 ## Dual-screen setup
 
