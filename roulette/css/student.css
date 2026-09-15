@@ -214,6 +214,20 @@ p { margin-bottom: 0.75rem; max-width: 62ch; }
 .choice.is-right { border-color: var(--accent); background: var(--surface-3); }
 .choice.is-wrong { border-color: var(--series-2); }
 .answer-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+
+/* A box on one line, beside a button. It must have the same height as
+   the button, thus the vertical padding and the border are the same as
+   .btn. The small boxes inside a fraction are different, and wheel.css
+   sets those with a more specific rule. */
+.frac__in {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.frac__in:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .feedback { margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 8px; background: var(--surface-3); font-size: 0.92rem; }
 .feedback.is-right { border-left: 3px solid var(--accent); }
 .feedback.is-wrong { border-left: 3px solid var(--series-2); }
