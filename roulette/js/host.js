@@ -60,7 +60,7 @@ function publicState() {
     currencyMode: state.currencyMode,
     showCode: state.showCode,
     code: state.showCode && state.key ? state.key.code : null,
-    joinUrl: state.showCode ? state.joinUrl : "",
+    joinUrl: state.showCode ? (state.joinUrl || defaultJoinUrl()) : "",
     expiresAt: state.key ? state.key.expiresAt : null,
     demoModule: state.demoModule,
     betId: state.betId,
@@ -360,6 +360,7 @@ function render() {
   $("#wheel").value = state.wheel;
   $("#currency").value = state.currencyMode;
   $("#join-url").value = state.joinUrl;
+  $("#join-url").placeholder = defaultJoinUrl() || "http://10.1.24.87:8080/roulette/";
 }
 
 function buildDemoSelect() {
@@ -378,14 +379,57 @@ function buildDemoSelect() {
 }
 
 /* ---------------------------------------------------------------
+   The projector window
+   --------------------------------------------------------------- */
+
+/**
+ * The address for students, when the teacher did not type one.
+ *
+ * The student page is index.html, beside this file. Thus the address is
+ * the address of this page without the file name. A page opened from a
+ * file gives no address that a student can type. The function then
+ * gives an empty string, and the projector shows only the code.
+ */
+function defaultJoinUrl() {
+  if (location.protocol === "file:") return "";
+  return location.href.split(/[?#]/)[0].replace(/[^/]*$/, "");
+}
+
+/**
+ * Open the projector, or move to it when it is already open.
+ *
+ * The window has a name, and this file keeps the reference. Thus a
+ * second press moves to the window that is open. It does not make a
+ * second window. A browser can stop a new window. The teacher then gets
+ * a message, because a button that does nothing looks like a fault.
+ */
+let projectorWin = null;
+function openProjector() {
+  const warn = $("#projector-warn");
+  if (projectorWin && !projectorWin.closed) {
+    projectorWin.focus();
+    channel.send("STATE", publicState());
+    return;
+  }
+  projectorWin = window.open("display.html", "roulette-projector");
+  if (!projectorWin) {
+    if (warn) {
+      warn.textContent = "The browser stopped the projector window. Permit pop-ups for this page, then select Open projector again.";
+      warn.hidden = false;
+    }
+    return;
+  }
+  if (warn) { warn.textContent = ""; warn.hidden = true; }
+  projectorWin.focus();
+  setTimeout(() => channel.send("STATE", publicState()), 400);
+}
+
+/* ---------------------------------------------------------------
    Wire up the page
    --------------------------------------------------------------- */
 function wire() {
   $("#generate").addEventListener("click", generateKey);
-  $("#open-display").addEventListener("click", () => {
-    window.open("display.html", "_blank");
-    setTimeout(() => channel.send("STATE", publicState()), 400);
-  });
+  $("#open-display").addEventListener("click", openProjector);
   $("#show-code").addEventListener("click", () => {
     if (!state.key) generateKey();
     state.showCode = true; state.phase = "code"; update();
@@ -424,7 +468,7 @@ function wire() {
     printCodeCard({
       key: k.code,
       stopCode: RouletteKey.formatStopCode(k.stopCode),
-      joinUrl: state.joinUrl,
+      joinUrl: state.joinUrl || defaultJoinUrl(),
       expiresText: new Date(k.expiresAt).toLocaleString(),
       durationText: k.durationMin ? k.durationMin + " minutes" : "no time limit",
     });

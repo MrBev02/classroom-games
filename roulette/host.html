@@ -24,6 +24,7 @@
       <a class="btn ghost" href="../index.html">&#8592; All games</a>
       <button id="open-display" class="btn ghost" type="button">Open projector &#8599;</button>
       <span class="console__hint">Students see the <strong>projector</strong>. Keep this screen to yourself.</span>
+      <span id="projector-warn" class="console__hint warn" hidden></span>
     </span>
   </header>
 
@@ -66,8 +67,9 @@
         </div>
         <div class="field">
           <label class="field-label" for="join-url">Address students type</label>
-          <input id="join-url" class="num" type="text" placeholder="http://10.1.24.87:8080/roulette/">
-          <p class="hint-line">Run <code>node serve.js</code> to print this address.</p>
+          <input id="join-url" class="num" type="text">
+          <p class="hint-line">Leave this empty to use the address of this page. Type an address to
+            replace it, for example the one that <code>node serve.js</code> prints.</p>
         </div>
         <div class="btn-row">
           <button id="generate" class="btn primary" type="button">Make a code</button>
